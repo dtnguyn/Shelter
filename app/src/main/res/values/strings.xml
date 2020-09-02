@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Shelter</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sqft">Sqft</string>
+    <string name="baths">Baths</string>
+    <string name="beds">Beds</string>
+    <string name="login">Login</string>
+    <string name="connect_to_the_people_living_in_your_area">Connect to the people living in your area</string>
+    <string name="login_with_google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="facebook_app_id">608977569789570</string> <string name="fb_login_protocol_scheme">fb608977569789570</string>
+    <string name="new_to_this_app_tell_us_about_you">New to this app? Tell us about you!</string>
+    <string name="looking_for_a_new_place">Looking for a new place?</string>
+
+</resources>

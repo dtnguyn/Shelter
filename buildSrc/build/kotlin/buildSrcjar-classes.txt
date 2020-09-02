@@ -1,0 +1,1 @@
+C:\Android\Shelter\buildSrc\build\classes\kotlin\main\ClassPath.class;C:\Android\Shelter\buildSrc\build\classes\kotlin\main\Deps.class;C:\Android\Shelter\buildSrc\build\classes\kotlin\main\TestDeps.class;C:\Android\Shelter\buildSrc\build\classes\kotlin\main\Versions.class
