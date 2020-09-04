@@ -1,4 +1,4 @@
-package com.nguyen.shelter.ui.main
+package com.nguyen.shelter.ui.main.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,8 +14,11 @@ import javax.inject.Inject
 class RentPropertyAdapter
 @Inject
 constructor(
-    private val cacheMapper: PropertyCacheMapper
-): PagingDataAdapter<PropertyCacheEntity, RentPropertyAdapter.RentPropertyViewHolder>(PROPERTY_COMPARATOR) {
+    private val cacheMapper: PropertyCacheMapper,
+    private val detailOnClick: (String) -> Unit,
+): PagingDataAdapter<PropertyCacheEntity, RentPropertyAdapter.RentPropertyViewHolder>(
+    PROPERTY_COMPARATOR
+) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RentPropertyViewHolder {
@@ -64,6 +67,10 @@ constructor(
                         else props.features.priceMin!!.toInt().toString()
                         binding.price = price
                     } else binding.price = "N/A"
+                }
+
+                binding.container.setOnClickListener {
+                    detailOnClick.invoke(property.id)
                 }
             }
 

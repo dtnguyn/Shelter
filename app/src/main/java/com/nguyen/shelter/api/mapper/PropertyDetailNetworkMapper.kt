@@ -19,18 +19,18 @@ constructor() : EntityMapper<PropertyDetailNetworkEntity, PropertyDetail>{
             address = if(checkNullFromApi(entity.address)) entity.address!! else Address(),
             features = if(checkNullFromApi(entity.features)) entity.features!! else Features(),
             photoCount = if(checkNullFromApi(entity.category)) entity.photoCount!! else 0,
-            photos = if(checkNullFromApi(entity.photos)) entity.photos!!.listOfData else listOf(),
+            photos = if(checkNullFromApi(entity.photos)) entity.photos!! else listOf(),
             beds = if(checkNullFromApi(entity.photos)) entity.beds!! else 0,
             baths = if(checkNullFromApi(entity.photos)) entity.baths!! else 0,
             yearBuilt = if(checkNullFromApi(entity.yearBuilt)) entity.yearBuilt!!.toString() else "Unknown",
             description = if(checkNullFromApi(entity.description)) entity.description!! else "No description",
             lotSize = if(checkNullFromApi(entity.lotSize?.size)) entity.lotSize!!.size!! else 0,
             url = if(checkNullFromApi(entity.url)) entity.url!! else "url is not available",
-            community = if(checkNullFromApi(entity.community)) entity.community!!.listOfData else listOf(),
-            floorPlans = if(checkNullFromApi(entity.floorPlans)) entity.floorPlans!!.listOfData else listOf(),
+            community = if(checkNullFromApi(entity.community)) entity.community!! else listOf(),
+            floorPlans = if(checkNullFromApi(entity.floorPlans)) entity.floorPlans!! else listOf(),
             leaseTerm = if(checkNullFromApi(entity.leaseTerm)) entity.leaseTerm!! else "Lease term not available",
             office = if(checkNullFromApi(entity.office)) entity.office!! else Office(),
-            schools = if(checkNullFromApi(entity.schools)) entity.schools!!.listOfData else listOf()
+            schools = if(checkNullFromApi(entity.schools)) entity.schools!! else listOf()
         )
     }
 
@@ -43,18 +43,18 @@ constructor() : EntityMapper<PropertyDetailNetworkEntity, PropertyDetail>{
             address = domainModel.address,
             features = domainModel.features,
             photoCount = domainModel.photoCount,
-            photos = DataList(domainModel.photos),
+            photos = domainModel.photos,
             beds = domainModel.beds,
             baths = domainModel.baths,
             yearBuilt = domainModel.yearBuilt.toInt(),
             description = domainModel.description,
             lotSize = LotSize(domainModel.lotSize),
             url = domainModel.url,
-            community = DataList(domainModel.community),
-            floorPlans = DataList(domainModel.floorPlans),
+            community = domainModel.community,
+            floorPlans = domainModel.floorPlans,
             leaseTerm = domainModel.leaseTerm,
             office = domainModel.office,
-            schools = DataList(domainModel.schools)
+            schools = domainModel.schools
         )
     }
 

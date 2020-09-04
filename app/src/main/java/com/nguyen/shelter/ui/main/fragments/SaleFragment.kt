@@ -1,4 +1,4 @@
-package com.nguyen.shelter.ui.main
+package com.nguyen.shelter.ui.main.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nguyen.shelter.databinding.FragmentSaleBinding
+import com.nguyen.shelter.ui.main.adapters.SalePropertyAdapter
+import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
+import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,7 +52,6 @@ class SaleFragment : Fragment() {
             lifecycleScope.launch {
                 pagingAdapterSale.submitData(pagingData)
             }
-
         })
     }
 

@@ -14,7 +14,7 @@ object Versions{
     const val espressoCoreVersion = "3.2.0"
     const val gradleVersion = "4.0.1"
     const val pagingVersion = "3.0.0-alpha03"
-    const val materialVersion = "1.1.0"
+    const val materialVersion = "1.2.1"
     const val navigationVersion = "2.3.0"
     const val glideVersion = "4.11.0"
     const val legacySupportVersion = "1.0.0"
@@ -68,6 +68,7 @@ object ClassPath{
     const val gradleClassPath = "com.android.tools.build:gradle:${Versions.gradleVersion}"
     const val gradlePluginClassPath = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlinVersion}"
     const val googleServicePath = "com.google.gms:google-services:${Versions.googleServicePath}"
+    const val navigationSafeArg = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigationVersion}"
 
 }
 

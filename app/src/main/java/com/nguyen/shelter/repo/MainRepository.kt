@@ -3,8 +3,6 @@ package com.nguyen.shelter.repo
 import android.app.Activity
 import androidx.paging.*
 import com.facebook.AccessToken
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -16,6 +14,7 @@ import com.nguyen.shelter.db.ShelterDatabase
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
 import com.nguyen.shelter.model.CallbackResponse
+import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.model.PropertyFilter
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -26,9 +25,9 @@ class MainRepository
 constructor(
     private val service: RealtorApiService,
     private val database: ShelterDatabase,
-    private val propertyNetworkMapper: PropertyNetworkMapper,
-    private val propertyDetailNetworkMapper: PropertyDetailNetworkMapper,
-    private val propertyCacheMapper: PropertyCacheMapper,
+    private val mapper: PropertyNetworkMapper,
+    private val detailMapper: PropertyDetailNetworkMapper,
+    private val cacheMapper: PropertyCacheMapper,
     private val auth: FirebaseAuth
 ){
 
@@ -41,8 +40,8 @@ constructor(
         val propertyDao = database.propertyDao()
         val pagingSourceFactory = {propertyDao.getProperties("for_rent")}
         val remoteMediator = RentRemoteMediator(
-            propertyNetworkMapper,
-            propertyCacheMapper,
+            mapper,
+            cacheMapper,
             filter,
             service,
             database
@@ -60,8 +59,8 @@ constructor(
         val propertyDao = database.propertyDao()
         val pagingSourceFactory = {propertyDao.getProperties("for_sale")}
         val remoteMediator = SaleRemoteMediator(
-            propertyNetworkMapper,
-            propertyCacheMapper,
+            mapper,
+            cacheMapper,
             filter,
             service,
             database
@@ -75,13 +74,24 @@ constructor(
     }
 
 
+    suspend fun getPropertyDetail(id: String, callback: (response: CallbackResponse<PropertyDetail>) -> Unit) {
+        val response = service.getPropertyDetail(id)
+        val detailList = response.data
+
+        if(detailList != null && detailList.isNotEmpty()){
+            callback.invoke(CallbackResponse(true, "Getting property detail successfully.", detailMapper.mapFromEntity(detailList[0])))
+        } else {
+            callback.invoke(CallbackResponse(false, "Cannot get detail.", null))
+        }
+    }
+
+
     fun checkAuthentication(callback: (response: CallbackResponse<FirebaseUser>) -> Unit){
         if(auth.currentUser == null){
             callback.invoke(CallbackResponse(false, "User are not logged in.", auth.currentUser))
         } else {
             callback.invoke(CallbackResponse(true, "User are already logged in.", auth.currentUser))
         }
-
     }
 
 
@@ -111,5 +121,16 @@ constructor(
 
             }
     }
+
+    fun logout(callback: (response: CallbackResponse<FirebaseUser>) -> Unit){
+        auth.signOut()
+        if(auth.currentUser == null){
+            callback.invoke(CallbackResponse(true, "Log out successfully.", auth.currentUser))
+        } else {
+            callback.invoke(CallbackResponse(false, "Cannot log out.", auth.currentUser))
+        }
+    }
+
+
 
 }

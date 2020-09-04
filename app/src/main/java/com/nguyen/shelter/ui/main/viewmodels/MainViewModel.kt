@@ -1,4 +1,4 @@
-package com.nguyen.shelter.ui.main
+package com.nguyen.shelter.ui.main.viewmodels
 
 import android.app.Activity
 import androidx.hilt.lifecycle.ViewModelInject
@@ -6,9 +6,9 @@ import androidx.lifecycle.*
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import com.facebook.AccessToken
-import com.facebook.CallbackManager
 import com.google.firebase.auth.FirebaseUser
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
+import com.nguyen.shelter.model.CallbackResponse
 import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.repo.MainRepository
 import kotlinx.coroutines.flow.catch
@@ -65,12 +65,7 @@ constructor(
 
                 is MainStateEvent.CheckAuthentication -> {
                     mainRepository.checkAuthentication{response ->
-                        if(response.status){
-                            _currentUser.value = response.data
-                        } else {
-                            _error.value = response.message
-                        }
-
+                        _currentUser.value = response.data
                     }
                 }
 
@@ -92,6 +87,14 @@ constructor(
                             _currentUser.value = response.data
                         } else {
                             _error.value = response.message
+                        }
+                    }
+                }
+
+                is MainStateEvent.Logout -> {
+                    mainRepository.logout {response ->
+                        handleCallback(response) {
+                            _currentUser.value = response.data
                         }
                     }
                 }
@@ -120,10 +123,25 @@ constructor(
                         .launchIn(viewModelScope)
                 }
 
+                is MainStateEvent.GetPropertyDetail -> {
+                    mainRepository.getPropertyDetail(mainStateEvent.id){
+                        println("debug: Getting detail $it")
+                    }
+                }
+
                 is MainStateEvent.SaveRentFilter -> {
                     _rentPropertyFilter.value = mainStateEvent.filter
                 }
             }
+        }
+    }
+
+
+    private fun <T> handleCallback(response: CallbackResponse<T>, successAction: () -> Unit){
+        if(response.status){
+            successAction.invoke()
+        } else {
+            _error.value = response.message
         }
     }
 
@@ -135,11 +153,21 @@ constructor(
 sealed class MainStateEvent{
 
     object InitializeLiveData: MainStateEvent()
+
+    // Get properties from API
     object GetRentPropertyList: MainStateEvent()
     object GetSalePropertyList: MainStateEvent()
+    class GetPropertyDetail(val id: String): MainStateEvent()
+
+
+    class SaveRentFilter(val filter: PropertyFilter): MainStateEvent()
+
+    // Authentication
     object CheckAuthentication: MainStateEvent()
+    object Logout: MainStateEvent()
     class FacebookAuthenticate(val token: AccessToken, val activity: Activity): MainStateEvent()
     class GoogleAuthenticate(val token: String, val activity: Activity): MainStateEvent()
-    class SaveRentFilter(val filter: PropertyFilter): MainStateEvent()
+
+
 
 }

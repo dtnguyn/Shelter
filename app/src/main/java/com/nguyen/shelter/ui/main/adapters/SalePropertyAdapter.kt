@@ -1,4 +1,4 @@
-package com.nguyen.shelter.ui.main
+package com.nguyen.shelter.ui.main.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -15,7 +15,9 @@ class SalePropertyAdapter
 @Inject
 constructor(
     private val cacheMapper: PropertyCacheMapper
-): PagingDataAdapter<PropertyCacheEntity, SalePropertyAdapter.SalePropertyViewHolder>(PROPERTY_COMPARATOR) {
+): PagingDataAdapter<PropertyCacheEntity, SalePropertyAdapter.SalePropertyViewHolder>(
+    PROPERTY_COMPARATOR
+) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SalePropertyViewHolder {

@@ -1,5 +1,6 @@
 package com.nguyen.shelter.api.service
 
+import com.nguyen.shelter.api.entity.PropertyDetailNetworkEntity
 import com.nguyen.shelter.api.entity.PropertyNetworkEntity
 import com.nguyen.shelter.api.response.ApiResponse
 import retrofit2.http.GET
@@ -74,6 +75,14 @@ interface RealtorApiService {
         @Query("features") features: String?
 
     ): ApiResponse<PropertyNetworkEntity>
+
+
+    @Headers(
+        "x-rapidapi-host: realtor.p.rapidapi.com",
+        "x-rapidapi-key: 7671356523mshf5fc94df33e09eep1dfeb2jsn2065788690cf"
+    )
+    @GET("detail")
+    suspend fun getPropertyDetail(@Query("property_id") id: String): ApiResponse<PropertyDetailNetworkEntity>
 
 
 

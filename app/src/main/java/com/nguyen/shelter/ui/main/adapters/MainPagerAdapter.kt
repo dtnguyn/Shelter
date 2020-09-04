@@ -1,7 +1,9 @@
-package com.nguyen.shelter.ui.main
+package com.nguyen.shelter.ui.main.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.nguyen.shelter.ui.main.fragments.RentFragment
+import com.nguyen.shelter.ui.main.fragments.SaleFragment
 
 class MainPagerAdapter (fragment: Fragment) : FragmentStateAdapter(fragment){
 

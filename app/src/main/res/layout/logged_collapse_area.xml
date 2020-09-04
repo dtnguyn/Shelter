@@ -15,20 +15,25 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/user_avatar_post"
+            android:id="@+id/user_avatar_cardview"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            app:cardElevation="0dp"
+            android:transitionName="avatar_main"
             android:layout_centerHorizontal="true"
             android:layout_margin="15dp"
+            app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="40dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:id="@+id/avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -43,9 +48,9 @@
             android:text="@{`Hi ` + username + `,`}"
             android:layout_marginTop="20dp"
             android:textColor="@color/textColorLight"
-            android:textSize="25sp"
-            app:layout_constraintStart_toStartOf="@+id/user_avatar_post"
-            app:layout_constraintTop_toBottomOf="@+id/user_avatar_post" />
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="@+id/user_avatar_cardview"
+            app:layout_constraintTop_toBottomOf="@+id/user_avatar_cardview" />
 
         <TextView
             android:id="@+id/textView2"

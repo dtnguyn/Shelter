@@ -27,6 +27,7 @@
         </androidx.appcompat.widget.Toolbar>
 
         <TextView
+            android:id="@+id/app_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_semi_bold"
@@ -39,6 +40,21 @@
             app:layout_constraintTop_toTopOf="@+id/main_toolbar" />
 
 
+        <ImageView
+            android:id="@+id/filter_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/filter_ic_32"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/app_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/app_title" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/main_toolbar_group"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:constraint_referenced_ids="app_title, filter_button"/>
 
         <fragment
             android:id="@+id/main_fragment"

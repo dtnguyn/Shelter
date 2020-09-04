@@ -8,6 +8,20 @@
     <fragment
         android:name="com.nguyen.shelter.ui.main.MainFragment"
         tools:layout="@layout/fragment_main"
-        android:id="@+id/main_fragment" />
+        android:id="@+id/main_fragment" >
+        <action
+            android:id="@+id/action_main_fragment_to_user_fragment"
+            app:destination="@id/user_fragment" />
+    </fragment>
+
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.UserFragment"
+        tools:layout="@layout/fragment_user"
+        android:id="@+id/user_fragment" />
+
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.FilterFragment"
+        tools:layout="@layout/fragment_filter"
+        android:id="@+id/filter_fragment" />
 
 </navigation>

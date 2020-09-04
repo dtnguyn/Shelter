@@ -5,6 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.nguyen.shelter.api.entity.PropertyNetworkEntity
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
 import com.nguyen.shelter.api.service.RealtorApiService
 import com.nguyen.shelter.db.ShelterDatabase
@@ -97,7 +98,8 @@ constructor
                 features = filter.features
             )
 
-            val properties = apiResponse.data
+            var properties = apiResponse.data
+            if(properties == null) properties = listOf()
             val endOfPaginationReached = properties.isEmpty()
             database.withTransaction {
                 // clear all tables in the database

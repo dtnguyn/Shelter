@@ -5,5 +5,5 @@ import com.nguyen.shelter.api.entity.PropertyNetworkEntity
 
 data class ApiResponse<T> (
     @SerializedName("properties")
-    var data: List<PropertyNetworkEntity>
+    var data: List<T>?
 )

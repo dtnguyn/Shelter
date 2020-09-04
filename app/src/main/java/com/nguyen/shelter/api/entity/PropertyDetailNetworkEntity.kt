@@ -33,7 +33,7 @@ data class PropertyDetailNetworkEntity(
     var baths: Int?,
 
     @SerializedName("photos")
-    var photos: DataList<Photo>?,
+    var photos: List<Photo>?,
 
     @SerializedName("year_built")
     var yearBuilt: Int?,
@@ -48,10 +48,10 @@ data class PropertyDetailNetworkEntity(
     var url: String?,
 
     @SerializedName("features")
-    var community: DataList<CommunityFeature>?,
+    var community: List<CommunityFeature>?,
 
     @SerializedName("floor_plans")
-    var floorPlans: DataList<FloorPlan>?,
+    var floorPlans: List<FloorPlan>?,
 
     @SerializedName("lease_term")
     var leaseTerm: String?,
@@ -60,7 +60,7 @@ data class PropertyDetailNetworkEntity(
     var office: Office?,
 
     @SerializedName("schools")
-    var schools: DataList<School>?
+    var schools: List<School>?
 
 
 
