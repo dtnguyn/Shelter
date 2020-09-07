@@ -49,5 +49,10 @@
     <string name="laundry_room">Laundry room</string>
     <string name="no_fee">No fee</string>
     <string name="cat">Cat</string>
+    <string name="date">Date</string>
+    <string name="choose_states">Choose states</string>
+    <string name="item_name">item name</string>
+    <string name="dog">Dog</string>
+    <string name="pets_allowance">Pets Allowance</string>
 
 </resources>

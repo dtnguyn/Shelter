@@ -24,4 +24,9 @@
         tools:layout="@layout/fragment_filter"
         android:id="@+id/filter_fragment" />
 
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.StateBottomSheetFragment"
+        tools:layout="@layout/fragment_bottom_state"
+        android:id="@+id/state_fragment_bottom" />
+
 </navigation>

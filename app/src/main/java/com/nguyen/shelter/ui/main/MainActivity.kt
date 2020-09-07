@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.ExperimentalPagingApi
 import com.nguyen.shelter.R
+import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,7 +87,22 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
     }
 
+    @ExperimentalPagingApi
+    fun saveRentPropertyFilter(propertyFilter: PropertyFilter){
+        mainViewModel.setStateEvent(MainStateEvent.SaveRentPropertyFilter(propertyFilter))
+    }
 
+    fun getRentPropertyFilter(): PropertyFilter {
+        return mainViewModel.rentPropertyFilter.value ?: PropertyFilter()
+    }
 
+    @ExperimentalPagingApi
+    fun saveSalePropertyFilter(propertyFilter: PropertyFilter){
+        mainViewModel.setStateEvent(MainStateEvent.SaveSalePropertyFilter(propertyFilter))
+    }
+
+    fun getSalePropertyFilter(): PropertyFilter {
+        return mainViewModel.salePropertyFilter.value ?: PropertyFilter()
+    }
 
 }

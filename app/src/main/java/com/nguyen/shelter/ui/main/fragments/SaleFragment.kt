@@ -11,10 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nguyen.shelter.databinding.FragmentSaleBinding
+import com.nguyen.shelter.model.PropertyFilter
+import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.adapters.SalePropertyAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +31,7 @@ class SaleFragment : Fragment() {
     @Inject
     lateinit var pagingAdapterSale: SalePropertyAdapter
 
+    @ExperimentalCoroutinesApi
     @ExperimentalPagingApi
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +46,8 @@ class SaleFragment : Fragment() {
         rentRecyclerView.adapter = pagingAdapterSale
 
         subscribeObservers()
-        viewModel.setStateEvent(MainStateEvent.GetSalePropertyList)
+        val filter = (activity as MainActivity?)?.getSalePropertyFilter() ?: PropertyFilter()
+        viewModel.setStateEvent(MainStateEvent.GetSalePropertyList(filter))
         return binding.root
     }
 

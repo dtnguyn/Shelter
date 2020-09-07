@@ -100,8 +100,7 @@ constructor(
                 }
 
                 is MainStateEvent.GetRentPropertyList -> {
-                    println("debug: GetRentPropertyList state ${rentPropertyFilter.value}")
-                    mainRepository.getRentPropertyList(_rentPropertyFilter.value!!)
+                    mainRepository.getRentPropertyList(mainStateEvent.propertyFilter)
                         .onEach {
                             println("debug: Success")
                             _rentPropertyPageData.value = it
@@ -113,7 +112,7 @@ constructor(
                 }
 
                 is MainStateEvent.GetSalePropertyList -> {
-                    mainRepository.getSalePropertyList(_salePropertyFilter.value!!)
+                    mainRepository.getSalePropertyList(mainStateEvent.propertyFilter)
                         .onEach {
                             _salePropertyPageData.value = it
                         }
@@ -129,8 +128,12 @@ constructor(
                     }
                 }
 
-                is MainStateEvent.SaveRentFilter -> {
-                    _rentPropertyFilter.value = mainStateEvent.filter
+                is MainStateEvent.SaveRentPropertyFilter -> {
+                    _rentPropertyFilter.value = mainStateEvent.propertyFilter
+                }
+
+                is MainStateEvent.SaveSalePropertyFilter -> {
+                    _salePropertyFilter.value = mainStateEvent.propertyFilter
                 }
             }
         }
@@ -154,19 +157,21 @@ sealed class MainStateEvent{
 
     object InitializeLiveData: MainStateEvent()
 
-    // Get properties from API
-    object GetRentPropertyList: MainStateEvent()
-    object GetSalePropertyList: MainStateEvent()
-    class GetPropertyDetail(val id: String): MainStateEvent()
-
-
-    class SaveRentFilter(val filter: PropertyFilter): MainStateEvent()
-
     // Authentication
     object CheckAuthentication: MainStateEvent()
     object Logout: MainStateEvent()
     class FacebookAuthenticate(val token: AccessToken, val activity: Activity): MainStateEvent()
     class GoogleAuthenticate(val token: String, val activity: Activity): MainStateEvent()
+
+
+    // Get properties from API
+    class GetRentPropertyList(val propertyFilter: PropertyFilter): MainStateEvent()
+    class GetSalePropertyList(val propertyFilter: PropertyFilter): MainStateEvent()
+    class GetPropertyDetail(val id: String): MainStateEvent()
+    class SaveRentPropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
+    class SaveSalePropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
+
+
 
 
 

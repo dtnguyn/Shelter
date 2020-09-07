@@ -12,10 +12,13 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nguyen.shelter.databinding.FragmentRentBinding
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
+import com.nguyen.shelter.model.PropertyFilter
+import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.adapters.RentPropertyAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +35,7 @@ class RentFragment: Fragment() {
     @Inject
     lateinit var cacheMapper: PropertyCacheMapper
 
+    @ExperimentalCoroutinesApi
     @ExperimentalPagingApi
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +52,9 @@ class RentFragment: Fragment() {
 
 
         subscribeObservers()
-        viewModel.setStateEvent(MainStateEvent.GetRentPropertyList)
+
+        val filter = (activity as MainActivity?)?.getRentPropertyFilter() ?: PropertyFilter()
+        viewModel.setStateEvent(MainStateEvent.GetRentPropertyList(filter))
 
         return binding.root
     }
