@@ -16,6 +16,17 @@
         <item>10000.0</item>
     </array>
 
+    <array name="initial_sale_price_slider_values">
+        <item>200000.0</item>
+        <item>900000.0</item>
+    </array>
+
+    <array name="initial_age_slider_values">
+        <item>0.0</item>
+        <item>30.0</item>
+    </array>
+
+
     <array name="state_code">
         <item>AL</item>
         <item>AK</item>

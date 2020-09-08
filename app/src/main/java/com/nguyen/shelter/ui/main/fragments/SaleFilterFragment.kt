@@ -1,38 +1,35 @@
 package com.nguyen.shelter.ui.main.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
-import com.nguyen.shelter.databinding.FragmentFilterBinding
+import com.nguyen.shelter.databinding.FragmentFilterSaleBinding
 import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.ui.main.MainActivity
+import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
+import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.filter_location.*
 import kotlinx.android.synthetic.main.filter_location.view.*
-import kotlinx.android.synthetic.main.filter_others.*
-import kotlinx.android.synthetic.main.filter_others.central_air_checkbox
-import kotlinx.android.synthetic.main.filter_others.dishwasher_checkbox
-import kotlinx.android.synthetic.main.filter_others.doorman_checkbox
-import kotlinx.android.synthetic.main.filter_others.elevator_checkbox
-import kotlinx.android.synthetic.main.filter_others.fireplace_checkbox
-import kotlinx.android.synthetic.main.filter_others.garage_checkbox
-import kotlinx.android.synthetic.main.filter_others.laundry_room_checkbox
-import kotlinx.android.synthetic.main.filter_others.no_fee_checkbox
-import kotlinx.android.synthetic.main.filter_others.outdoor_space_checkbox
-import kotlinx.android.synthetic.main.filter_others.pool_checkbox
-import kotlinx.android.synthetic.main.filter_others.recreation_checkbox
-import kotlinx.android.synthetic.main.filter_others.spa_checkbox
 import kotlinx.android.synthetic.main.filter_others.view.*
+import kotlinx.android.synthetic.main.filter_sale_others.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class FilterFragment : Fragment() {
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
+class SaleFilterFragment : Fragment() {
 
-    private lateinit var binding: FragmentFilterBinding
+    private lateinit var binding: FragmentFilterSaleBinding
     private lateinit var propertyFilter: PropertyFilter
+    private lateinit var propTypes: HashMap<String, Boolean>
+    private lateinit var others: HashMap<String, Boolean>
 
+    private val viewModel: MainViewModel by viewModels()
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,14 +45,11 @@ class FilterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFilterBinding.inflate(inflater, container, false)
+        binding = FragmentFilterSaleBinding.inflate(inflater, container, false)
 
-        propertyFilter = (activity as MainActivity?)?.getRentPropertyFilter() ?: PropertyFilter()
-        propertyFilter.priceMin = 1000
-        propertyFilter.priceMax = 10000
-        binding.filter = propertyFilter
 
-        val propTypes = hashMapOf<String, Boolean>(
+
+        propTypes = hashMapOf(
             "any" to true,
             "apartment" to false,
             "single_family" to false,
@@ -66,7 +60,7 @@ class FilterFragment : Fragment() {
             "farm" to false,
         )
 
-        val others = hashMapOf<String, Boolean>(
+         others = hashMapOf(
             "recreation" to false,
             "pool" to false,
             "outdoor_space" to false,
@@ -80,13 +74,6 @@ class FilterFragment : Fragment() {
             "laundry_room" to false,
             "no_fee" to false,
         )
-
-        setUpSortFilter()
-        setUpLocationFilter()
-        setUpFeatureFilter()
-        setUpTypeFilter(propTypes)
-        setUpPetFilter()
-        setUpOthersFilter(others)
 
 
         binding.cancelButton.setOnClickListener {
@@ -120,11 +107,27 @@ class FilterFragment : Fragment() {
             propertyFilter.features = othersQuery
 
             println("debug: $propertyFilter")
-//            (activity as MainActivity?)?.saveRentPropertyFilter(propertyFilter)
-//            findNavController().popBackStack()
+            viewModel.setStateEvent(MainStateEvent.SaveSalePropertyFilter(propertyFilter))
+            findNavController().popBackStack()
         }
 
         return binding.root
+    }
+
+    private fun subscribeObservers(){
+        viewModel.rentPropertyFilter.observe(viewLifecycleOwner, {filter ->
+            propertyFilter = filter
+            propertyFilter.priceMin = 100000
+            propertyFilter.priceMax = 10000000
+            binding.filter = propertyFilter
+
+            setUpSortFilter()
+            setUpLocationFilter()
+            setUpFeatureFilter()
+            setUpTypeFilter(propTypes)
+            setUpPetFilter()
+            setUpOthersFilter(others)
+        })
     }
 
 
@@ -185,7 +188,8 @@ class FilterFragment : Fragment() {
 
     private fun setUpFeatureFilter(){
         binding.featuresInclude.apply {
-            priceSlider.addOnChangeListener { rangeSlider, _, _ ->
+
+            priceSaleSlider.addOnChangeListener { rangeSlider, _, _ ->
                 propertyFilter.priceMin = rangeSlider.values[0].toInt()
                 propertyFilter.priceMax = rangeSlider.values[1].toInt()
                 binding.filter = propertyFilter
@@ -213,6 +217,38 @@ class FilterFragment : Fragment() {
                 propertyFilter.lotMin = rangeSlider.values[0].toInt()
                 propertyFilter.lotMax = rangeSlider.values[1].toInt()
                 binding.filter = propertyFilter
+            }
+
+            ageSlider.addOnChangeListener { rangeSlider, _, _ ->
+                propertyFilter.ageMin = rangeSlider.values[0].toInt()
+                propertyFilter.ageMax = rangeSlider.values[1].toInt()
+                binding.filter = propertyFilter
+            }
+        }
+
+        binding.othersFeaturesInclude.apply {
+            foreclosure_checkbox.setOnCheckedChangeListener { _, state ->
+                propertyFilter.isForeclosure = state
+            }
+
+            open_house_checkbox.setOnCheckedChangeListener { _, state ->
+                propertyFilter.hasOpenHouse = state
+            }
+
+            is_pending_checkbox.setOnCheckedChangeListener { _, state ->
+                propertyFilter.isPending = state
+            }
+
+            not_yet_built_checkbox.setOnCheckedChangeListener { _, state ->
+                propertyFilter.isNewPlan = state
+            }
+
+            contingent_checkbox.setOnCheckedChangeListener { _, state ->
+                propertyFilter.isContingent = state
+            }
+
+            new_construction_checkbox.setOnCheckedChangeListener { _, state ->
+                propertyFilter.isNewConstruction = state
             }
         }
     }
@@ -309,51 +345,51 @@ class FilterFragment : Fragment() {
     private fun setUpOthersFilter(others: HashMap<String, Boolean>){
         binding.othersInclude.apply {
             this.recreation_checkbox!!
-            recreation_checkbox.setOnCheckedChangeListener { button, state ->
+            recreation_checkbox.setOnCheckedChangeListener { _, state ->
                 others["recreation"] = state
             }
 
-            pool_checkbox.setOnCheckedChangeListener { button, state ->
+            pool_checkbox.setOnCheckedChangeListener { _, state ->
                 others["pool"] = state
             }
 
-            outdoor_space_checkbox.setOnCheckedChangeListener { button, state ->
+            outdoor_space_checkbox.setOnCheckedChangeListener { _, state ->
                 others["outdoor_space"] = state
             }
 
-            garage_checkbox.setOnCheckedChangeListener { button, state ->
+            garage_checkbox.setOnCheckedChangeListener { _, state ->
                 others["garage"] = state
             }
 
-            central_air_checkbox.setOnCheckedChangeListener { button, state ->
+            central_air_checkbox.setOnCheckedChangeListener { _, state ->
                 others["central_air"] = state
             }
 
-            fireplace_checkbox.setOnCheckedChangeListener { button, state ->
+            fireplace_checkbox.setOnCheckedChangeListener { _, state ->
                 others["fireplace"] = state
             }
 
-            spa_checkbox.setOnCheckedChangeListener { button, state ->
+            spa_checkbox.setOnCheckedChangeListener { _, state ->
                 others["spa"] = state
             }
 
-            dishwasher_checkbox.setOnCheckedChangeListener { button, state ->
+            dishwasher_checkbox.setOnCheckedChangeListener { _, state ->
                 others["dishwasher"] = state
             }
 
-            doorman_checkbox.setOnCheckedChangeListener { button, state ->
+            doorman_checkbox.setOnCheckedChangeListener { _, state ->
                 others["doorman"] = state
             }
 
-            elevator_checkbox.setOnCheckedChangeListener { button, state ->
+            elevator_checkbox.setOnCheckedChangeListener { _, state ->
                 others["elevator"] = state
             }
 
-            laundry_room_checkbox.setOnCheckedChangeListener { button, state ->
+            laundry_room_checkbox.setOnCheckedChangeListener { _, state ->
                 others["laundry_room"] = state
             }
 
-            no_fee_checkbox.setOnCheckedChangeListener { button, state ->
+            no_fee_checkbox.setOnCheckedChangeListener { _, state ->
                 others["no_fee"] = state
             }
         }

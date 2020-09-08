@@ -5,16 +5,22 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.facebook.AccessToken
 import com.google.firebase.auth.FirebaseUser
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.model.CallbackResponse
 import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.repo.MainRepository
+import com.nguyen.shelter.repo.MainRepository.Companion.RENT
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel
 @ViewModelInject
@@ -101,6 +107,7 @@ constructor(
 
                 is MainStateEvent.GetRentPropertyList -> {
                     mainRepository.getRentPropertyList(mainStateEvent.propertyFilter)
+                        .cachedIn(viewModelScope)
                         .onEach {
                             println("debug: Success")
                             _rentPropertyPageData.value = it
@@ -109,10 +116,12 @@ constructor(
                             println("debug: Error")
                         }
                         .launchIn(viewModelScope)
+
                 }
 
                 is MainStateEvent.GetSalePropertyList -> {
                     mainRepository.getSalePropertyList(mainStateEvent.propertyFilter)
+                        .cachedIn(viewModelScope)
                         .onEach {
                             _salePropertyPageData.value = it
                         }
@@ -130,10 +139,23 @@ constructor(
 
                 is MainStateEvent.SaveRentPropertyFilter -> {
                     _rentPropertyFilter.value = mainStateEvent.propertyFilter
+                    mainRepository.saveRentFilter(mainStateEvent.propertyFilter)
                 }
 
                 is MainStateEvent.SaveSalePropertyFilter -> {
                     _salePropertyFilter.value = mainStateEvent.propertyFilter
+                    mainRepository.saveSaleFilter(mainStateEvent.propertyFilter)
+                }
+
+                is MainStateEvent.GetPropertyFilter -> {
+                    CoroutineScope(IO).launch {
+                        val filter = mainRepository.getFilter(mainStateEvent.type)
+                        withContext(Main){
+                            if(mainStateEvent.type == RENT) _rentPropertyFilter.value = filter
+                            else _rentPropertyFilter.value = filter
+                        }
+                    }
+
                 }
             }
         }
@@ -170,6 +192,7 @@ sealed class MainStateEvent{
     class GetPropertyDetail(val id: String): MainStateEvent()
     class SaveRentPropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
     class SaveSalePropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
+    class GetPropertyFilter(val type: String): MainStateEvent()
 
 
 

@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.nguyen.shelter.databinding.FragmentMainBinding
+import com.nguyen.shelter.ui.main.MainActivity.Companion.CURRENT_TAB
 import com.nguyen.shelter.ui.main.adapters.MainPagerAdapter
 import com.nguyen.shelter.ui.main.fragments.DialogAuthentication
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
@@ -83,9 +84,13 @@ class MainFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when(tab.position){
                     0 -> {
+                        CURRENT_TAB = "rent"
                         (activity as MainActivity?)?.changeBackgroundToRent()
                     }
-                    1 -> (activity as MainActivity?)?.changeBackgroundToSale()
+                    1 -> {
+                        CURRENT_TAB = "sale"
+                        (activity as MainActivity?)?.changeBackgroundToSale()
+                    }
                 }
             }
 

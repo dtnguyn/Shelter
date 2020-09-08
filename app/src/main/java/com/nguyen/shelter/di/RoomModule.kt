@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.nguyen.shelter.db.ShelterDatabase
 import com.nguyen.shelter.db.ShelterDatabase.Companion.DATABASE_NAME
 import com.nguyen.shelter.db.entity.PropertyCacheDao
+import com.nguyen.shelter.db.entity.PropertyFilterCacheDao
 import com.nguyen.shelter.db.entity.RemoteKeysDao
 import dagger.Module
 import dagger.Provides
@@ -43,6 +44,10 @@ object RoomModule {
         return shelterDatabase.remoteKeysDao()
     }
 
-
+    @Singleton
+    @Provides
+    fun provideFilterDao(shelterDatabase: ShelterDatabase): PropertyFilterCacheDao{
+        return shelterDatabase.filterDao()
+    }
 
 }

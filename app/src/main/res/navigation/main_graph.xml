@@ -20,13 +20,18 @@
         android:id="@+id/user_fragment" />
 
     <fragment
-        android:name="com.nguyen.shelter.ui.main.fragments.FilterFragment"
-        tools:layout="@layout/fragment_filter"
-        android:id="@+id/filter_fragment" />
+        android:name="com.nguyen.shelter.ui.main.fragments.RentFilterFragment"
+        tools:layout="@layout/fragment_filter_rent"
+        android:id="@+id/rent_filter_fragment" />
 
     <fragment
         android:name="com.nguyen.shelter.ui.main.fragments.StateBottomSheetFragment"
         tools:layout="@layout/fragment_bottom_state"
         android:id="@+id/state_fragment_bottom" />
+
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.SaleFilterFragment"
+        tools:layout="@layout/fragment_filter_sale"
+        android:id="@+id/sale_filter_fragment" />
 
 </navigation>

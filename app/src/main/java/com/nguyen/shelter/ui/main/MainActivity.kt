@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
 
+    companion object {
+        var CURRENT_TAB = "rent"
+    }
+
     @ExperimentalPagingApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +53,11 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(mainToolBar)
 
         filter_button.setOnClickListener {
-            findNavController(R.id.main_fragment).navigate(R.id.filter_fragment)
+            when(CURRENT_TAB){
+                "rent" -> findNavController(R.id.main_fragment).navigate(R.id.rent_filter_fragment)
+                "sale" -> findNavController(R.id.main_fragment).navigate(R.id.sale_filter_fragment)
+            }
+
         }
 
         navigation_view.setupWithNavController(navController)
@@ -87,22 +95,5 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
     }
 
-    @ExperimentalPagingApi
-    fun saveRentPropertyFilter(propertyFilter: PropertyFilter){
-        mainViewModel.setStateEvent(MainStateEvent.SaveRentPropertyFilter(propertyFilter))
-    }
-
-    fun getRentPropertyFilter(): PropertyFilter {
-        return mainViewModel.rentPropertyFilter.value ?: PropertyFilter()
-    }
-
-    @ExperimentalPagingApi
-    fun saveSalePropertyFilter(propertyFilter: PropertyFilter){
-        mainViewModel.setStateEvent(MainStateEvent.SaveSalePropertyFilter(propertyFilter))
-    }
-
-    fun getSalePropertyFilter(): PropertyFilter {
-        return mainViewModel.salePropertyFilter.value ?: PropertyFilter()
-    }
 
 }

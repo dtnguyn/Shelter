@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:background="@color/backgroundColor"
         android:paddingBottom="20dp"
-        tools:context=".ui.main.fragments.FilterFragment">
+        tools:context=".ui.main.fragments.RentFilterFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -76,6 +76,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:filter="@{filter}"
+                app:type="@{`rent`}"
+                app:payment="@{`USD/month`}"
                 app:layout_constraintTop_toBottomOf="@+id/location_include" />
 
             <include

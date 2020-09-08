@@ -8,8 +8,19 @@
             type="com.nguyen.shelter.model.PropertyFilter" />
 
         <variable
-            name="test"
+            name="type"
             type="String" />
+
+        <variable
+            name="payment"
+            type="String" />
+
+        <variable
+            name="sliderColor"
+            type="android.graphics.drawable.ColorDrawable" />
+
+
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:fontFamily="@font/montserrat_regular"
-            android:text="@{filter.priceMin + `-` + filter.priceMax + ` USD/Monthly`}"
+            android:text="@{filter.priceMin + `-` + filter.priceMax + ` ` + payment}"
             android:textColor="@color/textColorDark"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -50,10 +61,27 @@
             android:valueTo="20000.0"
             android:stepSize="100.0"
             app:values="@array/initial_rent_price_slider_values"
+            android:visibility="@{type == `sale` ? View.INVISIBLE : View.VISIBLE, default= visible}"
             android:theme="@style/MyMaterialTheme"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="30dp"
-            android:backgroundTint="@color/rentColor"
+            app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/price_sale_slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.0"
+            android:valueTo="100000000.0"
+            android:stepSize="100000.0"
+            android:visibility="@{type == `sale` ? View.VISIBLE : View.INVISIBLE, default= invisible}"
+            app:values="@array/initial_sale_price_slider_values"
+            android:theme="@style/MyMaterialTheme"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="30dp"
+            app:thumbColor="@color/saleColor"
+            app:trackColorActive="@color/saleColor"
+            app:trackColorInactive="@color/lightSaleColor"
             app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
 
@@ -81,7 +109,6 @@
             android:theme="@style/MyMaterialTheme"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="30dp"
-            android:backgroundTint="@color/rentColor"
             app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
 
@@ -109,7 +136,6 @@
             android:theme="@style/MyMaterialTheme"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="30dp"
-            android:backgroundTint="@color/rentColor"
             app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
 
@@ -131,13 +157,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:valueFrom="0.0"
-            android:valueTo="10000.0"
+            android:valueTo="100000.0"
             android:stepSize="100.0"
             app:values="@array/initial_area_slider_values"
             android:theme="@style/MyMaterialTheme"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="30dp"
-            android:backgroundTint="@color/rentColor"
             app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
         <TextView
@@ -158,14 +183,46 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:valueFrom="0.0"
-            android:valueTo="10000.0"
+            android:valueTo="100000.0"
             android:stepSize="100.0"
             app:values="@array/initial_area_slider_values"
             android:theme="@style/MyMaterialTheme"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="30dp"
-            android:backgroundTint="@color/rentColor"
             app:layout_constraintTop_toBottomOf="@+id/textView22" />
+
+        <TextView
+            android:id="@+id/textView24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="@{filter.ageMin + `-` + filter.ageMax + ` years`}"
+            android:textColor="@color/textColorDark"
+            android:textSize="18sp"
+            android:visibility="@{type == `sale` ? View.VISIBLE : View.GONE, default= gone}"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lot_slider" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/age_slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.0"
+            android:valueTo="50.0"
+            android:stepSize="1.0"
+            app:values="@array/initial_age_slider_values"
+            android:theme="@style/MyMaterialTheme"
+            android:visibility="@{type == `sale` ? View.VISIBLE : View.GONE, default= gone}"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="30dp"
+            app:thumbColor="@color/saleColor"
+            app:trackColorActive="@color/saleColor"
+            app:trackColorInactive="@color/lightSaleColor"
+            app:layout_constraintTop_toBottomOf="@+id/textView24" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
 import com.nguyen.shelter.api.service.RealtorApiService
 import com.nguyen.shelter.db.ShelterDatabase
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
+import com.nguyen.shelter.db.mapper.PropertyFilterCacheMapper
 import com.nguyen.shelter.repo.MainRepository
 import dagger.Module
 import dagger.Provides
@@ -27,6 +28,7 @@ object RepositoryModule {
         propertyNetworkMapper: PropertyNetworkMapper,
         propertyDetailNetworkMapper: PropertyDetailNetworkMapper,
         propertyCacheMapper: PropertyCacheMapper,
+        filterCacheMapper: PropertyFilterCacheMapper,
         auth: FirebaseAuth
     ): MainRepository{
         return MainRepository(
@@ -35,6 +37,7 @@ object RepositoryModule {
             propertyNetworkMapper,
             propertyDetailNetworkMapper,
             propertyCacheMapper,
+            filterCacheMapper,
             auth
         )
     }

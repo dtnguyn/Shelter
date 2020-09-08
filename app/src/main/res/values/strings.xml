@@ -54,5 +54,11 @@
     <string name="item_name">item name</string>
     <string name="dog">Dog</string>
     <string name="pets_allowance">Pets Allowance</string>
+    <string name="foreclosure">Foreclosure</string>
+    <string name="is_pending">Is pending</string>
+    <string name="not_yet_built">Not yet built</string>
+    <string name="contingent">Contingent</string>
+    <string name="new_construction">New construction</string>
+    <string name="open_house">Open house</string>
 
 </resources>

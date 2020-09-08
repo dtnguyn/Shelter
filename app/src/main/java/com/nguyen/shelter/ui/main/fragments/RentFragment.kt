@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nguyen.shelter.databinding.FragmentRentBinding
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
 import com.nguyen.shelter.model.PropertyFilter
+import com.nguyen.shelter.repo.MainRepository.Companion.RENT
 import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.adapters.RentPropertyAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
@@ -22,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@ExperimentalPagingApi
 @AndroidEntryPoint
 class RentFragment: Fragment() {
 
@@ -53,8 +55,8 @@ class RentFragment: Fragment() {
 
         subscribeObservers()
 
-        val filter = (activity as MainActivity?)?.getRentPropertyFilter() ?: PropertyFilter()
-        viewModel.setStateEvent(MainStateEvent.GetRentPropertyList(filter))
+        viewModel.setStateEvent(MainStateEvent.GetPropertyFilter(RENT))
+
 
         return binding.root
     }
@@ -69,11 +71,14 @@ class RentFragment: Fragment() {
 
 
     private fun subscribeObservers(){
-        viewModel.rentPropertyPageData.observe(viewLifecycleOwner, Observer { pagingData ->
+        viewModel.rentPropertyPageData.observe(viewLifecycleOwner, { pagingData ->
             lifecycleScope.launch {
                 pagingAdapterRent.submitData(pagingData)
             }
+        })
 
+        viewModel.rentPropertyFilter.observe(viewLifecycleOwner, {filter ->
+            viewModel.setStateEvent(MainStateEvent.GetRentPropertyList(filter))
         })
     }
 

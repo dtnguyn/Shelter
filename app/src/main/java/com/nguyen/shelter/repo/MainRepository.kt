@@ -13,9 +13,11 @@ import com.nguyen.shelter.api.service.RealtorApiService
 import com.nguyen.shelter.db.ShelterDatabase
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
+import com.nguyen.shelter.db.mapper.PropertyFilterCacheMapper
 import com.nguyen.shelter.model.CallbackResponse
 import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.model.PropertyFilter
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -28,11 +30,17 @@ constructor(
     private val mapper: PropertyNetworkMapper,
     private val detailMapper: PropertyDetailNetworkMapper,
     private val cacheMapper: PropertyCacheMapper,
+    private val filterMapper: PropertyFilterCacheMapper,
     private val auth: FirebaseAuth
 ){
 
+    private var rentFilter = PropertyFilter()
+    private var saleFilter = PropertyFilter()
+
     companion object {
         private const val NETWORK_PAGE_SIZE = 200
+        const val RENT = "rent_filter"
+        const val SALE = "sale_filter"
     }
 
     @ExperimentalPagingApi
@@ -131,6 +139,21 @@ constructor(
         }
     }
 
+    suspend fun saveRentFilter(filter: PropertyFilter) {
+        val cacheFilter = filterMapper.mapToEntity(filter)
+        cacheFilter.filterType = RENT
+        database.filterDao().insertFilter(cacheFilter)
+    }
 
+    suspend fun saveSaleFilter(filter: PropertyFilter) {
+        val cacheFilter = filterMapper.mapToEntity(filter)
+        cacheFilter.filterType = SALE
+        database.filterDao().insertFilter(cacheFilter)
+    }
+
+    suspend fun getFilter(type: String): PropertyFilter{
+        val cacheFilter = database.filterDao().getPropertyFilter(type) ?: return PropertyFilter()
+        return filterMapper.mapFromEntity(cacheFilter)
+    }
 
 }
