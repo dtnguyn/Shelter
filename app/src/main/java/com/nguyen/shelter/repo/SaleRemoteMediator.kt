@@ -31,6 +31,11 @@ constructor
     private val database: ShelterDatabase
 ): RemoteMediator<Int, PropertyCacheEntity>() {
 
+    companion object{
+        private var isLoaded: Boolean = true
+    }
+
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PropertyCacheEntity>
@@ -38,6 +43,7 @@ constructor
         println("debug: Sale Loading...")
         val page = when(loadType){
             LoadType.REFRESH -> {
+                if(isLoaded) return MediatorResult.Success(endOfPaginationReached = true)
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                 remoteKeys?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
             }
@@ -97,7 +103,7 @@ constructor
                 allowDogs =  filter.allow_dogs,
                 features = filter.features
             )
-
+            isLoaded = true
             var properties = apiResponse.data
             if(properties == null) properties = listOf()
             val endOfPaginationReached = properties.isEmpty()

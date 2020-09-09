@@ -14,8 +14,8 @@ data class Office(
     var type: String? = "",
 
     @SerializedName("phones")
-    var phones: DataList<Phone>? = null,
+    var phones: List<Phone>? = null,
 
     @SerializedName("hours")
-    var workingHour: WorkingHour? = null
+    var workingHour: List<WorkingHour>? = null
 )

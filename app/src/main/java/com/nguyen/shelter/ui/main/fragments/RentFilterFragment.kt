@@ -52,33 +52,6 @@ class RentFilterFragment : Fragment() {
         viewModel.setStateEvent(MainStateEvent.GetPropertyFilter(RENT))
 
 
-        propTypes = hashMapOf(
-            "any" to true,
-            "apartment" to false,
-            "single_family" to false,
-            "multi_family" to false,
-            "condo" to false,
-            "mobile" to false,
-            "land" to false,
-            "farm" to false,
-        )
-
-        others = hashMapOf(
-            "recreation" to false,
-            "pool" to false,
-            "outdoor_space" to false,
-            "garage" to false,
-            "central_air" to false,
-            "fireplace" to false,
-            "spa" to false,
-            "dishwasher" to false,
-            "doorman" to false,
-            "elevator" to false,
-            "laundry_room" to false,
-            "no_fee" to false,
-        )
-
-
         binding.cancelButton.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -117,12 +90,36 @@ class RentFilterFragment : Fragment() {
         return binding.root
     }
 
+
+    private fun convertStringToMap(stringValue: String?): HashMap<String, Boolean>{
+        if (stringValue == null) return HashMap()
+        val list =  stringValue.split(",")
+        val map: HashMap<String, Boolean> = HashMap()
+        for(item in list){
+            val trimItem = item.trim()
+            if(trimItem.isBlank()) continue
+            map[trimItem] = true
+        }
+        println("debug: $map")
+        return map
+    }
+
     private fun subscribeObservers(){
         viewModel.rentPropertyFilter.observe(viewLifecycleOwner, {filter ->
+
             propertyFilter = filter
-            propertyFilter.priceMin = 1000
-            propertyFilter.priceMax = 10000
+            propertyFilter.apply {
+                if(priceMin == null) priceMin = 0
+                if(priceMax == null) priceMax = 3000
+                if(lotMin == null) lotMin = 0
+                if(lotMax == null) lotMax = 5000
+                if(areaMin == null) areaMin = 0
+                if(areaMax == null) areaMax = 5000
+            }
             binding.filter = propertyFilter
+
+            propTypes = convertStringToMap(propertyFilter.type)
+            others = convertStringToMap(propertyFilter.features)
 
             setUpSortFilter()
             setUpLocationFilter()
@@ -191,30 +188,36 @@ class RentFilterFragment : Fragment() {
     private fun setUpFeatureFilter(){
         binding.featuresInclude.apply {
 
+            priceSlider.values = mutableListOf(propertyFilter.priceMin?.toFloat(), propertyFilter.priceMax?.toFloat())
             priceSlider.addOnChangeListener { rangeSlider, _, _ ->
                 propertyFilter.priceMin = rangeSlider.values[0].toInt()
                 propertyFilter.priceMax = rangeSlider.values[1].toInt()
                 binding.filter = propertyFilter
             }
 
+            bedsSlider.values = mutableListOf(propertyFilter.bedsMin?.toFloat(), propertyFilter.bedsMax?.toFloat())
             bedsSlider.addOnChangeListener { rangeSlider, _, _ ->
                 propertyFilter.bedsMin = rangeSlider.values[0].toInt()
                 propertyFilter.bedsMax = rangeSlider.values[1].toInt()
                 binding.filter = propertyFilter
             }
 
+            bathsSlider.values = mutableListOf(propertyFilter.bathsMin?.toFloat(), propertyFilter.bathsMax?.toFloat())
             bathsSlider.addOnChangeListener { rangeSlider, _, _ ->
                 propertyFilter.bathsMin = rangeSlider.values[0].toInt()
                 propertyFilter.bathsMax = rangeSlider.values[1].toInt()
                 binding.filter = propertyFilter
             }
 
+            println("debug: ${propertyFilter.areaMin} ${propertyFilter.areaMax}")
+            sqftSlider.values = mutableListOf(propertyFilter.areaMin?.toFloat(), propertyFilter.areaMax?.toFloat())
             sqftSlider.addOnChangeListener { rangeSlider, _, _ ->
                 propertyFilter.areaMin = rangeSlider.values[0].toInt()
                 propertyFilter.areaMax = rangeSlider.values[1].toInt()
                 binding.filter = propertyFilter
             }
 
+            lotSlider.values = mutableListOf(propertyFilter.lotMin?.toFloat(), propertyFilter.lotMax?.toFloat())
             lotSlider.addOnChangeListener { rangeSlider, _, _ ->
                 propertyFilter.lotMin = rangeSlider.values[0].toInt()
                 propertyFilter.lotMax = rangeSlider.values[1].toInt()
@@ -226,7 +229,8 @@ class RentFilterFragment : Fragment() {
     private fun setUpTypeFilter(types: HashMap<String, Boolean>){
         val propTypeBinding = binding.propTypeInclude
         propTypeBinding.apply {
-            anyClicked = true
+
+            anyClicked = types["any"]
             anyCardView.setOnClickListener {
                 anyClicked = anyClicked?.not() ?: true
                 if(anyClicked!!){
@@ -241,7 +245,7 @@ class RentFilterFragment : Fragment() {
                 types["any"] = anyClicked!!
             }
 
-
+            apartmentClicked = types["apartment"]
             apartmentCardView.setOnClickListener {
                 apartmentClicked = apartmentClicked?.not() ?: true
                 anyClicked = false
@@ -249,6 +253,7 @@ class RentFilterFragment : Fragment() {
                 types["apartment"] = apartmentClicked!!
             }
 
+            singleClicked = types["single_family"]
             singleCardView.setOnClickListener {
                 singleClicked = singleClicked?.not() ?: true
                 anyClicked = false
@@ -256,6 +261,7 @@ class RentFilterFragment : Fragment() {
                 types["single_family"] = singleClicked!!
             }
 
+            multiClicked = types["multi_family"]
             multiCardView.setOnClickListener {
                 multiClicked = multiClicked?.not() ?: true
                 anyClicked = false
@@ -263,6 +269,7 @@ class RentFilterFragment : Fragment() {
                 types["multi_family"] = multiClicked!!
             }
 
+            condoClicked = types["condo"]
             condoCardView.setOnClickListener {
                 condoClicked = condoClicked?.not() ?: true
                 anyClicked = false
@@ -270,6 +277,7 @@ class RentFilterFragment : Fragment() {
                 types["condo"] = condoClicked!!
             }
 
+            mobileClicked = types["mobile"]
             mobileCardView.setOnClickListener {
                 mobileClicked = mobileClicked?.not() ?: true
                 anyClicked = false
@@ -277,6 +285,7 @@ class RentFilterFragment : Fragment() {
                 types["mobile"] = mobileClicked!!
             }
 
+            farmClicked = types["farm"]
             farmCardView.setOnClickListener {
                 farmClicked = farmClicked?.not() ?: true
                 anyClicked = false
@@ -284,6 +293,7 @@ class RentFilterFragment : Fragment() {
                 types["farm"] = farmClicked!!
             }
 
+            landClicked = types["land"]
             landCardView.setOnClickListener {
                 landClicked = landClicked?.not() ?: true
                 anyClicked = false
@@ -296,8 +306,8 @@ class RentFilterFragment : Fragment() {
     private fun setUpPetFilter() {
         val petsBinding = binding.petInclude
         petsBinding.apply {
-            dogClicked = true
-            catClicked = false
+            dogClicked = propertyFilter.allow_dogs
+            catClicked = propertyFilter.allow_cats
 
             dogCardView.setOnClickListener {
                 dogClicked = dogClicked?.not() ?: true
@@ -315,50 +325,63 @@ class RentFilterFragment : Fragment() {
     private fun setUpOthersFilter(others: HashMap<String, Boolean>){
         binding.othersInclude.apply {
             this.recreation_checkbox!!
+
+            recreation_checkbox.isChecked = others["recreation"] ?: false
             recreation_checkbox.setOnCheckedChangeListener { button, state ->
                 others["recreation"] = state
             }
 
+            pool_checkbox.isChecked = others["pool"] ?: false
             pool_checkbox.setOnCheckedChangeListener { button, state ->
                 others["pool"] = state
             }
 
+            outdoor_space_checkbox.isChecked = others["outdoor_space"] ?: false
             outdoor_space_checkbox.setOnCheckedChangeListener { button, state ->
                 others["outdoor_space"] = state
             }
 
+            garage_checkbox.isChecked = others["garage"] ?: false
             garage_checkbox.setOnCheckedChangeListener { button, state ->
                 others["garage"] = state
             }
 
+            central_air_checkbox.isChecked = others["central_air"] ?: false
             central_air_checkbox.setOnCheckedChangeListener { button, state ->
                 others["central_air"] = state
             }
 
+            fireplace_checkbox.isChecked = others["fireplace"] ?: false
             fireplace_checkbox.setOnCheckedChangeListener { button, state ->
                 others["fireplace"] = state
             }
 
+            spa_checkbox.isChecked = others["spa"] ?: false
             spa_checkbox.setOnCheckedChangeListener { button, state ->
                 others["spa"] = state
             }
 
+            dishwasher_checkbox.isChecked = others["dishwasher"] ?: false
             dishwasher_checkbox.setOnCheckedChangeListener { button, state ->
                 others["dishwasher"] = state
             }
 
+            doorman_checkbox.isChecked = others["doorman"] ?: false
             doorman_checkbox.setOnCheckedChangeListener { button, state ->
                 others["doorman"] = state
             }
 
+            elevator_checkbox.isChecked = others["elevator"] ?: false
             elevator_checkbox.setOnCheckedChangeListener { button, state ->
                 others["elevator"] = state
             }
 
+            laundry_room_checkbox.isChecked = others["laundry_room"] ?: false
             laundry_room_checkbox.setOnCheckedChangeListener { button, state ->
                 others["laundry_room"] = state
             }
 
+            no_fee_checkbox.isChecked = others["no_fee"] ?: false
             no_fee_checkbox.setOnCheckedChangeListener { button, state ->
                 others["no_fee"] = state
             }

@@ -8,10 +8,10 @@ data class FloorPlan(
     var id: Int?,
 
     @SerializedName("baths")
-    var baths: Int?,
+    var baths: Double?,
 
     @SerializedName("beds")
-    var beds: Int?,
+    var beds: Double?,
 
     @SerializedName("photo_count")
     var photoCount: Int?,

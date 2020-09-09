@@ -139,17 +139,20 @@ constructor(
 
                 is MainStateEvent.SaveRentPropertyFilter -> {
                     _rentPropertyFilter.value = mainStateEvent.propertyFilter
+                    println("debug: save rent ${mainStateEvent.propertyFilter}")
                     mainRepository.saveRentFilter(mainStateEvent.propertyFilter)
                 }
 
                 is MainStateEvent.SaveSalePropertyFilter -> {
                     _salePropertyFilter.value = mainStateEvent.propertyFilter
+                    println("debug: save sale ${mainStateEvent.propertyFilter}")
                     mainRepository.saveSaleFilter(mainStateEvent.propertyFilter)
                 }
 
                 is MainStateEvent.GetPropertyFilter -> {
                     CoroutineScope(IO).launch {
                         val filter = mainRepository.getFilter(mainStateEvent.type)
+                        println("debug: get filter ${mainStateEvent.type}$filter")
                         withContext(Main){
                             if(mainStateEvent.type == RENT) _rentPropertyFilter.value = filter
                             else _rentPropertyFilter.value = filter
