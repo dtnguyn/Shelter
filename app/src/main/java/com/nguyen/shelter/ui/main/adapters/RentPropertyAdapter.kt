@@ -1,13 +1,22 @@
 package com.nguyen.shelter.ui.main.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.cardview.widget.CardView
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.databinding.PropertyItemBinding
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
+import com.skydoves.transformationlayout.TransformationLayout
+import kotlinx.android.synthetic.main.property_item.view.*
 import javax.inject.Inject
 
 
@@ -15,7 +24,7 @@ class RentPropertyAdapter
 @Inject
 constructor(
     private val cacheMapper: PropertyCacheMapper,
-    private val detailOnClick: (String) -> Unit,
+    private val detailOnClick: (Bundle, TransformationLayout) -> Unit,
 ): PagingDataAdapter<PropertyCacheEntity, RentPropertyAdapter.RentPropertyViewHolder>(
     PROPERTY_COMPARATOR
 ) {
@@ -34,7 +43,6 @@ constructor(
 
 
     inner class RentPropertyViewHolder(private val binding: PropertyItemBinding): RecyclerView.ViewHolder(binding.root){
-
 
         fun bind(property: PropertyCacheEntity?, position: Int) {
             property?.let {
@@ -63,14 +71,27 @@ constructor(
                     } else binding.area = "N/A"
 
                     if(priceMax != null && priceMin != null){
-                        val price: String? =  if(props.features.priceMax!! > props.features.priceMin!!) "" + props.features.priceMin!!.toInt() + "-$" + props.features.priceMax!!.toInt()
+                        val price: String? =  if(props.features.priceMax!! > props.features.priceMin!!) "$" + props.features.priceMin!!.toInt() + "-$" + props.features.priceMax!!.toInt()
                         else props.features.priceMin!!.toInt().toString()
                         binding.price = price
                     } else binding.price = "N/A"
                 }
 
+                val transformationLayout = binding.transformationLayout
+                transformationLayout.transitionName = props.id
+
                 binding.container.setOnClickListener {
-                    detailOnClick.invoke(property.id)
+                    println("debug: ${transformationLayout.transitionName}")
+//                    val extras = FragmentNavigatorExtras(
+//                        binding.container to "testing_shelter"
+//                    )
+//                    detailOnClick.invoke(props.id, props.photos, extras)
+
+                    val bundle = transformationLayout.getBundle("TransformationParams")
+                    //val bundle = bundleOf()
+                    bundle.putString("id", props.id)
+                    bundle.putString("photo", props.photos[0].url)
+                    detailOnClick.invoke(bundle, binding.transformationLayout)
                 }
             }
 

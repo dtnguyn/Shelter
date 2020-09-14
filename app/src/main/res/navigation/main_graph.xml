@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_main_fragment_to_user_fragment"
             app:destination="@id/user_fragment" />
+        <action
+            android:id="@+id/action_main_fragment_to_detail_fragment"
+            app:destination="@id/detail_fragment" />
     </fragment>
 
     <fragment
@@ -33,5 +36,21 @@
         android:name="com.nguyen.shelter.ui.main.fragments.SaleFilterFragment"
         tools:layout="@layout/fragment_filter_sale"
         android:id="@+id/sale_filter_fragment" />
+
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.DetailFragment"
+        tools:layout="@layout/fragment_detail"
+        android:id="@+id/detail_fragment" >
+
+        <argument
+            android:name="id"
+            app:argType="string"/>
+
+        <argument
+            android:name="photo"
+            app:argType="string"/>
+
+    </fragment>
+
 
 </navigation>

@@ -25,7 +25,6 @@
     <string name="choose_state">Choose State</string>
     <string name="choose_city">Choose City</string>
     <string name="enter_the_zip_code">Enter the zip code</string>
-    <string name="features">Features</string>
     <string name="enter_your_monthly_budget">Enter your monthly budget</string>
     <string name="_2_beds_min">2 Beds (min)</string>
     <string name="property_type">Property type</string>
@@ -60,5 +59,8 @@
     <string name="contingent">Contingent</string>
     <string name="new_construction">New construction</string>
     <string name="open_house">Open house</string>
+    <string name="features">Features</string>
+    <string name="contact">Contact</string>
+    <string name="lease_terms">Lease terms</string>
 
 </resources>

@@ -10,6 +10,7 @@ import com.facebook.AccessToken
 import com.google.firebase.auth.FirebaseUser
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.model.CallbackResponse
+import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.repo.MainRepository
 import com.nguyen.shelter.repo.MainRepository.Companion.RENT
@@ -32,6 +33,8 @@ constructor(
     private val _salePropertyPageData: MutableLiveData<PagingData<PropertyCacheEntity>> = MutableLiveData()
     private val _rentPropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
     private val _salePropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
+    private val _rentPropertyDetail: MutableLiveData<PropertyDetail> = MutableLiveData()
+
     private val _currentUser: MutableLiveData<FirebaseUser> = MutableLiveData()
     private val _error: MutableLiveData<String> = MutableLiveData()
 
@@ -59,6 +62,9 @@ constructor(
         it
     }
 
+    val rentPropertyDetail: LiveData<PropertyDetail> = Transformations.map(_rentPropertyDetail){
+        it
+    }
 
     @ExperimentalPagingApi
     fun setStateEvent(mainStateEvent: MainStateEvent){
@@ -134,6 +140,7 @@ constructor(
                 is MainStateEvent.GetPropertyDetail -> {
                     mainRepository.getPropertyDetail(mainStateEvent.id){
                         println("debug: Getting detail $it")
+                        _rentPropertyDetail.value = it.data
                     }
                 }
 

@@ -21,10 +21,13 @@ import com.nguyen.shelter.ui.main.adapters.MainPagerAdapter
 import com.nguyen.shelter.ui.main.fragments.DialogAuthentication
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
+import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.tab_layout_toolbar.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
+@ExperimentalPagingApi
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
@@ -33,6 +36,11 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
 
     private val viewModel: MainViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //onTransformationStartContainer()
+    }
 
     @ExperimentalPagingApi
     override fun onCreateView(
@@ -56,8 +64,9 @@ class MainFragment : Fragment() {
                 binding.loggedCollapseArea.userAvatarCardview to "avatar_main"
             )
             val action = MainFragmentDirections.actionMainFragmentToUserFragment()
-            NavHostFragment.findNavController(this@MainFragment).navigate(action,extras)
-             //findNavController().navigate(R.id.user_fragment, null, null, extras)
+            NavHostFragment.findNavController(this@MainFragment).navigate(action, extras)
+
+//            findNavController().navigate(R.id.user_fragment)
         }
 
         subscribeObserver()
@@ -68,6 +77,7 @@ class MainFragment : Fragment() {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         pagerAdapter = MainPagerAdapter(this)
         viewPager = view.main_pager
@@ -109,7 +119,11 @@ class MainFragment : Fragment() {
                 binding.loggedCollapseArea.url = it.photoUrl.toString()
                 binding.loggedCollapseArea.username = it.displayName
             }
-
         })
+    }
+
+    override fun onResume() {
+        (activity as MainActivity?)?.showActionBar()
+        super.onResume()
     }
 }

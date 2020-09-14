@@ -1,10 +1,12 @@
 package com.nguyen.shelter.ui.main.adapters
 
 import androidx.fragment.app.Fragment
+import androidx.paging.ExperimentalPagingApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.nguyen.shelter.ui.main.fragments.RentFragment
 import com.nguyen.shelter.ui.main.fragments.SaleFragment
 
+@ExperimentalPagingApi
 class MainPagerAdapter (fragment: Fragment) : FragmentStateAdapter(fragment){
 
     private val rentFragment = RentFragment()
