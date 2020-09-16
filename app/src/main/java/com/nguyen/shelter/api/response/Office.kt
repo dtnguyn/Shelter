@@ -17,5 +17,5 @@ data class Office(
     var phones: List<Phone>? = null,
 
     @SerializedName("hours")
-    var workingHour: List<WorkingHour>? = null
+    var workingHours: List<WorkingHour>? = null
 )

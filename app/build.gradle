@@ -7,6 +7,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -108,6 +109,7 @@ dependencies {
     implementation "com.github.skydoves:transformationlayout:1.0.6"
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
 }
 
 kapt {

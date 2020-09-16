@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ExpandableListView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import androidx.transition.TransitionInflater
+import com.nguyen.shelter.api.response.CommunityFeature
 import com.nguyen.shelter.api.response.Photo
+import com.nguyen.shelter.api.response.WorkingHour
 import com.nguyen.shelter.databinding.FragmentDetailBinding
 import com.nguyen.shelter.ui.main.MainActivity
+import com.nguyen.shelter.ui.main.adapters.FeaturesExpandableListAdapter
 import com.nguyen.shelter.ui.main.adapters.ImageSliderAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
@@ -21,6 +25,8 @@ import com.smarteist.autoimageslider.SliderView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.*
+import kotlin.collections.HashMap
 
 
 @ExperimentalPagingApi
@@ -92,7 +98,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun subscribeObservers(){
-        viewModel.rentPropertyDetail.observe(viewLifecycleOwner, {propDetail ->
+        viewModel.rentPropertyDetail.observe(viewLifecycleOwner, { propDetail ->
 
             binding.apply {
                 finishLoading = true
@@ -104,40 +110,130 @@ class DetailFragment : Fragment() {
                 contactInclude.contactShimmerContainer.stopShimmer()
                 priceShimmerContainer.stopShimmer()
                 detail = propDetail
+                fullDescription = propDetail.description
+                trimDescription = propDetail.description.subSequence(
+                    0,
+                    propDetail.description.length / 4
+                ).toString() + ".....(Read more)"
+                isFullDescription = false
+                descriptionInclude.descriptionText.setOnClickListener {
+                    isFullDescription = isFullDescription!!.not()
+                }
+                workSchedule = propDetail.office.workingHours?.let { getSortedWorkDaysString(it) }
+
+                otherFeaturesButton.setOnClickListener {
+                    val dialog = DialogOtherDetailFeatures(propDetail)
+                    dialog.show(requireActivity().supportFragmentManager, "Other features dialog")
+                }
+
             }
 
+
             adapter.addImages(propDetail.photos)
+
 
             val features = propDetail.features
 
 
             features.apply {
-                if(bedsMax != null && bedsMin != null){
-                    val beds: String? = if(bedsMax!! > bedsMin!!) "" + bedsMin!!.toInt() + "-" + bedsMax!!.toInt()
-                    else bedsMin!!.toInt().toString()
+                if (bedsMax != null && bedsMin != null) {
+                    val beds: String? =
+                        if (bedsMax!! > bedsMin!!) "" + bedsMin!!.toInt() + "-" + bedsMax!!.toInt()
+                        else bedsMin!!.toInt().toString()
                     binding.beds = beds
                 } else binding.beds = "N/A"
 
-                if(bathsMax != null && bathsMin != null){
-                    val baths: String? = if(bathsMax!! > bathsMin!!) "" + bathsMin!!.toInt() + "-" + bathsMax!!.toInt()
-                    else bathsMin!!.toInt().toString()
+                if (bathsMax != null && bathsMin != null) {
+                    val baths: String? =
+                        if (bathsMax!! > bathsMin!!) "" + bathsMin!!.toInt() + "-" + bathsMax!!.toInt()
+                        else bathsMin!!.toInt().toString()
                     binding.baths = baths
                 } else binding.baths = "N/A"
 
-                if(areaMax != null && areaMin != null){
-                    val area: String? =  if(areaMax!! > areaMin!!) "" + areaMin!!.toInt() + "-" + areaMax!!.toInt()
-                    else areaMin!!.toInt().toString()
+                if (areaMax != null && areaMin != null) {
+                    val area: String? =
+                        if (areaMax!! > areaMin!!) "" + areaMin!!.toInt() + "-" + areaMax!!.toInt()
+                        else areaMin!!.toInt().toString()
                     binding.sqft = area
                 } else binding.sqft = "N/A"
 
-                if(priceMax != null && priceMin != null){
-                    val price: String? =  if(priceMax!! > priceMin!!) "$" + priceMin!!.toInt() + "-$" + priceMax!!.toInt()
-                    else priceMin!!.toInt().toString()
+                if (priceMax != null && priceMin != null) {
+                    val price: String? =
+                        if (priceMax!! > priceMin!!) "$" + priceMin!!.toInt() + "-$" + priceMax!!.toInt()
+                        else priceMin!!.toInt().toString()
                     binding.price = price
                 } else binding.price = "N/A"
             }
         })
     }
+
+    private fun getSortedWorkDaysString(workingHour: List<WorkingHour>): String{
+        if(workingHour.isEmpty()) return ""
+
+        val workDays = workingHour[0].workDays!!
+        val startHour = workingHour[0].startWorkingHour
+        val endHour = workingHour[0].endWorkingHour
+
+        if (workDays.isEmpty()) return ""
+        val sortedWorkDays = arrayListOf<String>()
+        val map = hashMapOf<String, Boolean>()
+        for (day in workDays) {
+            map[day.decapitalize(Locale.ROOT)] = true
+        }
+
+        if(map["monday"] == true) sortedWorkDays.add("Monday")
+        if(map["tuesday"] == true) sortedWorkDays.add("Tuesday")
+        if(map["wednesday"] == true) sortedWorkDays.add("Wednesday")
+        if(map["thursday"] == true) sortedWorkDays.add("Thursday")
+        if(map["friday"] == true) sortedWorkDays.add("Friday")
+        if(map["saturday"] == true) sortedWorkDays.add("Saturday")
+        if(map["sunday"] == true) sortedWorkDays.add("Sunday")
+
+        val hour: String
+
+        hour = if(startHour == "By Appointment") startHour
+        else "from $startHour to $endHour"
+
+        return "${sortedWorkDays[0]} to ${sortedWorkDays[sortedWorkDays.lastIndex]}, $hour"
+    }
+
+
+
+    private fun ExpandableListView.setUp(adapter: FeaturesExpandableListAdapter){
+        this.setAdapter(adapter)
+
+        var totalHeight: Int = 0
+        val desiredWidth = View.MeasureSpec.makeMeasureSpec(
+            this.width,
+            View.MeasureSpec.EXACTLY
+        )
+
+        for(i in 0 until (adapter.groupCount)){
+            val group = adapter.getGroupView(i, false, null, this)
+            group.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
+
+            totalHeight += group.measuredHeight
+        }
+
+        val finalHeight = totalHeight + this.dividerHeight * (adapter.groupCount - 1)
+        val params = this.layoutParams
+
+        println("debug: finalHeigh $finalHeight")
+        params.height = finalHeight
+
+        this.layoutParams = params
+        this.requestLayout()
+
+        this.setOnGroupExpandListener {
+
+        }
+
+        this.setOnGroupCollapseListener {
+
+        }
+    }
+
+
 
 
 }

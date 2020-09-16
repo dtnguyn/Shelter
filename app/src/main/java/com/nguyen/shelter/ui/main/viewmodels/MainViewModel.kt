@@ -138,10 +138,15 @@ constructor(
                 }
 
                 is MainStateEvent.GetPropertyDetail -> {
-                    mainRepository.getPropertyDetail(mainStateEvent.id){
-                        println("debug: Getting detail $it")
-                        _rentPropertyDetail.value = it.data
+                    CoroutineScope(IO).launch {
+                        val detail = mainRepository.getPropertyDetail(mainStateEvent.id)
+
+                        withContext(Main){
+                            if(detail != null) _rentPropertyDetail.value = detail
+                            else _error.value = "Can't get property detail!"
+                        }
                     }
+
                 }
 
                 is MainStateEvent.SaveRentPropertyFilter -> {

@@ -62,5 +62,8 @@
     <string name="features">Features</string>
     <string name="contact">Contact</string>
     <string name="lease_terms">Lease terms</string>
+    <string name="description">Description</string>
+    <string name="see_more_features">See more features</string>
+    <string name="apply_online">Apply online</string>
 
 </resources>

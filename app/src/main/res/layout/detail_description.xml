@@ -4,11 +4,7 @@
 
     <data>
         <variable
-            name="office"
-            type="com.nguyen.shelter.api.response.Office" />
-
-        <variable
-            name="schedule"
+            name="description"
             type="String" />
 
         <variable
@@ -23,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp">
+        android:paddingBottom="5dp">
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/contact_shimmer_container"
@@ -49,17 +45,18 @@
 
                 <View
                     android:id="@+id/view42"
-                    android:layout_width="200dp"
+                    android:layout_width="0dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginHorizontal="15dp"
                     android:background="@color/shimmer"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view41" />
 
                 <View
-                    android:id="@+id/phone_view"
-                    android:layout_width="150dp"
+                    android:id="@+id/view11"
+                    android:layout_width="0dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="5dp"
                     android:background="@color/shimmer"
@@ -69,14 +66,15 @@
                     app:layout_constraintTop_toBottomOf="@id/view42" />
 
                 <View
-                    android:layout_width="250dp"
+                    android:layout_width="0dp"
                     android:layout_height="25dp"
-                    android:layout_marginTop="5dp"
                     android:background="@color/shimmer"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="50dp"
                     android:fontFamily="@font/montserrat_regular"
-                    app:layout_constraintEnd_toEndOf="@id/phone_view"
-                    app:layout_constraintStart_toStartOf="@id/phone_view"
-                    app:layout_constraintTop_toBottomOf="@id/phone_view" />
+                    app:layout_constraintEnd_toEndOf="@+id/view11"
+                    app:layout_constraintStart_toStartOf="@+id/view11"
+                    app:layout_constraintTop_toBottomOf="@+id/view11" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -89,58 +87,30 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:fontFamily="@font/montserrat_semi_bold"
-            android:text="@string/contact"
+            android:text="@string/description"
             android:textColor="@color/textColorDark"
             android:textSize="18sp"
-            android:textAlignment="center"
             android:visibility="@{finishLoading ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView42"
-            android:layout_width="wrap_content"
+            android:id="@+id/description_text"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/montserrat_regular"
-            android:text="@{office.name}"
-            android:textAlignment="center"
+            android:layout_marginHorizontal="15dp"
+            android:textAlignment="viewStart"
             android:textColor="@color/textColorDark"
             android:textSize="18sp"
+            android:text="@{description}"
             android:visibility="@{finishLoading ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView41" />
 
-        <TextView
-            android:id="@+id/phone_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="@{office.phones.size() > 0 ? office.phones.get(0).number : `No phone number`}"
-            android:textColor="@color/textColorDark"
-            android:textSize="18sp"
-            android:textAlignment="center"
-            android:visibility="@{finishLoading ? View.VISIBLE : View.INVISIBLE}"
-            android:layout_marginTop="5dp"
-            app:layout_constraintEnd_toEndOf="@+id/textView42"
-            app:layout_constraintStart_toStartOf="@+id/textView42"
-            app:layout_constraintTop_toBottomOf="@+id/textView42" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="@{schedule}"
-            android:textColor="@color/textColorDark"
-            android:textSize="18sp"
-            android:textAlignment="center"
-            android:visibility="@{finishLoading ? View.VISIBLE : View.INVISIBLE}"
-            android:layout_marginTop="5dp"
-            app:layout_constraintEnd_toEndOf="@+id/phone_number"
-            app:layout_constraintStart_toStartOf="@+id/phone_number"
-            app:layout_constraintTop_toBottomOf="@+id/phone_number" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

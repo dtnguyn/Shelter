@@ -13,6 +13,7 @@ import com.nguyen.shelter.api.service.RealtorApiService
 import com.nguyen.shelter.db.ShelterDatabase
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
+import com.nguyen.shelter.db.mapper.PropertyDetailCacheMapper
 import com.nguyen.shelter.db.mapper.PropertyFilterCacheMapper
 import com.nguyen.shelter.model.CallbackResponse
 import com.nguyen.shelter.model.PropertyDetail
@@ -29,6 +30,7 @@ constructor(
     private val database: ShelterDatabase,
     private val mapper: PropertyNetworkMapper,
     private val detailMapper: PropertyDetailNetworkMapper,
+    private val detailCacheMapper: PropertyDetailCacheMapper,
     private val cacheMapper: PropertyCacheMapper,
     private val filterMapper: PropertyFilterCacheMapper,
     private val auth: FirebaseAuth
@@ -82,15 +84,27 @@ constructor(
     }
 
 
-    suspend fun getPropertyDetail(id: String, callback: (response: CallbackResponse<PropertyDetail>) -> Unit) {
-        val response = service.getPropertyDetail(id)
-        val detailList = response.data
+    suspend fun getPropertyDetail(id: String): PropertyDetail? {
+        println("debug: Getting prop detail")
+        var detail: PropertyDetail? = null
+        val detailCacheEntity = database.detailDao().getPropertyDetail(id)
 
-        if(detailList != null && detailList.isNotEmpty()){
-            callback.invoke(CallbackResponse(true, "Getting property detail successfully.", detailMapper.mapFromEntity(detailList[0])))
-        } else {
-            callback.invoke(CallbackResponse(false, "Cannot get detail.", null))
+        println("debug: Check cache $detailCacheEntity")
+        if(detailCacheEntity == null){
+            val response = service.getPropertyDetail(id)
+            val detailList = response.data
+            println("debug: Check network ${detailList?.get(0)}")
+            if(detailList != null && detailList.isNotEmpty()){
+                detail = detailMapper.mapFromEntity(detailList[0])
+                database.detailDao().insert(detailCacheMapper.mapToEntity(detail))
+            }
+        }  else {
+            detail = detailCacheMapper.mapFromEntity(detailCacheEntity)
         }
+
+        println("debug: Check final $detail")
+        return detail
+
     }
 
 
