@@ -15,7 +15,7 @@ data class Address (
     @SerializedName("lat")
     var latitude: Float? = null,
 
-    @SerializedName("lng")
+    @SerializedName("lon")
     var longitude: Float? = null,
 
     @SerializedName("line")

@@ -65,5 +65,7 @@
     <string name="description">Description</string>
     <string name="see_more_features">See more features</string>
     <string name="apply_online">Apply online</string>
+    <string name="group">Group</string>
+    <string name="nearby_places">Nearby places</string>
 
 </resources>

@@ -3,31 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/map_bottom_sheet_button"
+        android:id="@+id/group_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_margin="15dp"
         android:fontFamily="@font/montserrat_semi_bold"
-        android:text="@string/choose_states"
+        android:text="@string/group"
         android:textColor="@color/textColorDark"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/states_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:paddingBottom="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map_bottom_sheet_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

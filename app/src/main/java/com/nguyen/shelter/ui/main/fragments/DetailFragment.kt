@@ -1,16 +1,20 @@
 package com.nguyen.shelter.ui.main.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import androidx.transition.TransitionInflater
-import com.nguyen.shelter.api.response.CommunityFeature
+import com.nguyen.shelter.R
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.api.response.WorkingHour
 import com.nguyen.shelter.databinding.FragmentDetailBinding
@@ -26,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
-import kotlin.collections.HashMap
 
 
 @ExperimentalPagingApi
@@ -84,6 +87,10 @@ class DetailFragment : Fragment() {
             viewModel.setStateEvent(MainStateEvent.GetPropertyDetail(id))
         }
 
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
 
 
 
@@ -126,6 +133,20 @@ class DetailFragment : Fragment() {
                     dialog.show(requireActivity().supportFragmentManager, "Other features dialog")
                 }
 
+                mapButton.setOnClickListener {
+                    println("debug: before latLng ${propDetail.address.latitude?.toDouble()} ${propDetail.address.longitude?.toDouble()}")
+                    val bundle = bundleOf(
+                        "lat" to propDetail.address.latitude?.toDouble(),
+                        "lng" to propDetail.address.longitude?.toDouble(),
+                        "schools" to propDetail.schools
+                    )
+                    findNavController().navigate(R.id.map_fragment, bundle)
+                }
+
+                applyOnlineButton.setOnClickListener {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(propDetail.url))
+                    startActivity(browserIntent)
+                }
             }
 
 

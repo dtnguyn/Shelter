@@ -1,7 +1,10 @@
 package com.nguyen.shelter.api.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class School(
 
     @SerializedName("id")
@@ -19,7 +22,7 @@ data class School(
     @SerializedName("lat")
     var latitude: Float?,
 
-    @SerializedName("lng")
+    @SerializedName("lon")
     var longitude: Float?,
 
     @SerializedName("funding_type")
@@ -37,4 +40,4 @@ data class School(
     @SerializedName("location")
     var location: SchoolLocation?
 
-)
+) : Parcelable

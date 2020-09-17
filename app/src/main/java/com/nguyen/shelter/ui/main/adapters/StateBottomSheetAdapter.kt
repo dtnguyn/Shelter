@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nguyen.shelter.R
 import kotlinx.android.synthetic.main.item_state.view.*
 
-class BottomSheetAdapter(private val items: Array<String>, private val itemOnClick : (String) -> Unit) : RecyclerView.Adapter<BottomSheetAdapter.BottomSheetViewHolder>(){
+class StateBottomSheetAdapter(private val items: Array<String>, private val itemOnClick : (String) -> Unit) : RecyclerView.Adapter<StateBottomSheetAdapter.BottomSheetViewHolder>(){
 
     inner class BottomSheetViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(item: String){

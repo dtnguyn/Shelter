@@ -52,5 +52,10 @@
 
     </fragment>
 
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.MapFragment"
+        tools:layout="@layout/fragment_map"
+        android:id="@+id/map_fragment" />
+
 
 </navigation>
