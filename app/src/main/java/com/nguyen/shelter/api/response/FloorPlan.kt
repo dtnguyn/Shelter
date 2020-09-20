@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class FloorPlan(
 
+    @SerializedName("name")
+    var name: String?,
+
     @SerializedName("id")
     var id: Int?,
 

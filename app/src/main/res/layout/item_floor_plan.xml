@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="floorPlan"
+            type="com.nguyen.shelter.api.response.FloorPlan" />
+
+        <variable
+            name="beds"
+            type="String" />
+
+        <variable
+            name="baths"
+            type="String" />
+
+        <variable
+            name="price"
+            type="String" />
+
+        <variable
+            name="area"
+            type="String" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginHorizontal="30dp"
+            app:cardBackgroundColor="@color/textColorLight"
+            app:cardCornerRadius="10dp"
+            android:layout_marginVertical="15dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.60" />
+
+                <ImageView
+                    android:id="@+id/floor_plan_image_view"
+                    imageFromUrl="@{floorPlan.photo.url}"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:foreground="@drawable/gradient_foreground"
+                    android:scaleType="fitXY"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:targetApi="m"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/textView35"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_semi_bold"
+                    android:layout_marginTop="10dp"
+                    android:text="@{floorPlan.name}"
+                    android:textColor="@color/textColorDark"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/floor_plan_image_view" />
+
+
+                <ImageView
+                    android:id="@+id/beds_img"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/bed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView35" />
+
+                <ImageView
+                    android:id="@+id/baths_img"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/bathroom"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/beds_img"
+                    app:layout_constraintTop_toBottomOf="@id/beds_img" />
+
+                <TextView
+                    android:id="@+id/beds_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="@{beds + ` bed(s)`}"
+                    android:textColor="@color/textColorDark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/beds_img"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView7"
+                    app:layout_constraintStart_toEndOf="@id/beds_img"
+                    app:layout_constraintTop_toTopOf="@id/beds_img" />
+
+                <TextView
+                    android:id="@+id/baths_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="@{baths + ` bath(s)`}"
+                    android:textColor="@color/textColorDark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/baths_img"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView18"
+                    app:layout_constraintStart_toEndOf="@+id/baths_img"
+                    app:layout_constraintTop_toTopOf="@+id/baths_img" />
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/price_max"
+                    app:layout_constraintStart_toStartOf="@+id/guideline4"
+                    app:layout_constraintTop_toBottomOf="@+id/textView35" />
+
+                <ImageView
+                    android:id="@+id/imageView18"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ruler"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/imageView7"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+
+                <TextView
+                    android:id="@+id/price_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="@{`$` + price }"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="@color/textColorDark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView7"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView7"
+                    app:layout_constraintTop_toTopOf="@+id/imageView7" />
+
+                <TextView
+                    android:id="@+id/sqft_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="@{area + ` sqft`}"
+                    android:textColor="@color/textColorDark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView18"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView18"
+                    app:layout_constraintTop_toTopOf="@+id/imageView18" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+</layout>

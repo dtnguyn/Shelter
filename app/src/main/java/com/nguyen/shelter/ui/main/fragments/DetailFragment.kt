@@ -13,13 +13,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
 import com.nguyen.shelter.R
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.api.response.WorkingHour
 import com.nguyen.shelter.databinding.FragmentDetailBinding
+import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.adapters.FeaturesExpandableListAdapter
+import com.nguyen.shelter.ui.main.adapters.FloorPlanAdapter
 import com.nguyen.shelter.ui.main.adapters.ImageSliderAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
@@ -72,8 +75,10 @@ class DetailFragment : Fragment() {
         imageSlider = binding.detailImageSlider
 
         val photosUrl: String? = arguments?.getString("photo")
-        photosUrl?.let {
-            adapter = ImageSliderAdapter(arrayListOf(Photo(it)))
+        photosUrl?.let { url ->
+            adapter = ImageSliderAdapter(arrayListOf(Photo(url))){bundle ->
+                findNavController().navigate(R.id.photo_detail_fragment, bundle)
+            }
             imageSlider.setSliderAdapter(adapter)
         }
 
@@ -106,86 +111,96 @@ class DetailFragment : Fragment() {
 
     private fun subscribeObservers(){
         viewModel.rentPropertyDetail.observe(viewLifecycleOwner, { propDetail ->
-
-            binding.apply {
-                finishLoading = true
-                addressShimmerContainer.stopShimmer()
-                leaseTermInclude.leaseTermShimmerContainer.stopShimmer()
-                typeInclude.typesShimmerContainer.stopShimmer()
-                featuresInclude.featuresShimmerContainer.stopShimmer()
-                featuresInclude.featuresShimmerContainer.stopShimmer()
-                contactInclude.contactShimmerContainer.stopShimmer()
-                priceShimmerContainer.stopShimmer()
-                detail = propDetail
-                fullDescription = propDetail.description
-                trimDescription = propDetail.description.subSequence(
-                    0,
-                    propDetail.description.length / 4
-                ).toString() + ".....(Read more)"
-                isFullDescription = false
-                descriptionInclude.descriptionText.setOnClickListener {
-                    isFullDescription = isFullDescription!!.not()
-                }
-                workSchedule = propDetail.office.workingHours?.let { getSortedWorkDaysString(it) }
-
-                otherFeaturesButton.setOnClickListener {
-                    val dialog = DialogOtherDetailFeatures(propDetail)
-                    dialog.show(requireActivity().supportFragmentManager, "Other features dialog")
-                }
-
-                mapButton.setOnClickListener {
-                    println("debug: before latLng ${propDetail.address.latitude?.toDouble()} ${propDetail.address.longitude?.toDouble()}")
-                    val bundle = bundleOf(
-                        "lat" to propDetail.address.latitude?.toDouble(),
-                        "lng" to propDetail.address.longitude?.toDouble(),
-                        "schools" to propDetail.schools
-                    )
-                    findNavController().navigate(R.id.map_fragment, bundle)
-                }
-
-                applyOnlineButton.setOnClickListener {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(propDetail.url))
-                    startActivity(browserIntent)
-                }
-            }
-
-
-            adapter.addImages(propDetail.photos)
-
-
-            val features = propDetail.features
-
-
-            features.apply {
-                if (bedsMax != null && bedsMin != null) {
-                    val beds: String? =
-                        if (bedsMax!! > bedsMin!!) "" + bedsMin!!.toInt() + "-" + bedsMax!!.toInt()
-                        else bedsMin!!.toInt().toString()
-                    binding.beds = beds
-                } else binding.beds = "N/A"
-
-                if (bathsMax != null && bathsMin != null) {
-                    val baths: String? =
-                        if (bathsMax!! > bathsMin!!) "" + bathsMin!!.toInt() + "-" + bathsMax!!.toInt()
-                        else bathsMin!!.toInt().toString()
-                    binding.baths = baths
-                } else binding.baths = "N/A"
-
-                if (areaMax != null && areaMin != null) {
-                    val area: String? =
-                        if (areaMax!! > areaMin!!) "" + areaMin!!.toInt() + "-" + areaMax!!.toInt()
-                        else areaMin!!.toInt().toString()
-                    binding.sqft = area
-                } else binding.sqft = "N/A"
-
-                if (priceMax != null && priceMin != null) {
-                    val price: String? =
-                        if (priceMax!! > priceMin!!) "$" + priceMin!!.toInt() + "-$" + priceMax!!.toInt()
-                        else priceMin!!.toInt().toString()
-                    binding.price = price
-                } else binding.price = "N/A"
-            }
+            fragmentInit(propDetail)
         })
+    }
+    
+    private fun fragmentInit(propDetail: PropertyDetail){
+        binding.apply {
+            finishLoading = true
+            addressShimmerContainer.stopShimmer()
+            leaseTermInclude.leaseTermShimmerContainer.stopShimmer()
+            typeInclude.typesShimmerContainer.stopShimmer()
+            featuresInclude.featuresShimmerContainer.stopShimmer()
+            featuresInclude.featuresShimmerContainer.stopShimmer()
+            contactInclude.contactShimmerContainer.stopShimmer()
+            priceShimmerContainer.stopShimmer()
+            detail = propDetail
+            fullDescription = propDetail.description
+            trimDescription = propDetail.description.subSequence(
+                0,
+                propDetail.description.length / 4
+            ).toString() + ".....(Read more)"
+            isFullDescription = false
+            descriptionInclude.descriptionText.setOnClickListener {
+                isFullDescription = isFullDescription!!.not()
+            }
+            workSchedule = propDetail.office.workingHours?.let { getSortedWorkDaysString(it) }
+
+            otherFeaturesButton.setOnClickListener {
+                val dialog = DialogOtherDetailFeatures(propDetail)
+                dialog.show(requireActivity().supportFragmentManager, "Other features dialog")
+            }
+
+            mapButton.setOnClickListener {
+                println("debug: before latLng ${propDetail.address.latitude?.toDouble()} ${propDetail.address.longitude?.toDouble()}")
+                val bundle = bundleOf(
+                    "lat" to propDetail.address.latitude?.toDouble(),
+                    "lng" to propDetail.address.longitude?.toDouble(),
+                    "schools" to propDetail.schools
+                )
+                findNavController().navigate(R.id.map_fragment, bundle)
+            }
+
+            applyOnlineButton.setOnClickListener {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(propDetail.url))
+                startActivity(browserIntent)
+            }
+
+        }
+
+        adapter.addImages(propDetail.photos)
+        val features = propDetail.features
+
+
+
+        val recyclerView = binding.floorPlanInclude.floorPlanRecyclerview
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        val filteredList = propDetail.floorPlans.filter { floorPlan -> floorPlan.name != null }
+        recyclerView.adapter = FloorPlanAdapter(filteredList){bundle ->
+            println("debug: photo before ${bundle.getParcelableArrayList<Photo>("photos")}")
+            findNavController().navigate(R.id.photo_detail_fragment, bundle)
+        }
+
+        features.apply {
+            if (bedsMax != null && bedsMin != null) {
+                val beds: String? =
+                    if (bedsMax!! > bedsMin!!) "" + bedsMin!!.toInt() + "-" + bedsMax!!.toInt()
+                    else bedsMin!!.toInt().toString()
+                binding.beds = beds
+            } else binding.beds = "N/A"
+
+            if (bathsMax != null && bathsMin != null) {
+                val baths: String? =
+                    if (bathsMax!! > bathsMin!!) "" + bathsMin!!.toInt() + "-" + bathsMax!!.toInt()
+                    else bathsMin!!.toInt().toString()
+                binding.baths = baths
+            } else binding.baths = "N/A"
+
+            if (areaMax != null && areaMin != null) {
+                val area: String? =
+                    if (areaMax!! > areaMin!!) "" + areaMin!!.toInt() + "-" + areaMax!!.toInt()
+                    else areaMin!!.toInt().toString()
+                binding.sqft = area
+            } else binding.sqft = "N/A"
+
+            if (priceMax != null && priceMin != null) {
+                val price: String? =
+                    if (priceMax!! > priceMin!!) "$" + priceMin!!.toInt() + "-$" + priceMax!!.toInt()
+                    else priceMin!!.toInt().toString()
+                binding.price = price
+            } else binding.price = "N/A"
+        }
     }
 
     private fun getSortedWorkDaysString(workingHour: List<WorkingHour>): String{

@@ -113,6 +113,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView9" />
 
+            <View
+                android:id="@+id/image_slider_click_area"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/detail_image_slider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/detail_image_slider" />
 
             <com.smarteist.autoimageslider.SliderView
                 android:id="@+id/detail_image_slider"
@@ -282,17 +290,14 @@
                     app:sqft="@{sqft}"
                     app:layout_constraintTop_toBottomOf="@+id/type_include" />
 
-<!--                <include-->
-<!--                    android:id="@+id/others_include"-->
-<!--                    layout="@layout/detail_others"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="60dp"-->
-<!--                    app:schedule="@{workSchedule}"-->
-<!--                    app:office="@{detail.office}"-->
-<!--                    app:finishLoading="@{finishLoading}"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/features_include" />-->
-<!--                -->
+
+                <include
+                    android:id="@+id/floor_plan_include"
+                    layout="@layout/detail_floor_plan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{finishLoading ? View.VISIBLE : View.INVISIBLE}"/>
+
                 <TextView
                     android:id="@+id/other_features_button"
                     android:layout_width="wrap_content"

@@ -57,5 +57,13 @@
         tools:layout="@layout/fragment_map"
         android:id="@+id/map_fragment" />
 
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.PhotoViewPagerFragment"
+        tools:layout="@layout/fragment_photo_view_pager"
+        android:id="@+id/photo_detail_fragment" />
+
+
+
+
 
 </navigation>
