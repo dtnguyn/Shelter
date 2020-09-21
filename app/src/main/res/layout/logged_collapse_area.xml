@@ -20,7 +20,7 @@
         android:layout_height="match_parent">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/user_avatar_cardview"
+            android:id="@+id/user_avatar_cardView"
             android:layout_width="50dp"
             android:layout_height="50dp"
             app:cardElevation="0dp"
@@ -49,8 +49,8 @@
             android:layout_marginTop="20dp"
             android:textColor="@color/textColorLight"
             android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@+id/user_avatar_cardview"
-            app:layout_constraintTop_toBottomOf="@+id/user_avatar_cardview" />
+            app:layout_constraintStart_toStartOf="@+id/user_avatar_cardView"
+            app:layout_constraintTop_toBottomOf="@+id/user_avatar_cardView" />
 
         <TextView
             android:id="@+id/textView2"

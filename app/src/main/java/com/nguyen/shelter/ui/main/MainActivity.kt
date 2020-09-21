@@ -15,10 +15,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.ExperimentalPagingApi
 import com.nguyen.shelter.R
-import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
-import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -15,10 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.nguyen.shelter.R
 import com.nguyen.shelter.api.response.School
 import com.nguyen.shelter.ui.main.adapters.MapBottomSheetAdapter
-import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.fragment_map.view.*
-import kotlinx.android.synthetic.main.fragment_map.view.map_bottom_recyclerview
-import kotlinx.android.synthetic.main.fragment_map.view.map_bottom_sheet_button
 
 
 class MapFragment : Fragment() {
@@ -38,7 +35,7 @@ class MapFragment : Fragment() {
             latLng = LatLng(it.getDouble("lat"), it.getDouble("lng"))
             val bottomSheet = BottomSheetBehavior.from(view.map_bottom_sheet)
             view.map_bottom_sheet_button.setOnClickListener {
-                bottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED);
+                bottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
             }
 
             schoolList = it.getParcelableArrayList("schools")

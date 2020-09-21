@@ -21,9 +21,9 @@ import com.nguyen.shelter.ui.main.adapters.MainPagerAdapter
 import com.nguyen.shelter.ui.main.fragments.DialogAuthentication
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
-import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.tab_layout_toolbar.view.*
+import kotlinx.android.synthetic.main.fragment_main.view.*
+
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -37,10 +37,6 @@ class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //onTransformationStartContainer()
-    }
 
     @ExperimentalPagingApi
     override fun onCreateView(
@@ -61,12 +57,11 @@ class MainFragment : Fragment() {
 
         binding.loggedCollapseArea.container.setOnClickListener {
             val extras = FragmentNavigatorExtras(
-                binding.loggedCollapseArea.userAvatarCardview to "avatar_main"
+                binding.loggedCollapseArea.userAvatarCardView to "avatar_main"
             )
             val action = MainFragmentDirections.actionMainFragmentToUserFragment()
             NavHostFragment.findNavController(this@MainFragment).navigate(action, extras)
 
-//            findNavController().navigate(R.id.user_fragment)
         }
 
         subscribeObserver()

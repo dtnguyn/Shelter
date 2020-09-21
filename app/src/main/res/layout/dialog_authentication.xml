@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingVertical="20dp"
     android:background="@drawable/white_rounded_edge"
     android:layout_width="match_parent"
@@ -26,7 +27,8 @@
         android:src="@drawable/community_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+        app:layout_constraintTop_toBottomOf="@+id/textView8"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/textView"
@@ -49,7 +51,8 @@
         android:layout_marginStart="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/google_button"
         app:layout_constraintStart_toStartOf="@+id/google_button"
-        app:layout_constraintTop_toTopOf="@+id/google_button" />
+        app:layout_constraintTop_toTopOf="@+id/google_button"
+        tools:ignore="ContentDescription" />
 
     <Button
         android:id="@+id/google_button"
@@ -75,7 +78,8 @@
         android:layout_marginStart="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/fb_button"
         app:layout_constraintStart_toStartOf="@+id/fb_button"
-        app:layout_constraintTop_toTopOf="@+id/fb_button" />
+        app:layout_constraintTop_toTopOf="@+id/fb_button"
+        tools:ignore="ContentDescription" />
 
     <Button
         android:id="@+id/fb_button"

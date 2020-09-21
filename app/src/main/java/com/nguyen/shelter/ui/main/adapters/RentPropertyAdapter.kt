@@ -3,20 +3,13 @@ package com.nguyen.shelter.ui.main.adapters
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.cardview.widget.CardView
-import androidx.core.os.bundleOf
-import androidx.navigation.fragment.FragmentNavigator
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.databinding.PropertyItemBinding
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
 import com.skydoves.transformationlayout.TransformationLayout
-import kotlinx.android.synthetic.main.property_item.view.*
 import javax.inject.Inject
 
 
@@ -36,7 +29,7 @@ constructor(
 
 
     override fun onBindViewHolder(holder: RentPropertyViewHolder, position: Int) {
-        holder.bind(getItem(position), position)
+        holder.bind(getItem(position))
     }
 
 
@@ -44,7 +37,7 @@ constructor(
 
     inner class RentPropertyViewHolder(private val binding: PropertyItemBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(property: PropertyCacheEntity?, position: Int) {
+        fun bind(property: PropertyCacheEntity?) {
             property?.let {
                 val props = cacheMapper.mapFromEntity(property)
                 val features = props.features
@@ -82,13 +75,8 @@ constructor(
 
                 binding.container.setOnClickListener {
                     println("debug: ${transformationLayout.transitionName}")
-//                    val extras = FragmentNavigatorExtras(
-//                        binding.container to "testing_shelter"
-//                    )
-//                    detailOnClick.invoke(props.id, props.photos, extras)
 
                     val bundle = transformationLayout.getBundle("TransformationParams")
-                    //val bundle = bundleOf()
                     bundle.putString("id", props.id)
                     bundle.putString("photo", props.photos[0].url)
                     detailOnClick.invoke(bundle, binding.transformationLayout)

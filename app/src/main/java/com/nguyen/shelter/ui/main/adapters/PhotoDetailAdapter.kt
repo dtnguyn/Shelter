@@ -1,10 +1,8 @@
 package com.nguyen.shelter.ui.main.adapters
 
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -16,8 +14,6 @@ class PhotoDetailAdapter(private val photos: List<Photo>, private val context: C
     inner class ImageViewHolder(private val binding: ItemPhotoViewPagerBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(url: String?){
-            println("debug: photos url $url")
-            //binding.url = url
             Glide.with(context)
                 .load(url)
                 .transition(DrawableTransitionOptions.withCrossFade())

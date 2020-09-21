@@ -9,10 +9,8 @@ import com.nguyen.shelter.api.response.School
 import com.nguyen.shelter.databinding.ItemSchoolBinding
 import kotlinx.android.synthetic.main.item_map_group.view.*
 
-class MapBottomSheetAdapter(private val schools: List<School>, private val restaurants: List<Any> = listOf()): RecyclerView.Adapter<MapBottomSheetAdapter.BaseViewHolder>() {
+class MapBottomSheetAdapter(private val schools: List<School>): RecyclerView.Adapter<MapBottomSheetAdapter.BaseViewHolder>() {
 
-    private val totalGroup = 1
-    private var groupCounter = 0
 
     abstract class BaseViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         abstract fun bind(item: Any)

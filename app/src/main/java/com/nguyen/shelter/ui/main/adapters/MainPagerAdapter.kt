@@ -5,7 +5,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.nguyen.shelter.ui.main.fragments.RentFragment
 import com.nguyen.shelter.ui.main.fragments.SaleFragment
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @ExperimentalPagingApi
 class MainPagerAdapter (fragment: Fragment) : FragmentStateAdapter(fragment){
 

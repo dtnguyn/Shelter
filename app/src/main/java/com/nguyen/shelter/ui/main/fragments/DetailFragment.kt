@@ -10,7 +10,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
@@ -39,7 +38,6 @@ import java.util.*
 class DetailFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
-    private val args: DetailFragmentArgs by navArgs()
 
     private lateinit var binding: FragmentDetailBinding
     private lateinit var adapter: ImageSliderAdapter
@@ -79,10 +77,7 @@ class DetailFragment : Fragment() {
             }
             imageSlider.setSliderAdapter(adapter)
         }
-
-
-
-
+        
         subscribeObservers()
 
         val id = arguments?.getString("id")
@@ -93,9 +88,6 @@ class DetailFragment : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
-
-
-
 
         return binding.root
     }
@@ -116,13 +108,6 @@ class DetailFragment : Fragment() {
     private fun fragmentInit(propDetail: PropertyDetail){
         binding.apply {
             finishLoading = true
-            addressShimmerContainer.stopShimmer()
-            leaseTermInclude.leaseTermShimmerContainer.stopShimmer()
-            typeInclude.typesShimmerContainer.stopShimmer()
-            featuresInclude.featuresShimmerContainer.stopShimmer()
-            featuresInclude.featuresShimmerContainer.stopShimmer()
-            contactInclude.contactShimmerContainer.stopShimmer()
-            priceShimmerContainer.stopShimmer()
             detail = propDetail
             fullDescription = propDetail.description
             trimDescription = propDetail.description.subSequence(
@@ -244,7 +229,7 @@ class DetailFragment : Fragment() {
                 binding.typeInclude.typeImg.setImageResource(R.drawable.single_family_selected)
             }
 
-            "multi_familty" -> {
+            "multi_family" -> {
                 binding.typeInclude.typeImg.setImageResource(R.drawable.multi_family_selected)
             }
 

@@ -55,7 +55,7 @@
                     android:scaleType="fitXY"
                     imageFromUrl="@{property.photos.size() > 0 ? property.photos.get(0).url : ``}"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="UnusedAttribute" />
+                    tools:ignore="ContentDescription,UnusedAttribute" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -120,7 +120,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.65"
                     app:layout_constraintStart_toEndOf="@+id/imageView2"
-                    app:layout_constraintTop_toBottomOf="@+id/textView7" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView7"
+                    tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/imageView3"
@@ -131,7 +132,8 @@
                     app:layout_constraintEnd_toStartOf="@id/imageView2"
                     app:layout_constraintHorizontal_bias="0.35"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView5"
+                    tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/imageView2"
@@ -141,7 +143,8 @@
                     android:src="@drawable/baths_selected"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -186,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:text="@{price + `/month`}"
                     android:textAlignment="center"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="@color/textColorDark"
                     android:fontFamily="@font/montserrat_semi_bold"
                     app:layout_constraintBottom_toBottomOf="parent"

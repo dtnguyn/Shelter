@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <fragment xmlns:tools="http://schemas.android.com/tools"
+    <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.main.fragments.MapFragment" />
+        tools:context=".ui.main.fragments.MapFragment"
+        tools:ignore="FragmentTagUsage" />
 
     <ImageView
         android:id="@+id/back_button"
@@ -18,7 +20,8 @@
         android:layout_margin="10dp"
         android:padding="5dp"
         android:background="@drawable/circle"
-        android:src="@drawable/back_button_32"/>
+        android:src="@drawable/back_button_32"
+        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:id="@+id/map_bottom_sheet"

@@ -388,62 +388,62 @@ class SaleFilterFragment : Fragment() {
         binding.othersInclude.apply {
             this.recreation_checkbox!!
             recreation_checkbox.isChecked = others["recreation"] ?: false
-            recreation_checkbox.setOnCheckedChangeListener { button, state ->
+            recreation_checkbox.setOnCheckedChangeListener { _, state ->
                 others["recreation"] = state
             }
 
             pool_checkbox.isChecked = others["pool"] ?: false
-            pool_checkbox.setOnCheckedChangeListener { button, state ->
+            pool_checkbox.setOnCheckedChangeListener { _, state ->
                 others["pool"] = state
             }
 
             outdoor_space_checkbox.isChecked = others["outdoor_space"] ?: false
-            outdoor_space_checkbox.setOnCheckedChangeListener { button, state ->
+            outdoor_space_checkbox.setOnCheckedChangeListener { _, state ->
                 others["outdoor_space"] = state
             }
 
             garage_checkbox.isChecked = others["garage"] ?: false
-            garage_checkbox.setOnCheckedChangeListener { button, state ->
+            garage_checkbox.setOnCheckedChangeListener { _, state ->
                 others["garage"] = state
             }
 
             central_air_checkbox.isChecked = others["central_air"] ?: false
-            central_air_checkbox.setOnCheckedChangeListener { button, state ->
+            central_air_checkbox.setOnCheckedChangeListener { _, state ->
                 others["central_air"] = state
             }
 
             fireplace_checkbox.isChecked = others["fireplace"] ?: false
-            fireplace_checkbox.setOnCheckedChangeListener { button, state ->
+            fireplace_checkbox.setOnCheckedChangeListener { _, state ->
                 others["fireplace"] = state
             }
 
             spa_checkbox.isChecked = others["spa"] ?: false
-            spa_checkbox.setOnCheckedChangeListener { button, state ->
+            spa_checkbox.setOnCheckedChangeListener { _, state ->
                 others["spa"] = state
             }
 
             dishwasher_checkbox.isChecked = others["dishwasher"] ?: false
-            dishwasher_checkbox.setOnCheckedChangeListener { button, state ->
+            dishwasher_checkbox.setOnCheckedChangeListener { _, state ->
                 others["dishwasher"] = state
             }
 
             doorman_checkbox.isChecked = others["doorman"] ?: false
-            doorman_checkbox.setOnCheckedChangeListener { button, state ->
+            doorman_checkbox.setOnCheckedChangeListener { _, state ->
                 others["doorman"] = state
             }
 
             elevator_checkbox.isChecked = others["elevator"] ?: false
-            elevator_checkbox.setOnCheckedChangeListener { button, state ->
+            elevator_checkbox.setOnCheckedChangeListener { _, state ->
                 others["elevator"] = state
             }
 
             laundry_room_checkbox.isChecked = others["laundry_room"] ?: false
-            laundry_room_checkbox.setOnCheckedChangeListener { button, state ->
+            laundry_room_checkbox.setOnCheckedChangeListener { _, state ->
                 others["laundry_room"] = state
             }
 
             no_fee_checkbox.isChecked = others["no_fee"] ?: false
-            no_fee_checkbox.setOnCheckedChangeListener { button, state ->
+            no_fee_checkbox.setOnCheckedChangeListener { _, state ->
                 others["no_fee"] = state
             }
         }

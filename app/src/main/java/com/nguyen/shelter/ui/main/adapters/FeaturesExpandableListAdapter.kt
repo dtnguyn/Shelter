@@ -1,6 +1,5 @@
 package com.nguyen.shelter.ui.main.adapters
 
-import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
@@ -37,6 +36,7 @@ class FeaturesExpandableListAdapter
 
     }
 
+    @SuppressLint("InflateParams")
     override fun getChildView(listPosition: Int, expandedListPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup?): View {
 
         val view = convertView

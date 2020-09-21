@@ -41,7 +41,8 @@
                 android:layout_marginStart="15dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView11"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView11" />
+                app:layout_constraintTop_toTopOf="@+id/textView11"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/save_button"
@@ -51,7 +52,8 @@
                 android:layout_marginEnd="15dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView11"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView11" />
+                app:layout_constraintTop_toTopOf="@+id/textView11"
+                tools:ignore="ContentDescription" />
 
             <include
                 android:id="@+id/sort_include"

@@ -53,7 +53,7 @@ class UserFragment : Fragment() {
 
 
     private fun subscribeObservers(){
-        viewModel.currentUser.observe(viewLifecycleOwner, Observer {
+        viewModel.currentUser.observe(viewLifecycleOwner, {
             binding.user = it
         })
     }

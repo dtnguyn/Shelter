@@ -23,6 +23,12 @@ object Versions{
     const val serviceAuthVersion = "18.1.0"
     const val googleServicePath = "4.3.3"
     const val facebookVersion = "[5,6)"
+    const val imageSliderVersion = "1.3.9"
+    const val transformationLayoutVersion = "1.0.6"
+    const val shimmerVersion = "0.5.0"
+    const val databindingCompilerVersion = "4.0.1"
+    const val recyclerViewVersion = "1.1.0"
+    const val mapsVersion = "17.0.0"
 }
 
 object Deps{
@@ -31,10 +37,16 @@ object Deps{
     const val coreKtx = "androidx.core:core-ktx:${Versions.androidCoreVersion}"
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinVersion}"
 
+    const val databindingCompiler = "com.android.databinding:compiler:${Versions.databindingCompilerVersion}"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayoutVersion}"
     const val materialDesign = "com.google.android.material:material:${Versions.materialVersion}"
     const val navigation = "androidx.navigation:navigation-ui-ktx:${Versions.navigationVersion}"
     const val legacySupport = "androidx.legacy:legacy-support-v4:${Versions.legacySupportVersion}"
+    const val imageSlider = "com.github.smarteist:autoimageslider:${Versions.imageSliderVersion}"
+    const val transformationLayout = "com.github.skydoves:transformationlayout:${Versions.transformationLayoutVersion}"
+    const val shimmer = "com.facebook.shimmer:shimmer:${Versions.shimmerVersion}"
+    const val maps = "com.google.android.gms:play-services-maps:${Versions.mapsVersion}"
+    const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerViewVersion}"
 
     const val fragmentNavigation = "androidx.navigation:navigation-fragment-ktx:${Versions.fragmentNavigationVersion}"
     const val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.liveDataVersion}"

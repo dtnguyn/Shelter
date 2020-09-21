@@ -30,8 +30,8 @@ class DialogAuthentication(private val viewModel: MainViewModel, private val act
     @ExperimentalPagingApi
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val builder = AlertDialog.Builder(it)
+        return activity.let { activity ->
+            val builder = AlertDialog.Builder(activity)
 
             val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_authentication, null)
@@ -43,7 +43,7 @@ class DialogAuthentication(private val viewModel: MainViewModel, private val act
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
-            val googleSignInClient = GoogleSignIn.getClient(activity, gso)
+            val googleSignInClient = GoogleSignIn.getClient(this.activity, gso)
 
             ggButton.setOnClickListener {
                 val signInIntent = googleSignInClient.signInIntent
@@ -60,7 +60,9 @@ class DialogAuthentication(private val viewModel: MainViewModel, private val act
                 object : FacebookCallback<LoginResult?> {
                     override fun onSuccess(loginResult: LoginResult?) {
                         loginResult?.accessToken?.let {
-                            viewModel.setStateEvent(MainStateEvent.FacebookAuthenticate(it, activity))
+                            viewModel.setStateEvent(MainStateEvent.FacebookAuthenticate(it,
+                                this@DialogAuthentication.activity
+                            ))
                             dismiss()
                         }
 
@@ -78,7 +80,7 @@ class DialogAuthentication(private val viewModel: MainViewModel, private val act
 
             builder.setView(view)
                 .create()
-        } ?: throw IllegalStateException("Activity cannot be null")
+        }
     }
 
 

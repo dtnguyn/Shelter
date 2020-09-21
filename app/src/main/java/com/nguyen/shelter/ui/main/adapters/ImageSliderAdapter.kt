@@ -2,13 +2,11 @@ package com.nguyen.shelter.ui.main.adapters
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.databinding.ItemImageSliderBinding
 import com.smarteist.autoimageslider.SliderViewAdapter
-import java.util.zip.Inflater
 
 class ImageSliderAdapter(private val images: ArrayList<Photo>, private val onClick: (Bundle) -> Unit): SliderViewAdapter<ImageSliderAdapter.ImageViewHolder>() {
 

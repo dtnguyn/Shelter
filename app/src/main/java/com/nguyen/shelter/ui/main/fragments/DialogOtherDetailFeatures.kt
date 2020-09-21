@@ -1,35 +1,19 @@
 package com.nguyen.shelter.ui.main.fragments
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.paging.ExperimentalPagingApi
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.nguyen.shelter.R
 import com.nguyen.shelter.api.response.CommunityFeature
 import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.ui.main.adapters.FeaturesExpandableListAdapter
-import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
-import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.detail_others.view.*
-import kotlinx.android.synthetic.main.dialog_authentication.view.*
 
-private const val RC_SIGN_IN = 1
 
 class DialogOtherDetailFeatures(private val propDetail: PropertyDetail): DialogFragment() {
-
-    private lateinit var callbackManager: CallbackManager
 
     @ExperimentalPagingApi
     @SuppressLint("InflateParams")

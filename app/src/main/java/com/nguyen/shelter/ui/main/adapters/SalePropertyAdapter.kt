@@ -26,7 +26,7 @@ constructor(
 
 
     override fun onBindViewHolder(holder: SalePropertyViewHolder, position: Int) {
-        holder.bind(getItem(position), position)
+        holder.bind(getItem(position))
     }
 
 
@@ -35,7 +35,7 @@ constructor(
     inner class SalePropertyViewHolder(private val binding: SalePropertyItemBinding): RecyclerView.ViewHolder(binding.root){
 
 
-        fun bind(property: PropertyCacheEntity?, position: Int) {
+        fun bind(property: PropertyCacheEntity?) {
             property?.let {
                 val props = cacheMapper.mapFromEntity(property)
                 val features = props.features

@@ -11,9 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nguyen.shelter.databinding.FragmentSaleBinding
-import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.repo.MainRepository
-import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.adapters.SalePropertyAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
@@ -55,7 +53,7 @@ class SaleFragment : Fragment() {
 
 
     private fun subscribeObservers(){
-        viewModel.salePropertyPageData.observe(viewLifecycleOwner, Observer { pagingData ->
+        viewModel.salePropertyPageData.observe(viewLifecycleOwner, { pagingData ->
             lifecycleScope.launch {
                 pagingAdapterSale.submitData(pagingData)
             }

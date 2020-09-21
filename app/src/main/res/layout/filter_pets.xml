@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -20,7 +21,7 @@
 
 
         <TextView
-            android:id="@+id/textview"
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_semi_bold"
@@ -39,7 +40,7 @@
             android:columnCount="2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textview">
+            app:layout_constraintTop_toBottomOf="@id/textView">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dog_card_view"
@@ -62,7 +63,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.44" />
+                        app:layout_constraintVertical_bias="0.44"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -100,7 +102,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.44" />
+                        app:layout_constraintVertical_bias="0.44"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:layout_width="wrap_content"
