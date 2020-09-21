@@ -88,7 +88,7 @@
 
 
         <ImageView
-            android:id="@+id/imageView8"
+            android:id="@+id/type_img"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:visibility="@{finishLoading ? View.VISIBLE : View.INVISIBLE}"
@@ -108,9 +108,9 @@
             android:text="@{type}"
             android:textColor="@color/textColorDark"
             android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="@+id/imageView8"
-            app:layout_constraintStart_toStartOf="@+id/imageView8"
-            app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+            app:layout_constraintEnd_toEndOf="@id/type_img"
+            app:layout_constraintStart_toStartOf="@id/type_img"
+            app:layout_constraintTop_toBottomOf="@id/type_img" />
 
         <ImageView
             android:id="@+id/imageView9"
@@ -121,7 +121,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imageView8" />
+            app:layout_constraintStart_toEndOf="@id/type_img" />
 
 
         <TextView

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ExpandableListView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -21,7 +20,6 @@ import com.nguyen.shelter.api.response.WorkingHour
 import com.nguyen.shelter.databinding.FragmentDetailBinding
 import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.ui.main.MainActivity
-import com.nguyen.shelter.ui.main.adapters.FeaturesExpandableListAdapter
 import com.nguyen.shelter.ui.main.adapters.FloorPlanAdapter
 import com.nguyen.shelter.ui.main.adapters.ImageSliderAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
@@ -159,6 +157,8 @@ class DetailFragment : Fragment() {
 
         }
 
+        choosePropTypeImg(propDetail.category)
+
         adapter.addImages(propDetail.photos)
         val features = propDetail.features
 
@@ -234,40 +234,45 @@ class DetailFragment : Fragment() {
     }
 
 
+    private fun choosePropTypeImg(type: String){
+        when(type){
+            "apartment" -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.apartment_selected)
+            }
 
-    private fun ExpandableListView.setUp(adapter: FeaturesExpandableListAdapter){
-        this.setAdapter(adapter)
+            "single_family" -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.single_family_selected)
+            }
 
-        var totalHeight: Int = 0
-        val desiredWidth = View.MeasureSpec.makeMeasureSpec(
-            this.width,
-            View.MeasureSpec.EXACTLY
-        )
+            "multi_familty" -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.multi_family_selected)
+            }
 
-        for(i in 0 until (adapter.groupCount)){
-            val group = adapter.getGroupView(i, false, null, this)
-            group.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
+            "condo" -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.condo_selected)
+            }
 
-            totalHeight += group.measuredHeight
-        }
+            "mobile" -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.mobile_selected)
+            }
 
-        val finalHeight = totalHeight + this.dividerHeight * (adapter.groupCount - 1)
-        val params = this.layoutParams
+            "land" -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.land_selected)
+            }
 
-        println("debug: finalHeigh $finalHeight")
-        params.height = finalHeight
+            "farm" -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.farm_selected)
+            }
 
-        this.layoutParams = params
-        this.requestLayout()
-
-        this.setOnGroupExpandListener {
-
-        }
-
-        this.setOnGroupCollapseListener {
-
+            else -> {
+                binding.typeInclude.typeImg.setImageResource(R.drawable.apartment_selected)
+            }
         }
     }
+
+
+
+
 
 
 
