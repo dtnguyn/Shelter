@@ -17,7 +17,7 @@ class RentPropertyAdapter
 @Inject
 constructor(
     private val cacheMapper: PropertyCacheMapper,
-    private val detailOnClick: (Bundle, TransformationLayout) -> Unit,
+    private val detailOnClick: (Bundle, TransformationLayout) -> Unit
 ): PagingDataAdapter<PropertyCacheEntity, RentPropertyAdapter.RentPropertyViewHolder>(
     PROPERTY_COMPARATOR
 ) {
@@ -39,46 +39,46 @@ constructor(
 
         fun bind(property: PropertyCacheEntity?) {
             property?.let {
-                val props = cacheMapper.mapFromEntity(property)
-                val features = props.features
+                val prop = cacheMapper.mapFromEntity(property)
+                val features = prop.features
 
-                binding.property = props
+                binding.property = prop
 
                 features.apply {
                     if(bedsMax != null && bedsMin != null){
-                        val beds: String? = if(props.features.bedsMax!! > props.features.bedsMin!!) "" + props.features.bedsMin!!.toInt() + "-" + props.features.bedsMax!!.toInt()
-                        else props.features.bedsMin!!.toInt().toString()
+                        val beds: String? = if(prop.features.bedsMax!! > prop.features.bedsMin!!) "" + prop.features.bedsMin!!.toInt() + "-" + prop.features.bedsMax!!.toInt()
+                        else prop.features.bedsMin!!.toInt().toString()
                         binding.beds = beds
-                    } else binding.beds = "N/A"
+                    } else binding.beds = prop.beds.toString()
 
                     if(bathsMax != null && bathsMin != null){
-                        val baths: String? = if(props.features.bathsMax!! > props.features.bathsMin!!) "" + props.features.bathsMin!!.toInt() + "-" + props.features.bathsMax!!.toInt()
-                        else props.features.bathsMin!!.toInt().toString()
+                        val baths: String? = if(prop.features.bathsMax!! > prop.features.bathsMin!!) "" + prop.features.bathsMin!!.toInt() + "-" + prop.features.bathsMax!!.toInt()
+                        else prop.features.bathsMin!!.toInt().toString()
                         binding.baths = baths
-                    } else binding.baths = "N/A"
+                    } else binding.baths = prop.baths.toString()
 
                     if(areaMax != null && areaMin != null){
-                        val area: String? =  if(props.features.areaMax!! > props.features.areaMin!!) "" + props.features.areaMin!!.toInt() + "-" + props.features.areaMax!!.toInt()
-                        else props.features.areaMin!!.toInt().toString()
+                        val area: String? =  if(prop.features.areaMax!! > prop.features.areaMin!!) "" + prop.features.areaMin!!.toInt() + "-" + prop.features.areaMax!!.toInt()
+                        else prop.features.areaMin!!.toInt().toString()
                         binding.area = area
-                    } else binding.area = "N/A"
+                    } else binding.area = prop.buildingSize
 
                     if(priceMax != null && priceMin != null){
-                        val price: String? =  if(props.features.priceMax!! > props.features.priceMin!!) "$" + props.features.priceMin!!.toInt() + "-$" + props.features.priceMax!!.toInt()
-                        else props.features.priceMin!!.toInt().toString()
+                        val price: String? =  if(prop.features.priceMax!! > prop.features.priceMin!!) "$" + prop.features.priceMin!!.toInt() + "-$" + prop.features.priceMax!!.toInt()
+                        else prop.features.priceMin!!.toInt().toString()
                         binding.price = price
-                    } else binding.price = "N/A"
+                    } else binding.price = "$${prop.price}"
                 }
 
                 val transformationLayout = binding.transformationLayout
-                transformationLayout.transitionName = props.id
+                transformationLayout.transitionName = prop.id
 
                 binding.container.setOnClickListener {
                     println("debug: ${transformationLayout.transitionName}")
-
+                    val photo = if(prop.photos.isNotEmpty()) prop.photos[0].url else ""
                     val bundle = transformationLayout.getBundle("TransformationParams")
-                    bundle.putString("id", props.id)
-                    bundle.putString("photo", props.photos[0].url)
+                    bundle.putString("id", prop.id)
+                    bundle.putString("photo", prop.photos[0].url)
                     detailOnClick.invoke(bundle, binding.transformationLayout)
                 }
             }

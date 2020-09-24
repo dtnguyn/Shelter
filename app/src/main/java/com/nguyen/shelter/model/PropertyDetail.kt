@@ -15,6 +15,8 @@ data class PropertyDetail(
     var lotSize: Int,
     var url: String,
     var community: List<CommunityFeature>,
+    var size: String,
+    var price: String,
     var floorPlans: List<FloorPlan>,
     var leaseTerm: String,
     var photoCount: Int,

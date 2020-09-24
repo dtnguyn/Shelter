@@ -1,9 +1,9 @@
 package com.nguyen.shelter.model
 
-import retrofit2.http.Query
+
 
 data class PropertyFilter(
-    var city: String = "New York City",
+    var city: String = "New York city",
     var stateCode: String = "NY",
     var postalCode: String? = null,
     var ageMin: Int? = 0,

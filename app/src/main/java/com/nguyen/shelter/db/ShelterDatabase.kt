@@ -6,7 +6,7 @@ import com.nguyen.shelter.db.entity.*
 
 @Database(
     entities = [PropertyCacheEntity::class, RemoteKeysEntity::class, PropertyFilterCacheEntity::class, PropertyDetailCacheEntity::class],
-    version = 6,
+    version = 8,
     exportSchema = false
 )
 abstract class ShelterDatabase: RoomDatabase() {

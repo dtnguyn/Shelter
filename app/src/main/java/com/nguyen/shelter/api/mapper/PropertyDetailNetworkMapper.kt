@@ -30,7 +30,9 @@ constructor() : EntityMapper<PropertyDetailNetworkEntity, PropertyDetail>{
             floorPlans = if(checkNullFromApi(entity.floorPlans)) entity.floorPlans!! else listOf(),
             leaseTerm = if(checkNullFromApi(entity.leaseTerm)) entity.leaseTerm!! else "Lease term not available",
             office = if(checkNullFromApi(entity.office)) entity.office!! else Office(),
-            schools = if(checkNullFromApi(entity.schools)) entity.schools!! else listOf()
+            schools = if(checkNullFromApi(entity.schools)) entity.schools!! else listOf(),
+            size = if(checkNullFromApi(entity.buildingSize?.size)) entity.buildingSize?.size!! else "N/A",
+            price = entity.price ?: "N/A"
         )
     }
 
@@ -54,7 +56,9 @@ constructor() : EntityMapper<PropertyDetailNetworkEntity, PropertyDetail>{
             floorPlans = domainModel.floorPlans,
             leaseTerm = domainModel.leaseTerm,
             office = domainModel.office,
-            schools = domainModel.schools
+            schools = domainModel.schools,
+            buildingSize = BuildingSize(domainModel.size),
+            price = domainModel.price
         )
     }
 

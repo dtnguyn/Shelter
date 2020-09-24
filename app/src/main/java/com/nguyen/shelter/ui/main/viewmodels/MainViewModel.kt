@@ -167,7 +167,7 @@ constructor(
                         println("debug: get filter ${mainStateEvent.type}$filter")
                         withContext(Main){
                             if(mainStateEvent.type == RENT) _rentPropertyFilter.value = filter
-                            else _rentPropertyFilter.value = filter
+                            else _salePropertyFilter.value = filter
                         }
                     }
 

@@ -152,10 +152,15 @@ class DetailFragment : Fragment() {
         val recyclerView = binding.floorPlanInclude.floorPlanRecyclerview
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         val filteredList = propDetail.floorPlans.filter { floorPlan -> floorPlan.name != null }
-        recyclerView.adapter = FloorPlanAdapter(filteredList){bundle ->
-            println("debug: photo before ${bundle.getParcelableArrayList<Photo>("photos")}")
-            findNavController().navigate(R.id.photo_detail_fragment, bundle)
+        if(filteredList.isEmpty()){
+            binding.floorPlanInclude.floorPlanContainer.visibility = View.GONE
+        } else {
+            recyclerView.adapter = FloorPlanAdapter(filteredList){bundle ->
+                println("debug: photo before ${bundle.getParcelableArrayList<Photo>("photos")}")
+                findNavController().navigate(R.id.photo_detail_fragment, bundle)
+            }
         }
+
 
         features.apply {
             if (bedsMax != null && bedsMin != null) {
@@ -163,28 +168,28 @@ class DetailFragment : Fragment() {
                     if (bedsMax!! > bedsMin!!) "" + bedsMin!!.toInt() + "-" + bedsMax!!.toInt()
                     else bedsMin!!.toInt().toString()
                 binding.beds = beds
-            } else binding.beds = "N/A"
+            }  else binding.beds = propDetail.beds.toString()
 
             if (bathsMax != null && bathsMin != null) {
                 val baths: String? =
                     if (bathsMax!! > bathsMin!!) "" + bathsMin!!.toInt() + "-" + bathsMax!!.toInt()
                     else bathsMin!!.toInt().toString()
                 binding.baths = baths
-            } else binding.baths = "N/A"
+            } else binding.baths = propDetail.baths.toString()
 
             if (areaMax != null && areaMin != null) {
                 val area: String? =
                     if (areaMax!! > areaMin!!) "" + areaMin!!.toInt() + "-" + areaMax!!.toInt()
                     else areaMin!!.toInt().toString()
                 binding.sqft = area
-            } else binding.sqft = "N/A"
+            } else binding.sqft = propDetail.size
 
             if (priceMax != null && priceMin != null) {
                 val price: String? =
                     if (priceMax!! > priceMin!!) "$" + priceMin!!.toInt() + "-$" + priceMax!!.toInt()
                     else priceMin!!.toInt().toString()
                 binding.price = price
-            } else binding.price = "N/A"
+            } else binding.price = "$${propDetail.price}"
         }
     }
 

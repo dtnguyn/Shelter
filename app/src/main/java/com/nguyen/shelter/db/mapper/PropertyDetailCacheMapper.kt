@@ -36,6 +36,8 @@ constructor(
             beds = if(checkNull(entity.beds)) entity.beds!! else 0,
             baths = if(checkNull(entity.baths)) entity.baths!! else 0,
             schools = gson.fromJson(entity.schools, object : TypeToken<List<School>>() {}.type),
+            size = entity.size ?: "N/A",
+            price = entity.price ?: "N/A"
         )
     }
 
@@ -59,7 +61,9 @@ constructor(
             office = gson.toJson(domainModel.office),
             beds = domainModel.beds,
             baths = domainModel.baths,
-            schools = gson.toJson(domainModel.schools)
+            schools = gson.toJson(domainModel.schools),
+            size = domainModel.size,
+            price = domainModel.price
         )
     }
 

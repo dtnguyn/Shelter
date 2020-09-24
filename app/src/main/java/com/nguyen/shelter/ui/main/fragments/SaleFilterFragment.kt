@@ -10,6 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import com.nguyen.shelter.databinding.FragmentFilterSaleBinding
 import com.nguyen.shelter.model.PropertyFilter
+import com.nguyen.shelter.repo.MainRepository
+import com.nguyen.shelter.repo.MainRepository.Companion.SALE
 import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
@@ -49,32 +51,7 @@ class SaleFilterFragment : Fragment() {
 
         subscribeObservers()
 
-//        propTypes = hashMapOf(
-//            "any" to true,
-//            "apartment" to false,
-//            "single_family" to false,
-//            "multi_family" to false,
-//            "condo" to false,
-//            "mobile" to false,
-//            "land" to false,
-//            "farm" to false,
-//        )
-//
-//         others = hashMapOf(
-//            "recreation" to false,
-//            "pool" to false,
-//            "outdoor_space" to false,
-//            "garage" to false,
-//            "central_air" to false,
-//            "fireplace" to false,
-//            "spa" to false,
-//            "dishwasher" to false,
-//            "doorman" to false,
-//            "elevator" to false,
-//            "laundry_room" to false,
-//            "no_fee" to false,
-//        )
-
+        viewModel.setStateEvent(MainStateEvent.GetPropertyFilter(SALE))
 
         binding.cancelButton.setOnClickListener {
             findNavController().popBackStack()
@@ -128,7 +105,7 @@ class SaleFilterFragment : Fragment() {
     }
 
     private fun subscribeObservers(){
-        viewModel.rentPropertyFilter.observe(viewLifecycleOwner, {filter ->
+        viewModel.salePropertyFilter.observe(viewLifecycleOwner, {filter ->
             propertyFilter = filter
             propertyFilter.apply {
                 if(priceMin == null) priceMin = 100000

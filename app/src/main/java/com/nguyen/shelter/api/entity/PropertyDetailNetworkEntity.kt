@@ -60,8 +60,13 @@ data class PropertyDetailNetworkEntity(
     var office: Office?,
 
     @SerializedName("schools")
-    var schools: List<School>?
+    var schools: List<School>?,
 
+    @SerializedName("building_size")
+    var buildingSize: BuildingSize?,
+
+    @SerializedName("price")
+    var price: String?
 
 
 )

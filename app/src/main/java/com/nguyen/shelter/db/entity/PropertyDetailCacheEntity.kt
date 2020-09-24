@@ -64,5 +64,11 @@ class PropertyDetailCacheEntity (
     var baths: Int?,
 
     @ColumnInfo(name= "schools")
-    var schools: String?
+    var schools: String?,
+
+    @ColumnInfo(name= "building_size")
+    var size: String?,
+
+    @ColumnInfo(name= "price")
+    var price: String?
 )
