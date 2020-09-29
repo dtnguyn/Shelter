@@ -121,4 +121,9 @@ class MainFragment : Fragment() {
         (activity as MainActivity?)?.showActionBar()
         super.onResume()
     }
+
+    override fun onStop() {
+        (activity as MainActivity?)?.hideActionBar()
+        super.onStop()
+    }
 }

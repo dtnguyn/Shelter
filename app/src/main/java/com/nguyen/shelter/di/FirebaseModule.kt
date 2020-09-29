@@ -2,6 +2,9 @@ package com.nguyen.shelter.di
 
 import androidx.paging.ExperimentalPagingApi
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
 import com.nguyen.shelter.api.service.RealtorApiService
@@ -23,5 +26,11 @@ object FirebaseModule {
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth{
         return FirebaseAuth.getInstance()
+    }
+
+    @Singleton
+    @Provides
+    fun provideFireStore(): FirebaseFirestore{
+        return Firebase.firestore
     }
 }

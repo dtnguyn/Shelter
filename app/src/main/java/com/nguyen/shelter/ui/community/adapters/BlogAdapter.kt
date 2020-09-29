@@ -8,7 +8,7 @@ import com.nguyen.shelter.R
 import com.nguyen.shelter.databinding.ItemBlogBinding
 import com.nguyen.shelter.model.Blog
 
-class BlogAdapter(private val blogs: List<Blog>): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
+class BlogAdapter(private val blogs: ArrayList<Blog>): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
 
 
     abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -22,9 +22,9 @@ class BlogAdapter(private val blogs: List<Blog>): RecyclerView.Adapter<BlogAdapt
 
     }
 
-    class BlogViewHolder(binding: ItemBlogBinding) : BaseViewHolder(binding.root){
+    class BlogViewHolder(private val binding: ItemBlogBinding) : BaseViewHolder(binding.root){
         override fun bind(item: Any?) {
-
+            binding.blog = item as Blog
         }
 
     }
@@ -54,9 +54,20 @@ class BlogAdapter(private val blogs: List<Blog>): RecyclerView.Adapter<BlogAdapt
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        holder.bind(blogs[position])
+        if(position != 0){
+            holder.bind(blogs[position - 1])
+        }
+
     }
 
     override fun getItemCount(): Int = blogs.size + 1
+
+    fun addItems(list: List<Blog>){
+        for(blog in list){
+            blogs.add(blog)
+            notifyItemInserted(blogs.size - 1)
+        }
+
+    }
 
 }

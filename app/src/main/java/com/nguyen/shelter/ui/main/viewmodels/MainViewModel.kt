@@ -208,8 +208,4 @@ sealed class MainStateEvent{
     class SaveSalePropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
     class GetPropertyFilter(val type: String): MainStateEvent()
 
-
-
-
-
 }

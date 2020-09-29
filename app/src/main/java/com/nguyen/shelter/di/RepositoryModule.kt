@@ -2,6 +2,8 @@ package com.nguyen.shelter.di
 
 import androidx.paging.ExperimentalPagingApi
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
 import com.nguyen.shelter.api.service.RealtorApiService
@@ -9,6 +11,8 @@ import com.nguyen.shelter.db.ShelterDatabase
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
 import com.nguyen.shelter.db.mapper.PropertyDetailCacheMapper
 import com.nguyen.shelter.db.mapper.PropertyFilterCacheMapper
+import com.nguyen.shelter.model.Blog
+import com.nguyen.shelter.repo.BlogRepository
 import com.nguyen.shelter.repo.MainRepository
 import dagger.Module
 import dagger.Provides
@@ -44,4 +48,14 @@ object RepositoryModule {
             auth
         )
     }
+
+    @Singleton
+    @Provides
+    fun provideBlogRepository(
+        blogFirebaseMapper: BlogFirebaseMapper,
+        fireStore: FirebaseFirestore
+    ): BlogRepository{
+        return BlogRepository(blogFirebaseMapper, fireStore)
+    }
+
 }

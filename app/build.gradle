@@ -117,6 +117,8 @@ dependencies {
 
     implementation Deps.shimmer
 
+
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.6.0'
 }
 
 kapt {

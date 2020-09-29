@@ -13,6 +13,7 @@
     <color name="textColorLight">#fafafa</color>
     <color name="textColorDark">#454545</color>
     <color name="lightGrey">#d9d9d9</color>
+    <color name="lightLightGrey">#EDECEC</color>
     <color name="fbColor">#4285f8</color>
     <color name="red">#AA1818</color>
     <color name="shimmer">#dddddd</color>
