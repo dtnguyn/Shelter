@@ -58,7 +58,6 @@ class RentFilterFragment : Fragment() {
         }
 
         binding.saveButton.setOnClickListener {
-
             propertyFilter.city = city_edit_text.text.toString()
             propertyFilter.postalCode = zip_code_edit_text.text.toString()
 

@@ -152,13 +152,12 @@ class DetailFragment : Fragment() {
         val recyclerView = binding.floorPlanInclude.floorPlanRecyclerview
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         val filteredList = propDetail.floorPlans.filter { floorPlan -> floorPlan.name != null }
-        if(filteredList.isEmpty()){
-            binding.floorPlanInclude.floorPlanContainer.visibility = View.GONE
-        } else {
-            recyclerView.adapter = FloorPlanAdapter(filteredList){bundle ->
-                println("debug: photo before ${bundle.getParcelableArrayList<Photo>("photos")}")
-                findNavController().navigate(R.id.photo_detail_fragment, bundle)
-            }
+        println("debug: filtered ${filteredList.size}")
+        binding.floorPlanInclude.empty = filteredList.isEmpty()
+
+        recyclerView.adapter = FloorPlanAdapter(filteredList){bundle ->
+            println("debug: photo before ${bundle.getParcelableArrayList<Photo>("photos")}")
+            findNavController().navigate(R.id.photo_detail_fragment, bundle)
         }
 
 

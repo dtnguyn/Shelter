@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <group android:checkableBehavior="single"
+        android:id="@+id/main_screens">
+
+        <item
+            android:id="@id/blog_fragment"
+            android:title="@string/explore"
+            android:icon="@drawable/ic_explore_32dp" />
+
+        <item
+            android:title="@string/community"
+            android:icon="@drawable/ic_community_32"/>
+
+        <item
+            android:title="@string/donation"
+            android:icon="@drawable/ic_donation_32"/>
+
+    </group>
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/other_screens">
+
+        <item
+            android:title="@string/settings"
+            android:icon="@drawable/ic_settings_32"/>
+
+    </group>
 
 </menu>

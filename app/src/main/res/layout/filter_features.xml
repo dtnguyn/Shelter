@@ -80,9 +80,6 @@
             android:theme="@style/MyMaterialTheme"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="30dp"
-            app:thumbColor="@color/saleColor"
-            app:trackColorActive="@color/saleColor"
-            app:trackColorInactive="@color/lightSaleColor"
             app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
 

@@ -39,19 +39,24 @@ constructor
         loadType: LoadType,
         state: PagingState<Int, PropertyCacheEntity>
     ): MediatorResult {
-        println("debug: Loading...")
+        println("debug: Loading Rent...")
         val page = when(loadType){
             LoadType.REFRESH -> {
                 if(isLoaded) return MediatorResult.Success(endOfPaginationReached = true)
+//                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+//                remoteKeys?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
+
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                 remoteKeys?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
             }
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
 //            {
 //
-//                state
 //                val remoteKeys = getRemoteKeyForFirstItem(state)
 //                if (remoteKeys == null) {
+//                    // The LoadType is PREPEND so some data was loaded before,
+//                    // so we should have been able to get remote keys
+//                    // If the remoteKeys are null, then we're an invalid state and we have a bug
 //                    throw InvalidObjectException("Remote key and the prevKey should not be null")
 //                }
 //                // If the previous key is null, then we can't request more data
@@ -63,9 +68,10 @@ constructor
 //            }
             LoadType.APPEND -> return MediatorResult.Success(endOfPaginationReached = true)
 //            {
+//
 //                val remoteKeys = getRemoteKeyForLastItem(state)
-//                if (remoteKeys?.nextKey == null) {
-//                    throw InvalidObjectException("Remote key should not be null for $this")
+//                if (remoteKeys == null || remoteKeys.nextKey == null) {
+//                    throw InvalidObjectException("Remote key should not be null for $loadType")
 //                }
 //                remoteKeys.nextKey
 //            }
@@ -95,7 +101,7 @@ constructor
                 features = filter.features
             )
 
-            isLoaded = true
+            //isLoaded = true
             var properties = apiResponse.data
             if(properties == null) properties = listOf()
             val endOfPaginationReached = properties.isEmpty()
@@ -115,9 +121,9 @@ constructor
                     )
                 }
                 println("debug: keys: $keys")
-                database.remoteKeysDao().insertAll(keys)
-                val test = cacheMapper.mapToEntityList(networkMapper.mapFromEntityList(properties))
 
+                val test = cacheMapper.mapToEntityList(networkMapper.mapFromEntityList(properties))
+                database.remoteKeysDao().insertAll(keys)
                 database.propertyDao().insertAll(test)
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
@@ -166,7 +172,7 @@ constructor
         return state.pages.lastOrNull() { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let {
                 // Get the remote keys of the last item retrieved
-                database.remoteKeysDao().getRemoteKeysId(it.id )
+                database.remoteKeysDao().getRemoteKeysId(it.id)
             }
     }
 

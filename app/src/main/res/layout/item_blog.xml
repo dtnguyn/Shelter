@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="blog"
+            type="com.nguyen.shelter.model.Blog" />
+
+        <variable
+            name="dateString"
+            type="String" />
+
+        <variable
+            name="timeString"
+            type="String" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/lightGrey"
+        app:cardCornerRadius="10dp"
+        android:layout_marginVertical="15dp"
+        android:layout_marginHorizontal="30dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/user_avatar_cardView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardElevation="0dp"
+                android:transitionName="avatar_main"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="40dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/textView48"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="@{dateString}"
+                android:textColor="@color/textColorDark"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/user_avatar_cardView" />
+
+            <TextView
+                android:id="@+id/textView49"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:text="@{blog.user.name}"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/textColorDark"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/textView48"
+                app:layout_constraintStart_toEndOf="@+id/user_avatar_cardView"
+                app:layout_constraintTop_toTopOf="@+id/user_avatar_cardView" />
+
+            <TextView
+                android:id="@+id/textView50"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="@{`posted ` + timeString}"
+                android:textColor="@color/textColorDark"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/textView48"
+                app:layout_constraintStart_toEndOf="@+id/user_avatar_cardView"
+                app:layout_constraintTop_toBottomOf="@+id/textView49" />
+
+
+            <TextView
+                android:id="@+id/textView51"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:lineSpacingExtra="4dp"
+                android:text="@{blog.content}"
+                android:textColor="@color/textColorDark"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/textView50"
+                tools:layout_editor_absoluteX="10dp" />
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/heart_ic_32"
+                app:layout_constraintStart_toStartOf="@+id/textView51"
+                app:layout_constraintTop_toBottomOf="@+id/textView51" />
+
+            <TextView
+                android:id="@+id/textView52"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="@{blog.likeCounter + ``}"
+                android:textColor="@color/textColorDark"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintStart_toEndOf="@+id/imageView6"
+                app:layout_constraintTop_toTopOf="@+id/imageView6" />
+
+            <ImageView
+                android:id="@+id/comment_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_comment_32"
+                android:layout_marginStart="15dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintStart_toEndOf="@+id/textView52"
+                app:layout_constraintTop_toTopOf="@+id/imageView6" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{blog.commentCounter + ``}"
+                android:textColor="@color/textColorDark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="14sp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/comment_button"
+                app:layout_constraintStart_toEndOf="@+id/comment_button"
+                app:layout_constraintTop_toTopOf="@+id/comment_button" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</layout>

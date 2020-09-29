@@ -62,7 +62,10 @@
         tools:layout="@layout/fragment_photo_view_pager"
         android:id="@+id/photo_detail_fragment" />
 
-
+    <fragment
+        android:name="com.nguyen.shelter.ui.community.BlogFragment"
+        tools:layout="@layout/blog_collapse_area"
+        android:id="@+id/blog_fragment" />
 
 
 

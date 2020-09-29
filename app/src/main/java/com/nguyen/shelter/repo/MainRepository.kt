@@ -40,7 +40,7 @@ constructor(
     private var saleFilter = PropertyFilter()
 
     companion object {
-        private const val NETWORK_PAGE_SIZE = 200
+        private const val NETWORK_PAGE_SIZE = 30
         const val RENT = "rent_filter"
         const val SALE = "sale_filter"
     }

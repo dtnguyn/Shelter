@@ -7,6 +7,7 @@
         <variable
             name="filter"
             type="com.nguyen.shelter.model.PropertyFilter" />
+
     </data>
 
     <ScrollView
@@ -54,6 +55,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView11"
                 tools:ignore="ContentDescription" />
+
 
             <include
                 android:id="@+id/sort_include"

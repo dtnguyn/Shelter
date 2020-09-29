@@ -4,7 +4,11 @@
 
     <data>
 
+        <import type="android.view.View"/>
 
+        <variable
+            name="empty"
+            type="Boolean" />
 
     </data>
 
@@ -12,7 +16,8 @@
         android:id="@+id/floor_plan_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="@{empty ? View.GONE : View.VISIBLE}">
 
 
         <TextView
