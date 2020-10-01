@@ -3,6 +3,7 @@ package com.nguyen.shelter.di
 import androidx.paging.ExperimentalPagingApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.StorageReference
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
@@ -53,9 +54,11 @@ object RepositoryModule {
     @Provides
     fun provideBlogRepository(
         blogFirebaseMapper: BlogFirebaseMapper,
-        fireStore: FirebaseFirestore
+        fireStore: FirebaseFirestore,
+        storageReference: StorageReference,
+        auth: FirebaseAuth
     ): BlogRepository{
-        return BlogRepository(blogFirebaseMapper, fireStore)
+        return BlogRepository(blogFirebaseMapper, fireStore, storageReference, auth)
     }
 
 }

@@ -76,5 +76,8 @@
     <string name="donation">Donation</string>
     <string name="settings">Settings</string>
     <string name="see_what_people_around_your_area_posting">See what people around your area posting!</string>
+    <string name="add_post">Add post</string>
+    <string name="post">Post</string>
+    <string name="write_something_here">Write something here . . .</string>
 
 </resources>

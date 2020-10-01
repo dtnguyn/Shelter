@@ -5,14 +5,14 @@ import java.util.*
 
 data class Blog (
     var id: String,
-    var userId: String,
-    var user: User,
+    var userId: String = "",
+    var user: User = User(),
     var date: Date,
     var content: String,
-    var likeCounter: Int,
-    var commentCounter: Int,
-    var photos: List<Photo>,
-    var comments: List<Comment>,
-    var likeUsers: HashMap<String, Boolean>,
-    var postalCode: String
+    var likeCounter: Int = 0,
+    var commentCounter: Int = 0,
+    var photos: List<Photo> = listOf(),
+    var comments: List<Comment> = listOf(),
+    var likeUsers: HashMap<String, Boolean> = hashMapOf(),
+    var postalCode: String = ""
 )
