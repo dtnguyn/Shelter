@@ -2,12 +2,14 @@ package com.nguyen.shelter.repo
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.model.Blog
 import com.nguyen.shelter.model.CallbackResponse
+import com.nguyen.shelter.model.PhotoUri
 import com.nguyen.shelter.model.User
 import java.util.*
 import kotlin.collections.ArrayList
@@ -21,7 +23,7 @@ class BlogRepository(
 ) {
 
 
-    fun addBlog(blogContent: String, postalCode: String, images: List<Uri>, callback: (CallbackResponse<Unit>) -> Unit){
+    fun addBlog(blogContent: String, postalCode: String, images: List<PhotoUri>, callback: (CallbackResponse<Unit>) -> Unit){
         if(auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
@@ -58,7 +60,6 @@ class BlogRepository(
                 callback.invoke(CallbackResponse(it.status, it.message, null))
             }
         }
-
     }
 
 
@@ -82,17 +83,43 @@ class BlogRepository(
 
     }
 
-    fun editBlog(blog: Blog, callback: (CallbackResponse<Unit>) -> Unit){
-        val blogMap = blogMapper.mapToEntity(blog)
+    fun editBlog(oldBlog: Blog, newContent: String, newImages: List<PhotoUri>, callback: (CallbackResponse<Unit>) -> Unit){
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
 
-        db.collection("blogs").document(blog.id)
-            .set(blogMap)
-            .addOnSuccessListener {
-                callback.invoke(CallbackResponse(true, "Edit post successfully.", null))
+        println("debug: prepare adding images: ${newImages.size}")
+        addImagesToStorage(newImages){
+            println("debug: added images: ${it.data?.size}")
+            if(it.status){
+                val editedBlog = Blog(
+                    id = oldBlog.id,
+                    userId = auth.currentUser!!.uid,
+                    user = User(
+                        id = auth.currentUser!!.uid,
+                        avatar = auth.currentUser!!.photoUrl.toString(),
+                        name = auth.currentUser!!.displayName ?: "Unknown",
+                        email = auth.currentUser!!.email ?: "Unknown"
+                    ),
+                    date = oldBlog.date,
+                    content = newContent,
+                    photos = it.data!!,
+                    postalCode = oldBlog.postalCode
+                )
+                val blogMap = blogMapper.mapToEntity(editedBlog)
+                db.collection("blogs").document(editedBlog.id)
+                    .set(blogMap)
+                    .addOnSuccessListener {
+                        callback.invoke(CallbackResponse(true, "Edit post successfully.", null))
+                    }
+                    .addOnFailureListener {e ->
+                        callback.invoke(CallbackResponse(false, "Error when editing post: ${e.message}", null))
+                    }
+            } else {
+                callback.invoke(CallbackResponse(it.status, it.message, null))
             }
-            .addOnFailureListener {
-                callback.invoke(CallbackResponse(false, "Error when editing post: ${it.message}", null))
-            }
+        }
     }
 
 
@@ -107,13 +134,18 @@ class BlogRepository(
             }
     }
 
-    private fun addImagesToStorage(images: List<Uri>, callback: (CallbackResponse<List<Photo>>) -> Unit){
+    private fun addImagesToStorage(images: List<PhotoUri>, callback: (CallbackResponse<List<Photo>>) -> Unit){
 
         val photos = ArrayList<Photo>()
-
-        images.map{image ->
+        if(images.isEmpty()) callback.invoke(CallbackResponse(true, "", photos))
+        for(image in images){
+            if(image.isUploaded) {
+                photos.add(Photo(image.url!!))
+                if(photos.size == images.size) callback.invoke(CallbackResponse(true, "", photos))
+                continue
+            }
             val postImagesRef = storageRef.child("images/postImages/${UUID.randomUUID()}")
-            val uploadTask = postImagesRef.putFile(image)
+            val uploadTask = postImagesRef.putFile(image.uri)
 
             uploadTask
                 .addOnSuccessListener {
@@ -136,10 +168,18 @@ class BlogRepository(
                         println("download url $downloadUrl")
                         photos.add(Photo(downloadUrl))
                         if(photos.size == images.size) callback.invoke(CallbackResponse(true, "", photos))
-                    } else {
+                    } else {println("debug: Can't add images.")
                         callback.invoke(CallbackResponse(false, "Can't add images.", null))
                     }
                 }
+        }
+    }
+
+    fun checkAuthentication(callback: (CallbackResponse<FirebaseUser?>) -> Unit) {
+        if(auth.currentUser != null){
+            callback.invoke(CallbackResponse(true, "User has logged in.", auth.currentUser!!))
+        } else {
+            callback.invoke(CallbackResponse(false, "User has logged in.", null))
         }
     }
 

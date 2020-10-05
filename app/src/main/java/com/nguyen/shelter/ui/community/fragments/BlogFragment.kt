@@ -15,14 +15,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.databinding.FragmentBlogBinding
 import com.nguyen.shelter.model.Blog
+import com.nguyen.shelter.model.PhotoUri
 import com.nguyen.shelter.model.User
 import com.nguyen.shelter.ui.community.adapters.AddImageAdapter
 import com.nguyen.shelter.ui.community.adapters.BlogAdapter
@@ -49,6 +52,7 @@ class BlogFragment : Fragment() {
     private lateinit var addImageAdapter: AddImageAdapter
 
     private lateinit var binding: FragmentBlogBinding
+    private lateinit var addBottomSheet: BottomSheetBehavior<ConstraintLayout>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,9 +68,17 @@ class BlogFragment : Fragment() {
             if(result) getCurrentLocation()
         })
 
+        viewModel.setStateEvent(MainStateEvent.CheckAuthentication)
 
 
-        blogAdapter = BlogAdapter(arrayListOf(), requireContext())
+        blogAdapter = BlogAdapter(arrayListOf()){blog ->
+            println("debug: long pressed")
+
+            viewModel.setStateEvent(MainStateEvent.IsBlogOwner(blog.userId))
+            viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
+        }
+
+
 
 //        viewModel.setStateEvent(MainStateEvent.EditBlog(Blog(
 //            id = UUID.randomUUID().toString(),
@@ -83,13 +95,13 @@ class BlogFragment : Fragment() {
 //            likeUsers = hashMapOf("123" to true, "321" to true),
 //            postalCode = "44504"
 //        )))
-        viewModel.setStateEvent(MainStateEvent.GetBlogs("44504"))
+        viewModel.setStateEvent(MainStateEvent.GetBlogs)
         //viewModel.setStateEvent(MainStateEvent.DeleteBlog("0377d1de-e102-45f1-974a-9de9ab643809"))
 
 
-        val bottomSheet = BottomSheetBehavior.from(binding.addPostBottomSheet)
+        addBottomSheet = BottomSheetBehavior.from(binding.addPostBottomSheet)
         binding.addPostButton.setOnClickListener {
-            bottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
+            addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
         }
 
         binding.addImageButton.setOnClickListener {
@@ -101,8 +113,15 @@ class BlogFragment : Fragment() {
         }
 
         binding.postButton.setOnClickListener {
-            viewModel.setStateEvent(MainStateEvent.AddBlog(binding.contentEditText.text.toString()))
-            bottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED)
+            if(binding.postButton.text == "Post"){
+                viewModel.setStateEvent(MainStateEvent.AddBlog(binding.contentEditText.text.toString()))
+            } else {
+                viewModel.setStateEvent(MainStateEvent.EditBlog(binding.contentEditText.text.toString()))
+            }
+
+            addBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            binding.contentEditText.setText("")
         }
 
 
@@ -160,6 +179,7 @@ class BlogFragment : Fragment() {
                         val lat = locationResult.locations[latestIndex].latitude
                         val lng = locationResult.locations[latestIndex].longitude
                         val postalCode = getPostalCode(lat, lng)
+                        println("debug: postal code: $postalCode")
                         viewModel.setStateEvent(MainStateEvent.SetPostalCode(postalCode))
                     }
                     super.onLocationResult(locationResult)
@@ -192,8 +212,13 @@ class BlogFragment : Fragment() {
 
 
     private fun subscribeObservers(){
+
+        viewModel.isLoading.observe(viewLifecycleOwner, {
+            binding.isLoading = it
+        })
+
         viewModel.blogs.observe(viewLifecycleOwner, {
-            blogAdapter.addItems(it)
+            blogAdapter.refresh(it)
             val recyclerView = binding.blogRecyclerview
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             recyclerView.adapter = blogAdapter
@@ -205,7 +230,7 @@ class BlogFragment : Fragment() {
                addImageAdapter.notifyDataSetChanged()
             } else {
                 // Initialize the adapter and recyclerview
-                addImageAdapter = AddImageAdapter(it as ArrayList<Uri>, requireContext()){position ->
+                addImageAdapter = AddImageAdapter(it as ArrayList<PhotoUri>){position ->
                     viewModel.setStateEvent(MainStateEvent.DeleteImage(position))
                 }
                 val recyclerView = binding.imageRecyclerView
@@ -217,7 +242,46 @@ class BlogFragment : Fragment() {
         viewModel.postalCode.observe(viewLifecycleOwner, {
             binding.postalCodeText.text = it
         })
+
+        viewModel.isOwner.observe(viewLifecycleOwner, {
+            println("debug: isOwner $it")
+            val bottomSheet = BlogActionBottomFragment(it){action ->
+                performAction(action)
+            }
+            bottomSheet.show(requireActivity().supportFragmentManager, "Action Bottom Sheet")
+        })
+
+        viewModel.currentFocusBlog.observe(viewLifecycleOwner, {blog ->
+            binding.contentEditText.setText(blog.content)
+        })
+
     }
+
+
+    private fun performAction(action: String){
+
+        when(action){
+            "edit" -> {
+                viewModel.setStateEvent(MainStateEvent.ReplaceAddImages)
+                binding.postButton.text = "Save"
+                addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
+            }
+
+            "delete" -> {
+                viewModel.setStateEvent(MainStateEvent.DeleteBlog)
+            }
+
+            "report" -> {
+
+            }
+
+            "remove" -> {
+
+            }
+        }
+
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -239,4 +303,5 @@ class BlogFragment : Fragment() {
         }
 
     }
+
 }

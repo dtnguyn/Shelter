@@ -5,6 +5,11 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -65,11 +70,42 @@
 
 
 
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:paddingVertical="15dp"
+                android:orientation="vertical"
+                android:visibility="@{isLoading ? View.VISIBLE : View.INVISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/postal_code_text">
+
+                <include
+                    layout="@layout/loading_blog" />
+
+                <include
+                    layout="@layout/loading_blog" />
+
+                <include
+                    layout="@layout/loading_blog"/>
+
+                <include
+                    layout="@layout/loading_blog"/>
+
+                <include
+                    layout="@layout/loading_blog"/>
+
+            </LinearLayout>
+
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/blog_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="10dp"
+                android:visibility="@{isLoading ? View.INVISIBLE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/postal_code_text" />
 

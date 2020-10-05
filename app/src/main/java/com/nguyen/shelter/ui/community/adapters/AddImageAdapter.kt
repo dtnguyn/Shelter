@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nguyen.shelter.databinding.ItemAddImageBinding
+import com.nguyen.shelter.model.PhotoUri
 
-class AddImageAdapter(private val images: ArrayList<Uri>, private val context: Context, private val imageOnClick: (Int) -> Unit): RecyclerView.Adapter<AddImageAdapter.AddImageViewHolder>() {
+class AddImageAdapter(private val images: ArrayList<PhotoUri>, private val imageOnClick: (Int) -> Unit): RecyclerView.Adapter<AddImageAdapter.AddImageViewHolder>() {
 
     inner class AddImageViewHolder(private val binding: ItemAddImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(image: Uri, position: Int) {
+        fun bind(image: PhotoUri, position: Int) {
 
-            binding.imageUrl = image.toString()
+            binding.imageUrl = image.uri.toString()
 
             binding.addImage.setOnClickListener {
                 imageOnClick.invoke(position)

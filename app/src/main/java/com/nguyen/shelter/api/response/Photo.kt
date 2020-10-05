@@ -10,4 +10,5 @@ data class Photo (
     @SerializedName("href")
     val url: String?
 
+
 ) : Parcelable

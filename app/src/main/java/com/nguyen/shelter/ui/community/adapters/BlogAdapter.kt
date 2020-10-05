@@ -11,7 +11,7 @@ import com.nguyen.shelter.databinding.ItemBlogBinding
 import com.nguyen.shelter.model.Blog
 import java.text.SimpleDateFormat
 
-class BlogAdapter(private val blogs: ArrayList<Blog>, private val context: Context): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
+class BlogAdapter(private val blogs: ArrayList<Blog>, private val onBlogLongClick: (Blog) -> Unit): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
 
 
     abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -30,15 +30,26 @@ class BlogAdapter(private val blogs: ArrayList<Blog>, private val context: Conte
         override fun bind(item: Any?) {
             binding.blog = item as Blog
 
+//            println("debug: blog item: $item")
+
+            val dateString = SimpleDateFormat("dd MMM yyyy").format(item.date)
+            val timeString = SimpleDateFormat("HH:mm").format(item.date)
+
+//            println("debug: blog item date: $dateString")
+//            println("debug: blog item time: $timeString")
+            binding.dateString = dateString
+            binding.timeString = timeString
+
+            binding.blogContainer.setOnLongClickListener {
+
+                onBlogLongClick.invoke(item)
+
+                true
+            }
+
+
             if(item.photos.isNotEmpty() && !item.photos[0].url.isNullOrBlank()){
                 binding.image = item.photos[0].url
-
-                val dateString = SimpleDateFormat("dd MMM yyyy").format(item.date)
-                val timeString = SimpleDateFormat("HH:mm").format(item.date)
-
-                binding.dateString = dateString
-                binding.timeString = timeString
-
             } else {
                 binding.blogImage.visibility = View.GONE
             }
@@ -98,12 +109,14 @@ class BlogAdapter(private val blogs: ArrayList<Blog>, private val context: Conte
 
     override fun getItemCount(): Int = blogs.size + 1
 
-    fun addItems(list: List<Blog>){
+    fun refresh(list: List<Blog>){
+        blogs.clear()
+
         for(blog in list){
             blogs.add(blog)
-            notifyItemInserted(blogs.size - 1)
         }
 
+        notifyDataSetChanged()
     }
 
 }

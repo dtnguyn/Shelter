@@ -79,5 +79,10 @@
     <string name="add_post">Add post</string>
     <string name="post">Post</string>
     <string name="write_something_here">Write something here . . .</string>
+    <string name="choose_actions">Choose actions</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="report">Report</string>
+    <string name="remove">Remove</string>
 
 </resources>
