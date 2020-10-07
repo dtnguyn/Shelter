@@ -121,6 +121,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-firestore-ktx:21.6.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
+
 }
 
 kapt {

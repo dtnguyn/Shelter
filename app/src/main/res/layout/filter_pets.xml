@@ -21,7 +21,7 @@
 
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/add_edit_post_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_semi_bold"
@@ -40,7 +40,7 @@
             android:columnCount="2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView">
+            app:layout_constraintTop_toBottomOf="@id/add_edit_post_text">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/dog_card_view"

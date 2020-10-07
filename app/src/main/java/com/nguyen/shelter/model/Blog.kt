@@ -14,5 +14,7 @@ data class Blog (
     var photos: List<Photo> = listOf(),
     var comments: List<Comment> = listOf(),
     var likeUsers: HashMap<String, Boolean> = hashMapOf(),
-    var postalCode: String = ""
+    var removeUsers: HashMap<String, Boolean> = hashMapOf(),
+    var postalCode: String = "",
+    var isLiked: Boolean = false
 )

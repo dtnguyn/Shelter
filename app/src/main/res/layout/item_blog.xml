@@ -22,6 +22,7 @@
             type="String" />
 
 
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -125,11 +126,11 @@
                 tools:layout_editor_absoluteX="10dp" />
 
             <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/heart_ic_32"
+                android:id="@+id/like_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="20dp"
+                android:src="@{blog.isLiked ? @drawable/red_heart_ic_32 : @drawable/heart_ic_32}"
                 app:layout_constraintStart_toStartOf="@+id/textView51"
                 app:layout_constraintTop_toBottomOf="@+id/textView51" />
 
@@ -142,9 +143,9 @@
                 android:text="@{blog.likeCounter + ``}"
                 android:textColor="@color/textColorDark"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
-                app:layout_constraintStart_toEndOf="@+id/imageView6"
-                app:layout_constraintTop_toTopOf="@+id/imageView6" />
+                app:layout_constraintBottom_toBottomOf="@+id/like_button"
+                app:layout_constraintStart_toEndOf="@+id/like_button"
+                app:layout_constraintTop_toTopOf="@+id/like_button" />
 
             <ImageView
                 android:id="@+id/comment_button"
@@ -152,9 +153,9 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_comment_32"
                 android:layout_marginStart="15dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintBottom_toBottomOf="@+id/like_button"
                 app:layout_constraintStart_toEndOf="@+id/textView52"
-                app:layout_constraintTop_toTopOf="@+id/imageView6" />
+                app:layout_constraintTop_toTopOf="@+id/like_button" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -164,9 +165,9 @@
                 android:fontFamily="@font/montserrat_regular"
                 android:textSize="14sp"
                 android:layout_marginStart="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/comment_button"
-                app:layout_constraintStart_toEndOf="@+id/comment_button"
-                app:layout_constraintTop_toTopOf="@+id/comment_button" />
+                app:layout_constraintBottom_toBottomOf="@id/comment_button"
+                app:layout_constraintStart_toEndOf="@id/comment_button"
+                app:layout_constraintTop_toTopOf="@id/comment_button" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

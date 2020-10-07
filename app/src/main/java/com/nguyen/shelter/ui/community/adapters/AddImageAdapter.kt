@@ -41,4 +41,10 @@ class AddImageAdapter(private val images: ArrayList<PhotoUri>, private val image
         return images.size
     }
 
+    fun refreshImages(){
+        images.clear()
+        notifyDataSetChanged()
+    }
+
+
 }

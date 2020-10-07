@@ -84,5 +84,7 @@
     <string name="delete">Delete</string>
     <string name="report">Report</string>
     <string name="remove">Remove</string>
+    <string name="reason">Reason:</string>
+    <string name="reason_for_reporting">Reason for reporting...</string>
 
 </resources>

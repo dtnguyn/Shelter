@@ -2,6 +2,7 @@ package com.nguyen.shelter.ui.community.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,13 @@ import com.nguyen.shelter.databinding.ItemBlogBinding
 import com.nguyen.shelter.model.Blog
 import java.text.SimpleDateFormat
 
-class BlogAdapter(private val blogs: ArrayList<Blog>, private val onBlogLongClick: (Blog) -> Unit): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
+
+class BlogAdapter(
+    private val blogs: ArrayList<Blog>,
+    private val context: Context,
+    private val onBlogLongClick: (Blog) -> Unit,
+    private val onLikeClick: (Blog) -> Unit
+): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
 
 
     abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -26,17 +33,13 @@ class BlogAdapter(private val blogs: ArrayList<Blog>, private val onBlogLongClic
     }
 
     inner class BlogViewHolder(private val binding: ItemBlogBinding) : BaseViewHolder(binding.root){
-        @SuppressLint("SimpleDateFormat")
+        @SuppressLint("SimpleDateFormat", "UseCompatLoadingForDrawables")
         override fun bind(item: Any?) {
             binding.blog = item as Blog
-
-//            println("debug: blog item: $item")
 
             val dateString = SimpleDateFormat("dd MMM yyyy").format(item.date)
             val timeString = SimpleDateFormat("HH:mm").format(item.date)
 
-//            println("debug: blog item date: $dateString")
-//            println("debug: blog item time: $timeString")
             binding.dateString = dateString
             binding.timeString = timeString
 
@@ -47,12 +50,21 @@ class BlogAdapter(private val blogs: ArrayList<Blog>, private val onBlogLongClic
                 true
             }
 
+            binding.likeButton.setOnClickListener {
+
+
+                onLikeClick.invoke(item)
+                binding.blog = item
+
+            }
 
             if(item.photos.isNotEmpty() && !item.photos[0].url.isNullOrBlank()){
                 binding.image = item.photos[0].url
             } else {
                 binding.blogImage.visibility = View.GONE
             }
+
+
 
         }
 
@@ -118,5 +130,43 @@ class BlogAdapter(private val blogs: ArrayList<Blog>, private val onBlogLongClic
 
         notifyDataSetChanged()
     }
+
+    fun addItem(blog: Blog) {
+        blogs.add(0, blog)
+        notifyItemInserted(1)
+    }
+
+    fun editItem(blog: Blog) {
+        var editPosition: Int? = null
+        for(i in 0 until  blogs.size){
+            if(blogs[i].id == blog.id) {
+                editPosition = i
+                break
+            }
+        }
+        editPosition?.let {
+            blogs[it].apply {
+                photos = blog.photos
+                content = blog.content
+            }
+            notifyItemChanged(it + 1)
+        }
+    }
+
+    fun removeItem(id: String){
+        var removePosition: Int? = null
+        for(i in 0 until  blogs.size){
+            if(blogs[i].id == id) {
+                removePosition = i
+                break
+            }
+
+        }
+        removePosition?.let {
+            blogs.removeAt(it)
+            notifyItemRemoved(it + 1)
+        }
+    }
+
 
 }

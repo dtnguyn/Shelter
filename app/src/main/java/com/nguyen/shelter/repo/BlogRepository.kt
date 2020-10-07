@@ -7,10 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.response.Photo
-import com.nguyen.shelter.model.Blog
-import com.nguyen.shelter.model.CallbackResponse
-import com.nguyen.shelter.model.PhotoUri
-import com.nguyen.shelter.model.User
+import com.nguyen.shelter.model.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -23,7 +20,7 @@ class BlogRepository(
 ) {
 
 
-    fun addBlog(blogContent: String, postalCode: String, images: List<PhotoUri>, callback: (CallbackResponse<Unit>) -> Unit){
+    fun addBlog(blogContent: String, postalCode: String, images: List<PhotoUri>, callback: (CallbackResponse<Blog>) -> Unit){
         if(auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
@@ -51,7 +48,7 @@ class BlogRepository(
                 db.collection("blogs").document(blog.id)
                     .set(blogMap)
                     .addOnSuccessListener {
-                        callback.invoke(CallbackResponse(true, "Add post successfully.", null))
+                        callback.invoke(CallbackResponse(true, "Add post successfully.", blog))
                     }
                     .addOnFailureListener {
                         callback.invoke(CallbackResponse(false, "Error when adding post: ${it.message}", null))
@@ -74,7 +71,11 @@ class BlogRepository(
             .get()
             .addOnSuccessListener {documents ->
                 for(document in documents){
-                    blogs.add(blogMapper.mapFromEntity(document.data as HashMap<String, Any>))
+                    val blog = blogMapper.mapFromEntity(document.data as HashMap<String, Any>)
+                    auth.currentUser?.let { user ->
+                        blog.isLiked = blog.likeUsers[user.uid] == true
+                        if(blog.removeUsers[user.uid] != true) blogs.add(blog)
+                    } ?: blogs.add(blog)
                 }
                 callback.invoke(CallbackResponse(true, "", blogs))
             }.addOnFailureListener {
@@ -83,7 +84,7 @@ class BlogRepository(
 
     }
 
-    fun editBlog(oldBlog: Blog, newContent: String, newImages: List<PhotoUri>, callback: (CallbackResponse<Unit>) -> Unit){
+    fun editBlog(oldBlog: Blog, newContent: String, newImages: List<PhotoUri>, callback: (CallbackResponse<Blog>) -> Unit){
         if(auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
@@ -111,7 +112,7 @@ class BlogRepository(
                 db.collection("blogs").document(editedBlog.id)
                     .set(blogMap)
                     .addOnSuccessListener {
-                        callback.invoke(CallbackResponse(true, "Edit post successfully.", null))
+                        callback.invoke(CallbackResponse(true, "Edit post successfully.", editedBlog))
                     }
                     .addOnFailureListener {e ->
                         callback.invoke(CallbackResponse(false, "Error when editing post: ${e.message}", null))
@@ -123,6 +124,8 @@ class BlogRepository(
     }
 
 
+
+
     fun deleteBlog(id: String, callback: (CallbackResponse<Unit>) -> Unit){
         db.collection("blogs").document(id)
             .delete()
@@ -131,6 +134,23 @@ class BlogRepository(
             }
             .addOnFailureListener {
                 callback.invoke(CallbackResponse(false, "Error when deleting post: ${it.message}", null))
+            }
+    }
+
+    fun removeBlog(blog: Blog, callback: (CallbackResponse<Unit>) -> Unit){
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
+        blog.removeUsers[auth.currentUser!!.uid] = true
+        val blogMap = blogMapper.mapToEntity(blog)
+        db.collection("blogs").document(blog.id)
+            .set(blogMap)
+            .addOnSuccessListener {
+                callback.invoke(CallbackResponse(true, "Edit post successfully.", null))
+            }
+            .addOnFailureListener {e ->
+                callback.invoke(CallbackResponse(false, "Error when editing post: ${e.message}", null))
             }
     }
 
@@ -181,6 +201,50 @@ class BlogRepository(
         } else {
             callback.invoke(CallbackResponse(false, "User has logged in.", null))
         }
+    }
+
+    fun reportBlog(reportContent: String, blogId: String, callback: (CallbackResponse<Unit>) -> Unit) {
+
+        val reportMap = hashMapOf(
+            "blog_id" to blogId,
+            "report_content" to reportContent
+        )
+
+        db.collection("reports").document(blogId)
+            .set(reportMap)
+            .addOnSuccessListener {
+                println("debug: report success")
+                callback.invoke(CallbackResponse(true, "Report post successfully.", null))
+            }
+            .addOnFailureListener {
+                println("debug: report fail ${it.message}")
+                callback.invoke(CallbackResponse(false, "Error when reporting post: ${it.message}", null))
+            }
+    }
+
+    fun likeBlog(blog: Blog, callback: (CallbackResponse<Unit>) -> Unit){
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
+
+        val userId = auth.currentUser!!.uid
+
+
+        blog.likeUsers[userId] = blog.likeUsers[userId] != true
+        blog.isLiked = blog.likeUsers[userId] == true
+        blog.likeCounter = if (blog.likeUsers[userId] == true) blog.likeCounter + 1 else blog.likeCounter - 1
+
+        val blogMap = blogMapper.mapToEntity(blog)
+
+        db.collection("blogs").document(blog.id)
+            .set(blogMap)
+            .addOnSuccessListener {
+                callback.invoke(CallbackResponse(true, "Like post successfully.", null))
+            }
+            .addOnFailureListener {e ->
+                callback.invoke(CallbackResponse(false, "Error when liking post: ${e.message}", null))
+            }
     }
 
 }

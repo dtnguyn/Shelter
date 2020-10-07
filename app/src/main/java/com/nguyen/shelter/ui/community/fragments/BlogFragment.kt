@@ -17,11 +17,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.nguyen.shelter.R
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.databinding.FragmentBlogBinding
 import com.nguyen.shelter.model.Blog
@@ -53,6 +56,7 @@ class BlogFragment : Fragment() {
 
     private lateinit var binding: FragmentBlogBinding
     private lateinit var addBottomSheet: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var reportBottomSheet: BottomSheetBehavior<ConstraintLayout>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,12 +75,18 @@ class BlogFragment : Fragment() {
         viewModel.setStateEvent(MainStateEvent.CheckAuthentication)
 
 
-        blogAdapter = BlogAdapter(arrayListOf()){blog ->
-            println("debug: long pressed")
-
-            viewModel.setStateEvent(MainStateEvent.IsBlogOwner(blog.userId))
-            viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
-        }
+        blogAdapter = BlogAdapter(
+            arrayListOf(),
+            requireContext(),
+            onBlogLongClick = fun(blog){
+                viewModel.setStateEvent(MainStateEvent.IsBlogOwner(blog.userId))
+                viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
+            },
+            onLikeClick = fun(blog){
+                viewModel.setStateEvent(MainStateEvent.LikeBlog(blog))
+                viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
+            }
+        )
 
 
 
@@ -101,6 +111,10 @@ class BlogFragment : Fragment() {
 
         addBottomSheet = BottomSheetBehavior.from(binding.addPostBottomSheet)
         binding.addPostButton.setOnClickListener {
+            binding.postButton.text = "Post"
+            binding.contentEditText.setText("")
+            addImageAdapter.refreshImages()
+            binding.addEditPostText.text = "Add Post"
             addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
         }
 
@@ -123,6 +137,18 @@ class BlogFragment : Fragment() {
 
             binding.contentEditText.setText("")
         }
+
+        reportBottomSheet = BottomSheetBehavior.from(binding.reportInclude.reportContainer)
+        binding.reportInclude.reportButton.setOnClickListener {
+            val reportContent = binding.reportInclude.reportEditText.text.toString()
+            if(reportContent.isBlank()) return@setOnClickListener
+            viewModel.currentFocusBlog.value?.id?.let {
+                viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
+                reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+
+        }
+
 
 
         return binding.root
@@ -251,9 +277,32 @@ class BlogFragment : Fragment() {
             bottomSheet.show(requireActivity().supportFragmentManager, "Action Bottom Sheet")
         })
 
+
+
+
         viewModel.currentFocusBlog.observe(viewLifecycleOwner, {blog ->
             binding.contentEditText.setText(blog.content)
+            binding.reportInclude.blogId = blog.id
         })
+
+        viewModel.addResponse.observe(viewLifecycleOwner, {blog ->
+            blogAdapter.addItem(blog)
+        })
+
+        viewModel.editResponse.observe(viewLifecycleOwner, {blog ->
+            blogAdapter.editItem(blog)
+        })
+
+
+        viewModel.deleteResponse.observe(viewLifecycleOwner, {id ->
+            blogAdapter.removeItem(id)
+        })
+
+        viewModel.removeResponse.observe(viewLifecycleOwner, {id ->
+            blogAdapter.removeItem(id)
+        })
+
+
 
     }
 
@@ -264,6 +313,7 @@ class BlogFragment : Fragment() {
             "edit" -> {
                 viewModel.setStateEvent(MainStateEvent.ReplaceAddImages)
                 binding.postButton.text = "Save"
+                binding.addEditPostText.text = "Edit Post"
                 addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
             }
 
@@ -272,11 +322,11 @@ class BlogFragment : Fragment() {
             }
 
             "report" -> {
-
+                reportBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
             }
 
             "remove" -> {
-
+                viewModel.setStateEvent(MainStateEvent.RemoveBlog)
             }
         }
 
@@ -301,7 +351,9 @@ class BlogFragment : Fragment() {
             }
 
         }
-
     }
+
+
+
 
 }

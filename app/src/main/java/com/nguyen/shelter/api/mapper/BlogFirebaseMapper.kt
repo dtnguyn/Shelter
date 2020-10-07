@@ -31,7 +31,8 @@ constructor(
             photos = gson.fromJson(entity["photos"] as String? ?: "", object : TypeToken<List<Photo>>() {}.type),
             comments = gson.fromJson(entity["comments"] as String? ?: "", object : TypeToken<List<Comment>>() {}.type),
             postalCode = entity["postal_code"] as String,
-            likeUsers = entity["liked_users"] as HashMap<String, Boolean>
+            likeUsers = entity["liked_users"] as HashMap<String, Boolean>,
+            removeUsers = entity["removed_users"] as HashMap<String, Boolean>
         )
     }
 
@@ -47,7 +48,8 @@ constructor(
             "photos" to gson.toJson(domainModel.photos),
             "comments" to gson.toJson(domainModel.comments),
             "postal_code" to domainModel.postalCode,
-            "liked_users" to domainModel.likeUsers
+            "liked_users" to domainModel.likeUsers,
+            "removed_users" to domainModel.removeUsers
         )
     }
 
