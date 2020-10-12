@@ -1,5 +1,6 @@
 package com.nguyen.shelter.ui.community.viewmodels
 
+import android.location.Address
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -27,6 +28,7 @@ constructor(
     private val _errorMessage: MutableLiveData<String> = MutableLiveData()
     private val _addImages: MutableLiveData<ArrayList<PhotoUri>> = MutableLiveData(arrayListOf())
     private val _postalCode: MutableLiveData<String> = MutableLiveData()
+    private val _area: MutableLiveData<String> = MutableLiveData()
     private val _currentUser: MutableLiveData<FirebaseUser> = MutableLiveData()
     private val _isOwner: MutableLiveData<Boolean> = MutableLiveData()
     private val _currentFocusBlog: MutableLiveData<Blog> = MutableLiveData()
@@ -55,6 +57,10 @@ constructor(
     }
 
     val postalCode: LiveData<String> = Transformations.map(_postalCode){
+        it
+    }
+
+    val area: LiveData<String> = Transformations.map(_area){
         it
     }
 
@@ -98,7 +104,7 @@ constructor(
         it
     }
 
-    val deleteCommentReponse: LiveData<String> = Transformations.map(_deleteCommentResponse){
+    val deleteCommentResponse: LiveData<String> = Transformations.map(_deleteCommentResponse){
         it
     }
 
@@ -129,16 +135,18 @@ constructor(
             is MainStateEvent.GetBlogs -> {
                 _isLoading.value = true
                 if(_postalCode.value == null) {
-                    _errorMessage.value = "Cannot get postalCode"
-                } else {
-                    blogRepository.getBlogs(_postalCode.value!!){response ->
-                        if(response.status) {
-                            println("debug: blogs size: ${response.data?.size}")
-                            _blogs.value?.clear()
-                            _blogs.value = response.data as ArrayList<Blog>
-                            _isLoading.value = false
-                        } else _errorMessage.value = response.message
-                    }
+                    _errorMessage.value = "Cannot get postalCode! We will set you at default postal code (10001). You can change the postal code by tapping on it."
+                    _isLoading.value = false
+                    _postalCode.value = NEW_YORK_CITY
+                }
+
+                blogRepository.getBlogs(_postalCode.value!!){response ->
+                    _isLoading.value = false
+                    if(response.status) {
+                        println("debug: blogs size: ${response.data?.size}")
+                        _blogs.value?.clear()
+                        _blogs.value = response.data as ArrayList<Blog>
+                    } else _errorMessage.value = response.message
                 }
 
 
@@ -243,7 +251,10 @@ constructor(
 
             is MainStateEvent.SetPostalCode -> {
                 _postalCode.value = event.postalCode
+            }
 
+            is MainStateEvent.SetArea -> {
+                _area.value = event.area
             }
 
             is MainStateEvent.IsBlogOwner -> {
@@ -293,6 +304,7 @@ sealed class MainStateEvent{
 
     //Others
     class SetPostalCode(val postalCode: String?): MainStateEvent()
+    class SetArea(val area: String?) : MainStateEvent()
     class IsBlogOwner(val userId: String): MainStateEvent()
     class SetFocusBlog(val blog: Blog) : MainStateEvent()
 

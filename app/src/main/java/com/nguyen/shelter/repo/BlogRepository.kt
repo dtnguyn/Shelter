@@ -3,6 +3,7 @@ package com.nguyen.shelter.repo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.StorageReference
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.CommentFirebaseMapper
@@ -69,6 +70,7 @@ class BlogRepository(
         println("debug: postal code: $postalCode")
         collectionRef
             .whereEqualTo("postal_code", postalCode)
+            .orderBy("date", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener {documents ->
                 println("debug: document size: ${documents.size()}")
@@ -81,6 +83,7 @@ class BlogRepository(
                 }
                 callback.invoke(CallbackResponse(true, "", blogs))
             }.addOnFailureListener {
+                println("debug: ${it.message}")
                 callback.invoke(CallbackResponse(false, "Error when getting posts: ${it.message}", null))
             }
 

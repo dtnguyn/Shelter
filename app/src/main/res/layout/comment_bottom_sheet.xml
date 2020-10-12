@@ -4,9 +4,15 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <variable
             name="commentCount"
             type="Integer" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
 
     </data>
 
@@ -62,6 +68,41 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/add_comment_button"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/loading_comment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginVertical="10dp"
+            android:orientation="vertical"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/comment_recyclerview"
+            app:layout_constraintTop_toBottomOf="@+id/textView55">
+
+            <include
+                layout="@layout/loading_comment" />
+
+            <include
+                layout="@layout/loading_comment" />
+
+            <include
+                layout="@layout/loading_comment" />
+
+            <include
+                layout="@layout/loading_comment" />
+
+            <include
+                layout="@layout/loading_comment" />
+
+            <include
+                layout="@layout/loading_comment" />
+
+            <include
+                layout="@layout/loading_comment" />
+
+
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

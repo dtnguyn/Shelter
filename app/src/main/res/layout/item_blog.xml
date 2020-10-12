@@ -101,6 +101,16 @@
                 app:layout_constraintStart_toEndOf="@+id/user_avatar_cardView"
                 app:layout_constraintTop_toBottomOf="@+id/textView49" />
 
+            <com.smarteist.autoimageslider.SliderView
+                android:id="@+id/blog_image_slider"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:layout_marginTop="20dp"
+                app:sliderIndicatorRadius="1dp"
+                app:sliderAutoCycleEnabled="false"
+                app:sliderStartAutoCycle="false"
+                app:layout_constraintTop_toBottomOf="@+id/textView50" />
+
 
             <ImageView
                 android:id="@+id/blog_image"
@@ -110,6 +120,14 @@
                 imageFromUrl="@{image}"
                 app:layout_constraintTop_toBottomOf="@+id/textView50" />
 
+            <ImageView
+                android:id="@+id/multiple_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/multiple_images_ic_32"
+                android:layout_margin="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/blog_image_slider"
+                app:layout_constraintTop_toTopOf="@+id/blog_image_slider" />
 
             <TextView
                 android:id="@+id/textView51"
@@ -122,7 +140,7 @@
                 android:text="@{blog.content}"
                 android:textColor="@color/textColorDark"
                 android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@id/blog_image"
+                app:layout_constraintTop_toBottomOf="@id/blog_image_slider"
                 tools:layout_editor_absoluteX="10dp" />
 
             <ImageView

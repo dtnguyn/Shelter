@@ -17,24 +17,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.nguyen.shelter.R
-import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.databinding.FragmentBlogBinding
-import com.nguyen.shelter.model.Blog
 import com.nguyen.shelter.model.PhotoUri
-import com.nguyen.shelter.model.User
 import com.nguyen.shelter.ui.community.adapters.AddImageAdapter
 import com.nguyen.shelter.ui.community.adapters.BlogAdapter
 import com.nguyen.shelter.ui.community.adapters.CommentAdapter
 import com.nguyen.shelter.ui.community.viewmodels.BlogViewModel
-import com.nguyen.shelter.ui.community.viewmodels.BlogViewModel.Companion.NEW_YORK_CITY
 import com.nguyen.shelter.ui.community.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.fragments.DialogError
@@ -84,7 +76,8 @@ class BlogFragment : Fragment() {
 
         blogAdapter = BlogAdapter(
             arrayListOf(),
-            requireContext(),
+            viewModel.area.value,
+            viewModel.postalCode.value,
             onBlogLongClick = fun(blog){
                 viewModel.setStateEvent(MainStateEvent.IsBlogOwner(blog.userId))
                 viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
@@ -97,6 +90,8 @@ class BlogFragment : Fragment() {
             onCommentClick = fun(blog){
                 commentBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
                 binding.commentInclude.commentCount = blog.commentCounter
+                binding.commentInclude.isLoading = true
+                if(this::commentAdapter.isInitialized) commentAdapter.clearComments()
                 viewModel.setStateEvent(MainStateEvent.GetComments(blog.id))
                 viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
             }
@@ -180,7 +175,6 @@ class BlogFragment : Fragment() {
             dialog.show(requireActivity().supportFragmentManager, "Postal code dialog")
         }
         binding.postalCodeText.setOnClickListener(locationListener)
-
         binding.locationIc.setOnClickListener(locationListener)
 
 
@@ -238,9 +232,7 @@ class BlogFragment : Fragment() {
                         val latestIndex = locationResult.locations.size - 1
                         val lat = locationResult.locations[latestIndex].latitude
                         val lng = locationResult.locations[latestIndex].longitude
-                        val postalCode = getPostalCode(lat, lng)
-                        println("debug: postal code: $postalCode")
-                        viewModel.setStateEvent(MainStateEvent.SetPostalCode(postalCode))
+                        setPostalCodeAndArea(lat, lng)
                     }
                     super.onLocationResult(locationResult)
                 }
@@ -254,21 +246,24 @@ class BlogFragment : Fragment() {
             }, Looper.getMainLooper())
     }
 
-    private fun getPostalCode(lat: Double, lng: Double): String?{
+    private fun setPostalCodeAndArea(lat: Double, lng: Double){
         val geocoder = Geocoder(context, Locale.getDefault())
-        var postalCode: String? = null
-        return try{
+        try{
             val addresses = geocoder.getFromLocation(lat, lng, 1)
-            if(addresses.size == 1){
-                postalCode = addresses[0].postalCode
+            if(addresses.size == 1 && addresses[0].postalCode != null && addresses[0].subAdminArea != null){
+                viewModel.setStateEvent(MainStateEvent.SetPostalCode(addresses[0].postalCode))
+                viewModel.setStateEvent(MainStateEvent.SetArea(addresses[0].subAdminArea))
+            } else {
+                println("debug: 2")
+                viewModel.setStateEvent(MainStateEvent.SetPostalCode(null))
+                viewModel.setStateEvent(MainStateEvent.SetArea(null))
             }
-            postalCode
         } catch (e: Exception){
-            Log.d("Map", "Error getting address: ${e.message}")
-            postalCode
+            println("debug: 3")
+            viewModel.setStateEvent(MainStateEvent.SetPostalCode(null))
+            viewModel.setStateEvent(MainStateEvent.SetArea(null))
         }
     }
-
 
 
     private fun subscribeObservers(){
@@ -276,7 +271,6 @@ class BlogFragment : Fragment() {
         viewModel.isLoading.observe(viewLifecycleOwner, {
             binding.isLoading = it
         })
-
 
         viewModel.errorMessage.observe(viewLifecycleOwner, {
             val dialogError = DialogError(it, requireActivity())
@@ -308,7 +302,13 @@ class BlogFragment : Fragment() {
         viewModel.postalCode.observe(viewLifecycleOwner, {
             binding.postalCodeText.text = it
             viewModel.setStateEvent(MainStateEvent.GetBlogs)
+            blogAdapter.changePostalCode(it)
         })
+
+        viewModel.area.observe(viewLifecycleOwner, {
+            blogAdapter.changeArea(it)
+        })
+
 
         viewModel.isOwner.observe(viewLifecycleOwner, {
             println("debug: isOwner $it")
@@ -324,8 +324,8 @@ class BlogFragment : Fragment() {
         })
 
         viewModel.addResponse.observe(viewLifecycleOwner, {blog ->
-            blogAdapter.addItem(blog)
             (activity as MainActivity?)?.hideKeyboard()
+            blogAdapter.addItem(blog)
             binding.blogRecyclerview.smoothScrollToPosition(0)
         })
 
@@ -343,6 +343,7 @@ class BlogFragment : Fragment() {
         })
 
         viewModel.comments.observe(viewLifecycleOwner, {comments ->
+            binding.commentInclude.isLoading = false
             commentAdapter = CommentAdapter(
                 comments,
                 deleteOnClick = fun(comment){
@@ -360,7 +361,7 @@ class BlogFragment : Fragment() {
             binding.commentInclude.commentCount = viewModel.currentFocusBlog.value?.commentCounter
         })
 
-        viewModel.deleteCommentReponse.observe(viewLifecycleOwner, {commentId ->
+        viewModel.deleteCommentResponse.observe(viewLifecycleOwner, { commentId ->
             commentAdapter.deleteItem(commentId)
             viewModel.currentFocusBlog.value?.let {
                 blogAdapter.deleteComment(it.id)

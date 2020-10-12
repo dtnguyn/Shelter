@@ -6,16 +6,25 @@ import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.nguyen.shelter.R
+import com.nguyen.shelter.api.response.Photo
+import com.nguyen.shelter.databinding.BlogCollapseAreaBinding
 import com.nguyen.shelter.databinding.ItemBlogBinding
 import com.nguyen.shelter.model.Blog
+import com.nguyen.shelter.ui.community.fragments.BlogFragment
+import com.nguyen.shelter.ui.community.fragments.DialogPostalCode
+import com.nguyen.shelter.ui.main.adapters.ImageSliderAdapter
 import java.text.SimpleDateFormat
 
 
 class BlogAdapter(
     private val blogs: ArrayList<Blog>,
-    private val context: Context,
+    private var area: String?,
+    private var postalCode: String?,
     private val onBlogLongClick: (Blog) -> Unit,
     private val onLikeClick: (Blog) -> Unit,
     private val onCommentClick: (Blog) -> Unit
@@ -26,8 +35,22 @@ class BlogAdapter(
         abstract fun bind(item: Any?)
     }
 
-    class HeaderViewHolder(itemView: View) : BaseViewHolder(itemView){
+     inner class HeaderViewHolder(private val binding: BlogCollapseAreaBinding) : BaseViewHolder(binding.root){
         override fun bind(item: Any?) {
+
+            println("debug: header: $area $postalCode")
+
+            when {
+                area != null -> {
+                    binding.area = area
+                }
+                postalCode != null -> {
+                    binding.area = "area $postalCode"
+                }
+                else -> {
+                    binding.area = "you"
+                }
+            }
         }
 
     }
@@ -59,10 +82,24 @@ class BlogAdapter(
                 onCommentClick.invoke(item)
             }
 
-            if(item.photos.isNotEmpty() && !item.photos[0].url.isNullOrBlank()){
-                binding.image = item.photos[0].url
-            } else {
-                binding.blogImage.visibility = View.GONE
+            when {
+
+                item.photos.size > 1 -> {
+                    binding.blogImage.visibility = View.INVISIBLE
+                    val adapter = ImageSliderAdapter(item.photos as ArrayList<Photo>){}
+                    binding.blogImageSlider.setSliderAdapter(adapter)
+                    binding.multipleIcon.visibility = View.VISIBLE
+                }
+                item.photos.size == 1 -> {
+                    binding.blogImageSlider.visibility = View.INVISIBLE
+                    binding.image = item.photos[0].url
+                    binding.multipleIcon.visibility = View.GONE
+                }
+                else -> {
+                    binding.blogImage.visibility = View.GONE
+                    binding.blogImageSlider.visibility = View.GONE
+                    binding.multipleIcon.visibility = View.GONE
+                }
             }
 
         }
@@ -81,11 +118,7 @@ class BlogAdapter(
         return when(viewType){
             R.layout.blog_collapse_area -> {
                 HeaderViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        viewType,
-                        parent,
-                        false
-                    )
+                    BlogCollapseAreaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
             }
 
@@ -114,7 +147,7 @@ class BlogAdapter(
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         if(position != 0){
             holder.bind(blogs[position - 1])
-        }
+        } else holder.bind(null)
 
     }
 
@@ -191,5 +224,15 @@ class BlogAdapter(
         position?.let{
             notifyItemChanged(it + 1)
         }
+    }
+
+    fun changeArea(newArea: String?) {
+        area = newArea
+        notifyItemChanged(0)
+    }
+
+    fun changePostalCode(newPostalCode: String?) {
+        postalCode = newPostalCode
+        notifyItemChanged(0)
     }
 }

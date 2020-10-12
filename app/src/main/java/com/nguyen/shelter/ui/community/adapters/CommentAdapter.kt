@@ -61,4 +61,10 @@ class CommentAdapter(private val comments: ArrayList<Comment>, private val delet
             notifyItemRemoved(it)
         }
     }
+
+    fun clearComments(){
+        comments.clear()
+        notifyDataSetChanged()
+    }
+
 }

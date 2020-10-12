@@ -33,6 +33,7 @@ class DialogPostalCode(private val viewModel: BlogViewModel, private val activit
                     val newPostalCode = view.postal_code_edit_text.text.toString()
                     if(newPostalCode != viewModel.postalCode.value && newPostalCode.isNotBlank()){
                         viewModel.setStateEvent(MainStateEvent.SetPostalCode(newPostalCode))
+                        viewModel.setStateEvent(MainStateEvent.SetArea(null))
                     }
                     dismiss()
                 }

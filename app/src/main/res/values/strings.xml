@@ -90,5 +90,6 @@
     <string name="change_postal_code">Change postal code</string>
     <string name="save">Save</string>
     <string name="error">Error</string>
+    <string name="user">User</string>
 
 </resources>
