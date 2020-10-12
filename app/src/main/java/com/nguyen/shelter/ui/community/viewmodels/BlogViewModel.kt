@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.model.Blog
+import com.nguyen.shelter.model.Comment
 import com.nguyen.shelter.model.PhotoUri
 import com.nguyen.shelter.repo.BlogRepository
 import com.nguyen.shelter.ui.community.fragments.BlogActionBottomFragment
@@ -24,20 +25,22 @@ constructor(
     }
 
     private val _errorMessage: MutableLiveData<String> = MutableLiveData()
-    private val _blogs: MutableLiveData<ArrayList<Blog>> = MutableLiveData()
     private val _addImages: MutableLiveData<ArrayList<PhotoUri>> = MutableLiveData(arrayListOf())
-    private val _postalCode: MutableLiveData<String> = MutableLiveData(NEW_YORK_CITY)
+    private val _postalCode: MutableLiveData<String> = MutableLiveData()
     private val _currentUser: MutableLiveData<FirebaseUser> = MutableLiveData()
     private val _isOwner: MutableLiveData<Boolean> = MutableLiveData()
     private val _currentFocusBlog: MutableLiveData<Blog> = MutableLiveData()
-    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData(true)
+    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
 
+    private val _blogs: MutableLiveData<ArrayList<Blog>> = MutableLiveData()
     private val _addResponse: MutableLiveData<Blog> = MutableLiveData()
     private val _editResponse: MutableLiveData<Blog> = MutableLiveData()
     private val _deleteResponse: MutableLiveData<String> = MutableLiveData()
     private val _removeResponse: MutableLiveData<String> = MutableLiveData()
 
-
+    private val _comments: MutableLiveData<ArrayList<Comment>> = MutableLiveData()
+    private val _addCommentResponse: MutableLiveData<Comment> = MutableLiveData()
+    private val _deleteCommentResponse: MutableLiveData<String> = MutableLiveData()
 
     val errorMessage: LiveData<String> = Transformations.map(_errorMessage){
         it
@@ -87,6 +90,18 @@ constructor(
         it
     }
 
+    val comments: LiveData<ArrayList<Comment>> = Transformations.map(_comments){
+        it
+    }
+
+    val addCommentResponse: LiveData<Comment> = Transformations.map(_addCommentResponse){
+        it
+    }
+
+    val deleteCommentReponse: LiveData<String> = Transformations.map(_deleteCommentResponse){
+        it
+    }
+
     fun setStateEvent(event: MainStateEvent){
 
         when(event){
@@ -113,14 +128,20 @@ constructor(
 
             is MainStateEvent.GetBlogs -> {
                 _isLoading.value = true
-                blogRepository.getBlogs(_postalCode.value!!){response ->
-                    if(response.status) {
-                        println("debug: blogs size: ${response.data?.size}")
-                        _blogs.value?.clear()
-                        _blogs.value = response.data as ArrayList<Blog>
-                        _isLoading.value = false
-                    } else _errorMessage.value = response.message
+                if(_postalCode.value == null) {
+                    _errorMessage.value = "Cannot get postalCode"
+                } else {
+                    blogRepository.getBlogs(_postalCode.value!!){response ->
+                        if(response.status) {
+                            println("debug: blogs size: ${response.data?.size}")
+                            _blogs.value?.clear()
+                            _blogs.value = response.data as ArrayList<Blog>
+                            _isLoading.value = false
+                        } else _errorMessage.value = response.message
+                    }
                 }
+
+
             }
 
             is MainStateEvent.EditBlog -> {
@@ -168,6 +189,32 @@ constructor(
                 }
             }
 
+            is MainStateEvent.GetComments -> {
+                blogRepository.getComments(event.blogId){response ->
+                    if(response.status) _comments.value = response.data
+                    else _errorMessage.value = response.message
+                }
+            }
+
+            is MainStateEvent.AddComment -> {
+                currentFocusBlog.value?.let {blog ->
+                    blogRepository.addComment(blog, event.commentContent) {response ->
+                        if(response.status) _addCommentResponse.value = response.data
+                        else _errorMessage.value = response.message
+                    }
+                }
+
+            }
+
+            is MainStateEvent.DeleteComment -> {
+                currentFocusBlog.value?.let {blog ->
+                    blogRepository.deleteComment(blog, event.commentId){response ->
+                        if(response.status) _deleteCommentResponse.value = response.data
+                        else _errorMessage.value = response.message
+                    }
+                }
+
+            }
 
             is MainStateEvent.AddImage -> {
                 val list = _addImages.value!!
@@ -222,8 +269,10 @@ constructor(
 
 sealed class MainStateEvent{
 
+    //Check Authentication
     object CheckAuthentication: MainStateEvent()
 
+    //Blogs operations
     class AddBlog(val blogContent: String): MainStateEvent()
     class EditBlog(val newContent: String) : MainStateEvent()
     object DeleteBlog : MainStateEvent()
@@ -232,14 +281,18 @@ sealed class MainStateEvent{
     class ReportBlog(val reportContent: String, val blogId: String) : MainStateEvent()
     class LikeBlog(val blog: Blog): MainStateEvent()
 
+    //Add images to blogs operations
     class AddImage(val newImages: List<Uri>): MainStateEvent()
     object ReplaceAddImages : MainStateEvent()
-
-
     class DeleteImage(val imagePosition: Int): MainStateEvent()
 
+    //Comment operations
+    class GetComments(val blogId: String): MainStateEvent()
+    class AddComment(val commentContent: String): MainStateEvent()
+    class DeleteComment(val commentId: String): MainStateEvent()
 
-    class SetPostalCode(val postalCode: String): MainStateEvent()
+    //Others
+    class SetPostalCode(val postalCode: String?): MainStateEvent()
     class IsBlogOwner(val userId: String): MainStateEvent()
     class SetFocusBlog(val blog: Blog) : MainStateEvent()
 

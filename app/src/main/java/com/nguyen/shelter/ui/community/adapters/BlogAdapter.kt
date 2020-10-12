@@ -17,7 +17,8 @@ class BlogAdapter(
     private val blogs: ArrayList<Blog>,
     private val context: Context,
     private val onBlogLongClick: (Blog) -> Unit,
-    private val onLikeClick: (Blog) -> Unit
+    private val onLikeClick: (Blog) -> Unit,
+    private val onCommentClick: (Blog) -> Unit
 ): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
 
 
@@ -27,7 +28,6 @@ class BlogAdapter(
 
     class HeaderViewHolder(itemView: View) : BaseViewHolder(itemView){
         override fun bind(item: Any?) {
-            TODO("Not yet implemented")
         }
 
     }
@@ -51,11 +51,12 @@ class BlogAdapter(
             }
 
             binding.likeButton.setOnClickListener {
-
-
                 onLikeClick.invoke(item)
                 binding.blog = item
+            }
 
+            binding.commentButton.setOnClickListener {
+                onCommentClick.invoke(item)
             }
 
             if(item.photos.isNotEmpty() && !item.photos[0].url.isNullOrBlank()){
@@ -63,8 +64,6 @@ class BlogAdapter(
             } else {
                 binding.blogImage.visibility = View.GONE
             }
-
-
 
         }
 
@@ -168,5 +167,29 @@ class BlogAdapter(
         }
     }
 
+    fun addComment(blogId: String){
+        var position: Int? = null
+        for(i in 0 until  blogs.size){
+            if(blogs[i].id == blogId) {
+                position = i
+                break
+            }
+        }
+        position?.let{
+            notifyItemChanged(it + 1)
+        }
+    }
 
+    fun deleteComment(blogId: String){
+        var position: Int? = null
+        for(i in 0 until  blogs.size){
+            if(blogs[i].id == blogId) {
+                position = i
+                break
+            }
+        }
+        position?.let{
+            notifyItemChanged(it + 1)
+        }
+    }
 }

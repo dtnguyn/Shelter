@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
+import com.nguyen.shelter.api.mapper.CommentFirebaseMapper
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
 import com.nguyen.shelter.api.service.RealtorApiService
@@ -53,12 +54,13 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideBlogRepository(
+        commentFirebaseMapper: CommentFirebaseMapper,
         blogFirebaseMapper: BlogFirebaseMapper,
         fireStore: FirebaseFirestore,
         storageReference: StorageReference,
         auth: FirebaseAuth
     ): BlogRepository{
-        return BlogRepository(blogFirebaseMapper, fireStore, storageReference, auth)
+        return BlogRepository(blogFirebaseMapper, commentFirebaseMapper, fireStore, storageReference, auth)
     }
 
 }

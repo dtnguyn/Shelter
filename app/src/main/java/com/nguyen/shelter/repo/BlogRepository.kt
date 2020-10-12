@@ -1,11 +1,11 @@
 package com.nguyen.shelter.repo
 
-import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
+import com.nguyen.shelter.api.mapper.CommentFirebaseMapper
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.model.*
 import java.util.*
@@ -14,6 +14,7 @@ import kotlin.collections.HashMap
 
 class BlogRepository(
     private val blogMapper: BlogFirebaseMapper,
+    private val commentMapper: CommentFirebaseMapper,
     private val db: FirebaseFirestore,
     private val storageRef: StorageReference,
     private val auth: FirebaseAuth
@@ -65,11 +66,12 @@ class BlogRepository(
         val collectionRef = db.collection("blogs")
         val blogs = ArrayList<Blog>()
 
-
+        println("debug: postal code: $postalCode")
         collectionRef
             .whereEqualTo("postal_code", postalCode)
             .get()
             .addOnSuccessListener {documents ->
+                println("debug: document size: ${documents.size()}")
                 for(document in documents){
                     val blog = blogMapper.mapFromEntity(document.data as HashMap<String, Any>)
                     auth.currentUser?.let { user ->
@@ -245,6 +247,97 @@ class BlogRepository(
             .addOnFailureListener {e ->
                 callback.invoke(CallbackResponse(false, "Error when liking post: ${e.message}", null))
             }
+    }
+
+    fun getComments(blogId: String, callback: (CallbackResponse<ArrayList<Comment>>) -> Unit){
+
+        val collectionRef = db.collection("comments")
+        val comments = ArrayList<Comment>()
+
+        collectionRef
+            .whereEqualTo("blog_id", blogId)
+            .get()
+            .addOnSuccessListener {documents ->
+                for(document in documents){
+                    val comment = commentMapper.mapFromEntity(document.data as HashMap<String, String>)
+                    auth.currentUser?.let { user ->
+                        if(user.uid == comment.user.id) comment.isOwner = true
+                    }
+                    comments.add(comment)
+                }
+                callback.invoke(CallbackResponse(true, "Get comments successfully", comments))
+            }.addOnFailureListener {
+                callback.invoke(CallbackResponse(false, "Error when getting comments: ${it.message}", null))
+            }
+
+    }
+
+
+    fun addComment(blog: Blog, content: String, callback: (CallbackResponse<Comment>) -> Unit){
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
+
+        val comment = Comment(
+            id = UUID.randomUUID().toString(),
+            blogId= blog.id,
+            content = content,
+            user = User(
+                id = auth.currentUser!!.uid,
+                avatar = auth.currentUser!!.photoUrl.toString(),
+                name = auth.currentUser!!.displayName ?: "Unknown",
+                email = auth.currentUser!!.email ?: "Unknown"
+            ),
+            date = Date(),
+            isOwner = true
+        )
+
+        blog.commentCounter += 1
+
+        val blogMap = blogMapper.mapToEntity(blog)
+        val commentMap = commentMapper.mapToEntity(comment)
+
+        val blogRef = db.collection("blogs").document(blog.id)
+        val commentRef = db.collection("comments").document(comment.id)
+
+        db.runBatch { batch ->
+            // Update the blog
+            batch.set(blogRef, blogMap)
+            // Update the comment
+            batch.set(commentRef, commentMap)
+
+        }.addOnCompleteListener {
+            callback.invoke(CallbackResponse(true, "Add comment successfully.", comment))
+        }.addOnFailureListener {e ->
+            callback.invoke(CallbackResponse(false, "Error when adding comment: ${e.message}", null))
+        }
+    }
+
+    fun deleteComment(blog: Blog, id: String, callback: (CallbackResponse<String>) -> Unit){
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
+
+        blog.commentCounter -= 1
+        val blogMap = blogMapper.mapToEntity(blog)
+
+
+        val blogRef = db.collection("blogs").document(blog.id)
+        val commentRef = db.collection("comments").document(id)
+
+        db.runBatch { batch ->
+            // Update the blog
+            batch.set(blogRef, blogMap)
+            // Update the comment
+            batch.delete(commentRef)
+
+        }.addOnCompleteListener {
+            callback.invoke(CallbackResponse(true, "Delete comment successfully.", id))
+        }.addOnFailureListener {e ->
+            callback.invoke(CallbackResponse(false, "Error when deleting comment: ${e.message}", null))
+        }
     }
 
 }

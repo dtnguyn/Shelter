@@ -86,5 +86,9 @@
     <string name="remove">Remove</string>
     <string name="reason">Reason:</string>
     <string name="reason_for_reporting">Reason for reporting...</string>
+    <string name="enter_postal_code">Enter postal code</string>
+    <string name="change_postal_code">Change postal code</string>
+    <string name="save">Save</string>
+    <string name="error">Error</string>
 
 </resources>

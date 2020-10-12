@@ -37,6 +37,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                android:id="@+id/location_ic"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/location_ic"
@@ -196,6 +197,10 @@
         <include
             android:id="@+id/report_include"
             layout="@layout/report_bottom_sheet"/>
+
+        <include
+            android:id="@+id/comment_include"
+            layout="@layout/comment_bottom_sheet"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

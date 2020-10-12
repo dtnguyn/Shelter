@@ -32,14 +32,19 @@ import com.nguyen.shelter.model.PhotoUri
 import com.nguyen.shelter.model.User
 import com.nguyen.shelter.ui.community.adapters.AddImageAdapter
 import com.nguyen.shelter.ui.community.adapters.BlogAdapter
+import com.nguyen.shelter.ui.community.adapters.CommentAdapter
 import com.nguyen.shelter.ui.community.viewmodels.BlogViewModel
 import com.nguyen.shelter.ui.community.viewmodels.BlogViewModel.Companion.NEW_YORK_CITY
 import com.nguyen.shelter.ui.community.viewmodels.MainStateEvent
+import com.nguyen.shelter.ui.main.MainActivity
+import com.nguyen.shelter.ui.main.fragments.DialogError
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 import kotlin.collections.ArrayList
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class BlogFragment : Fragment() {
 
@@ -52,11 +57,13 @@ class BlogFragment : Fragment() {
     private val viewModel: BlogViewModel by viewModels()
 
     private lateinit var blogAdapter: BlogAdapter
+    private lateinit var commentAdapter: CommentAdapter
     private lateinit var addImageAdapter: AddImageAdapter
 
     private lateinit var binding: FragmentBlogBinding
     private lateinit var addBottomSheet: BottomSheetBehavior<ConstraintLayout>
     private lateinit var reportBottomSheet: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var commentBottomSheet: BottomSheetBehavior<ConstraintLayout>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,10 +92,20 @@ class BlogFragment : Fragment() {
             onLikeClick = fun(blog){
                 viewModel.setStateEvent(MainStateEvent.LikeBlog(blog))
                 viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
+            },
+
+            onCommentClick = fun(blog){
+                commentBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+                binding.commentInclude.commentCount = blog.commentCounter
+                viewModel.setStateEvent(MainStateEvent.GetComments(blog.id))
+                viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
             }
         )
-
-
+//
+//        commentAdapter = CommentAdapter(
+//            arrayListOf()
+//
+//        )
 
 //        viewModel.setStateEvent(MainStateEvent.EditBlog(Blog(
 //            id = UUID.randomUUID().toString(),
@@ -105,7 +122,6 @@ class BlogFragment : Fragment() {
 //            likeUsers = hashMapOf("123" to true, "321" to true),
 //            postalCode = "44504"
 //        )))
-        viewModel.setStateEvent(MainStateEvent.GetBlogs)
         //viewModel.setStateEvent(MainStateEvent.DeleteBlog("0377d1de-e102-45f1-974a-9de9ab643809"))
 
 
@@ -116,6 +132,27 @@ class BlogFragment : Fragment() {
             addImageAdapter.refreshImages()
             binding.addEditPostText.text = "Add Post"
             addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
+        }
+
+        reportBottomSheet = BottomSheetBehavior.from(binding.reportInclude.reportContainer)
+        binding.reportInclude.reportButton.setOnClickListener {
+            val reportContent = binding.reportInclude.reportEditText.text.toString()
+            if(reportContent.isBlank()) return@setOnClickListener
+            viewModel.currentFocusBlog.value?.id?.let {
+                viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
+                reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+
+        }
+
+        commentBottomSheet = BottomSheetBehavior.from(binding.commentInclude.commentContainer)
+        binding.commentInclude.addCommentButton.setOnClickListener {
+            val commentContent = binding.commentInclude.commentEditText.text.toString()
+            if(commentContent.isBlank()) return@setOnClickListener
+            binding.commentInclude.commentEditText.setText("")
+            (activity as MainActivity?)?.hideKeyboard()
+
+            viewModel.setStateEvent(MainStateEvent.AddComment(commentContent))
         }
 
         binding.addImageButton.setOnClickListener {
@@ -138,16 +175,13 @@ class BlogFragment : Fragment() {
             binding.contentEditText.setText("")
         }
 
-        reportBottomSheet = BottomSheetBehavior.from(binding.reportInclude.reportContainer)
-        binding.reportInclude.reportButton.setOnClickListener {
-            val reportContent = binding.reportInclude.reportEditText.text.toString()
-            if(reportContent.isBlank()) return@setOnClickListener
-            viewModel.currentFocusBlog.value?.id?.let {
-                viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
-                reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-            }
-
+        val locationListener = View.OnClickListener(){
+            val dialog = DialogPostalCode(viewModel, requireActivity())
+            dialog.show(requireActivity().supportFragmentManager, "Postal code dialog")
         }
+        binding.postalCodeText.setOnClickListener(locationListener)
+
+        binding.locationIc.setOnClickListener(locationListener)
 
 
 
@@ -220,9 +254,9 @@ class BlogFragment : Fragment() {
             }, Looper.getMainLooper())
     }
 
-    private fun getPostalCode(lat: Double, lng: Double): String{
+    private fun getPostalCode(lat: Double, lng: Double): String?{
         val geocoder = Geocoder(context, Locale.getDefault())
-        var postalCode = NEW_YORK_CITY
+        var postalCode: String? = null
         return try{
             val addresses = geocoder.getFromLocation(lat, lng, 1)
             if(addresses.size == 1){
@@ -241,6 +275,12 @@ class BlogFragment : Fragment() {
 
         viewModel.isLoading.observe(viewLifecycleOwner, {
             binding.isLoading = it
+        })
+
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, {
+            val dialogError = DialogError(it, requireActivity())
+            dialogError.show(requireActivity().supportFragmentManager, "Dialog Error")
         })
 
         viewModel.blogs.observe(viewLifecycleOwner, {
@@ -267,6 +307,7 @@ class BlogFragment : Fragment() {
 
         viewModel.postalCode.observe(viewLifecycleOwner, {
             binding.postalCodeText.text = it
+            viewModel.setStateEvent(MainStateEvent.GetBlogs)
         })
 
         viewModel.isOwner.observe(viewLifecycleOwner, {
@@ -277,9 +318,6 @@ class BlogFragment : Fragment() {
             bottomSheet.show(requireActivity().supportFragmentManager, "Action Bottom Sheet")
         })
 
-
-
-
         viewModel.currentFocusBlog.observe(viewLifecycleOwner, {blog ->
             binding.contentEditText.setText(blog.content)
             binding.reportInclude.blogId = blog.id
@@ -287,6 +325,8 @@ class BlogFragment : Fragment() {
 
         viewModel.addResponse.observe(viewLifecycleOwner, {blog ->
             blogAdapter.addItem(blog)
+            (activity as MainActivity?)?.hideKeyboard()
+            binding.blogRecyclerview.smoothScrollToPosition(0)
         })
 
         viewModel.editResponse.observe(viewLifecycleOwner, {blog ->
@@ -302,7 +342,31 @@ class BlogFragment : Fragment() {
             blogAdapter.removeItem(id)
         })
 
+        viewModel.comments.observe(viewLifecycleOwner, {comments ->
+            commentAdapter = CommentAdapter(
+                comments,
+                deleteOnClick = fun(comment){
+                    viewModel.setStateEvent(MainStateEvent.DeleteComment(comment.id))
+                }
+            )
+            binding.commentInclude.commentRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+            binding.commentInclude.commentRecyclerview.adapter = commentAdapter
+        })
 
+        viewModel.addCommentResponse.observe(viewLifecycleOwner, {comment ->
+            commentAdapter.addItem(comment)
+            blogAdapter.addComment(comment.blogId)
+            binding.commentInclude.commentRecyclerview.smoothScrollToPosition(0)
+            binding.commentInclude.commentCount = viewModel.currentFocusBlog.value?.commentCounter
+        })
+
+        viewModel.deleteCommentReponse.observe(viewLifecycleOwner, {commentId ->
+            commentAdapter.deleteItem(commentId)
+            viewModel.currentFocusBlog.value?.let {
+                blogAdapter.deleteComment(it.id)
+            }
+
+        })
 
     }
 
