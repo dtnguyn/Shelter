@@ -3,6 +3,7 @@ package com.nguyen.shelter.ui.community.adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.BitmapDrawable
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +28,8 @@ class BlogAdapter(
     private var postalCode: String?,
     private val onBlogLongClick: (Blog) -> Unit,
     private val onLikeClick: (Blog) -> Unit,
-    private val onCommentClick: (Blog) -> Unit
+    private val onCommentClick: (Blog) -> Unit,
+    private val onPhotosClick: (Bundle) -> Unit
 ): RecyclerView.Adapter<BlogAdapter.BaseViewHolder>() {
 
 
@@ -85,15 +87,19 @@ class BlogAdapter(
             when {
 
                 item.photos.size > 1 -> {
-                    binding.blogImage.visibility = View.INVISIBLE
-                    val adapter = ImageSliderAdapter(item.photos as ArrayList<Photo>){}
+                    val adapter = ImageSliderAdapter(item.photos as ArrayList<Photo>){bundle ->
+                        onPhotosClick.invoke(bundle)
+                    }
                     binding.blogImageSlider.setSliderAdapter(adapter)
+                    binding.blogImage.visibility = View.INVISIBLE
+                    binding.blogImageSlider.visibility = View.VISIBLE
                     binding.multipleIcon.visibility = View.VISIBLE
                 }
                 item.photos.size == 1 -> {
-                    binding.blogImageSlider.visibility = View.INVISIBLE
                     binding.image = item.photos[0].url
-                    binding.multipleIcon.visibility = View.GONE
+                    binding.blogImage.visibility = View.VISIBLE
+                    binding.blogImageSlider.visibility = View.INVISIBLE
+                    binding.multipleIcon.visibility = View.INVISIBLE
                 }
                 else -> {
                     binding.blogImage.visibility = View.GONE

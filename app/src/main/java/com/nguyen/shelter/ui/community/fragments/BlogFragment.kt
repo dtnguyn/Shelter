@@ -18,9 +18,11 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.nguyen.shelter.R
 import com.nguyen.shelter.databinding.FragmentBlogBinding
 import com.nguyen.shelter.model.PhotoUri
 import com.nguyen.shelter.ui.community.adapters.AddImageAdapter
@@ -67,9 +69,13 @@ class BlogFragment : Fragment() {
         subscribeObservers()
 
 
-        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, fun(result: Boolean){
-            if(result) getCurrentLocation()
-        })
+        if(viewModel.postalCode.value == null) {
+            println("debug: again: ")
+            checkLocationPermission(fun(result: Boolean){
+                if(result) getCurrentLocation()
+            })
+        }
+
 
         viewModel.setStateEvent(MainStateEvent.CheckAuthentication)
 
@@ -79,14 +85,16 @@ class BlogFragment : Fragment() {
             viewModel.area.value,
             viewModel.postalCode.value,
             onBlogLongClick = fun(blog){
-                viewModel.setStateEvent(MainStateEvent.IsBlogOwner(blog.userId))
                 viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
+                val bottomSheet = BlogActionBottomFragment(blog.isOwner){action ->
+                    performAction(action)
+                }
+                bottomSheet.show(requireActivity().supportFragmentManager, "Action Bottom Sheet")
             },
             onLikeClick = fun(blog){
                 viewModel.setStateEvent(MainStateEvent.LikeBlog(blog))
                 viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
             },
-
             onCommentClick = fun(blog){
                 commentBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
                 binding.commentInclude.commentCount = blog.commentCounter
@@ -94,93 +102,80 @@ class BlogFragment : Fragment() {
                 if(this::commentAdapter.isInitialized) commentAdapter.clearComments()
                 viewModel.setStateEvent(MainStateEvent.GetComments(blog.id))
                 viewModel.setStateEvent(MainStateEvent.SetFocusBlog(blog))
+            },
+            onPhotosClick = fun(bundle){
+                findNavController().navigate(R.id.photo_detail_fragment, bundle)
             }
         )
-//
-//        commentAdapter = CommentAdapter(
-//            arrayListOf()
-//
-//        )
 
-//        viewModel.setStateEvent(MainStateEvent.EditBlog(Blog(
-//            id = UUID.randomUUID().toString(),
-//            userId = "123",
-//            user = User("123", "", "Adron", "test@email.com"),
-//            date = Date(),
-//            content = "Hello, I just move to this area, hopefully I get to know everyone!\n" +
-//                    "\n" +
-//                    "I plan on throwing a party next weekend. If anyone wants to join please comment below. ",
-//            likeCounter = 2,
-//            commentCounter = 0,
-//            comments = listOf(),
-//            photos = listOf(Photo("test"), Photo("test2"), Photo("test3"), Photo("test4")),
-//            likeUsers = hashMapOf("123" to true, "321" to true),
-//            postalCode = "44504"
-//        )))
-        //viewModel.setStateEvent(MainStateEvent.DeleteBlog("0377d1de-e102-45f1-974a-9de9ab643809"))
-
-
-        addBottomSheet = BottomSheetBehavior.from(binding.addPostBottomSheet)
-        binding.addPostButton.setOnClickListener {
-            binding.postButton.text = "Post"
-            binding.contentEditText.setText("")
-            addImageAdapter.refreshImages()
-            binding.addEditPostText.text = "Add Post"
-            addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
-        }
-
-        reportBottomSheet = BottomSheetBehavior.from(binding.reportInclude.reportContainer)
-        binding.reportInclude.reportButton.setOnClickListener {
-            val reportContent = binding.reportInclude.reportEditText.text.toString()
-            if(reportContent.isBlank()) return@setOnClickListener
-            viewModel.currentFocusBlog.value?.id?.let {
-                viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
-                reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-            }
-
-        }
-
-        commentBottomSheet = BottomSheetBehavior.from(binding.commentInclude.commentContainer)
-        binding.commentInclude.addCommentButton.setOnClickListener {
-            val commentContent = binding.commentInclude.commentEditText.text.toString()
-            if(commentContent.isBlank()) return@setOnClickListener
-            binding.commentInclude.commentEditText.setText("")
-            (activity as MainActivity?)?.hideKeyboard()
-
-            viewModel.setStateEvent(MainStateEvent.AddComment(commentContent))
-        }
-
-        binding.addImageButton.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*";
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            intent.action = Intent.ACTION_GET_CONTENT;
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-        }
-
-        binding.postButton.setOnClickListener {
-            if(binding.postButton.text == "Post"){
-                viewModel.setStateEvent(MainStateEvent.AddBlog(binding.contentEditText.text.toString()))
-            } else {
-                viewModel.setStateEvent(MainStateEvent.EditBlog(binding.contentEditText.text.toString()))
-            }
-
-            addBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-
-            binding.contentEditText.setText("")
-        }
-
-        val locationListener = View.OnClickListener(){
-            val dialog = DialogPostalCode(viewModel, requireActivity())
-            dialog.show(requireActivity().supportFragmentManager, "Postal code dialog")
-        }
-        binding.postalCodeText.setOnClickListener(locationListener)
-        binding.locationIc.setOnClickListener(locationListener)
+        viewInit()
 
 
 
         return binding.root
     }
+
+    private fun viewInit(){
+        binding.apply {
+            addBottomSheet = BottomSheetBehavior.from(binding.addPostBottomSheet)
+            addPostButton.setOnClickListener {
+                postButton.text = getString(R.string.post)
+                contentEditText.setText("")
+                addImageAdapter.refreshImages()
+                addEditPostText.text = getString(R.string.add_post)
+                addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
+            }
+
+            reportBottomSheet = BottomSheetBehavior.from(binding.reportInclude.reportContainer)
+            reportInclude.reportButton.setOnClickListener {
+                val reportContent = binding.reportInclude.reportEditText.text.toString()
+                if(reportContent.isBlank()) return@setOnClickListener
+                viewModel.currentFocusBlog.value?.id?.let {
+                    viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
+                    reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+
+            }
+
+            commentBottomSheet = BottomSheetBehavior.from(binding.commentInclude.commentContainer)
+            commentInclude.addCommentButton.setOnClickListener {
+                val commentContent = commentInclude.commentEditText.text.toString()
+                if(commentContent.isBlank()) return@setOnClickListener
+                commentInclude.commentEditText.setText("")
+                (activity as MainActivity?)?.hideKeyboard()
+
+                viewModel.setStateEvent(MainStateEvent.AddComment(commentContent))
+            }
+
+            addImageButton.setOnClickListener {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+            }
+
+            postButton.setOnClickListener {
+                if(postButton.text == getString(R.string.post)){
+                    viewModel.setStateEvent(MainStateEvent.AddBlog(contentEditText.text.toString()))
+                } else {
+                    viewModel.setStateEvent(MainStateEvent.EditBlog(contentEditText.text.toString()))
+                }
+
+                addBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+
+                contentEditText.setText("")
+            }
+
+            val locationListener = View.OnClickListener {
+                val dialog = DialogPostalCode(viewModel, requireActivity())
+                dialog.show(requireActivity().supportFragmentManager, getString(R.string.postal_code_dialog))
+            }
+            postalCodeText.setOnClickListener(locationListener)
+            locationIc.setOnClickListener(locationListener)
+        }
+    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -191,11 +186,9 @@ class BlogFragment : Fragment() {
         when(requestCode){
             1 -> {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                } else {
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(requireContext(), "Permission denied!", Toast.LENGTH_SHORT).show()
-                    activity?.finish()
+                    findNavController().popBackStack()
                 }
             }
         }
@@ -203,14 +196,14 @@ class BlogFragment : Fragment() {
 
 
     //Check location permission
-    private fun checkPermission(permission: String, callback: (result: Boolean) -> Unit) {
+    private fun checkLocationPermission(callback: (result: Boolean) -> Unit) {
         val request = ContextCompat.checkSelfPermission(
             requireContext(),
-            permission
+            Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!request) {
-            requestPermissions(arrayOf(permission), LOCATION_REQUEST_CODE)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
         } else {
             callback.invoke(true)
         }
@@ -300,6 +293,7 @@ class BlogFragment : Fragment() {
         })
 
         viewModel.postalCode.observe(viewLifecycleOwner, {
+            if(viewModel.blogs.value?.isNotEmpty() == true) return@observe
             binding.postalCodeText.text = it
             viewModel.setStateEvent(MainStateEvent.GetBlogs)
             blogAdapter.changePostalCode(it)
@@ -307,15 +301,6 @@ class BlogFragment : Fragment() {
 
         viewModel.area.observe(viewLifecycleOwner, {
             blogAdapter.changeArea(it)
-        })
-
-
-        viewModel.isOwner.observe(viewLifecycleOwner, {
-            println("debug: isOwner $it")
-            val bottomSheet = BlogActionBottomFragment(it){action ->
-                performAction(action)
-            }
-            bottomSheet.show(requireActivity().supportFragmentManager, "Action Bottom Sheet")
         })
 
         viewModel.currentFocusBlog.observe(viewLifecycleOwner, {blog ->
@@ -377,8 +362,8 @@ class BlogFragment : Fragment() {
         when(action){
             "edit" -> {
                 viewModel.setStateEvent(MainStateEvent.ReplaceAddImages)
-                binding.postButton.text = "Save"
-                binding.addEditPostText.text = "Edit Post"
+                binding.postButton.text = getString(R.string.save)
+                binding.addEditPostText.text = getString(R.string.edit_post)
                 addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
             }
 

@@ -91,5 +91,7 @@
     <string name="save">Save</string>
     <string name="error">Error</string>
     <string name="user">User</string>
+    <string name="edit_post">Edit Post</string>
+    <string name="postal_code_dialog">Postal code dialog</string>
 
 </resources>

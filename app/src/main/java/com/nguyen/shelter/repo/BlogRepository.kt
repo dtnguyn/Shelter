@@ -44,7 +44,8 @@ class BlogRepository(
                     date = Date(),
                     content = blogContent,
                     photos = it.data!!,
-                    postalCode = postalCode
+                    postalCode = postalCode,
+                    isOwner = true
                 )
                 val blogMap = blogMapper.mapToEntity(blog)
                 db.collection("blogs").document(blog.id)
@@ -78,6 +79,7 @@ class BlogRepository(
                     val blog = blogMapper.mapFromEntity(document.data as HashMap<String, Any>)
                     auth.currentUser?.let { user ->
                         blog.isLiked = blog.likeUsers[user.uid] == true
+                        blog.isOwner = blog.userId == auth.currentUser?.uid
                         if(blog.removeUsers[user.uid] != true) blogs.add(blog)
                     } ?: blogs.add(blog)
                 }

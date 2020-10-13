@@ -1,6 +1,5 @@
 package com.nguyen.shelter.ui.community.viewmodels
 
-import android.location.Address
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -8,12 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
-import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.model.Blog
 import com.nguyen.shelter.model.Comment
 import com.nguyen.shelter.model.PhotoUri
 import com.nguyen.shelter.repo.BlogRepository
-import com.nguyen.shelter.ui.community.fragments.BlogActionBottomFragment
+
 
 class BlogViewModel
 @ViewModelInject
@@ -30,7 +28,6 @@ constructor(
     private val _postalCode: MutableLiveData<String> = MutableLiveData()
     private val _area: MutableLiveData<String> = MutableLiveData()
     private val _currentUser: MutableLiveData<FirebaseUser> = MutableLiveData()
-    private val _isOwner: MutableLiveData<Boolean> = MutableLiveData()
     private val _currentFocusBlog: MutableLiveData<Blog> = MutableLiveData()
     private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -64,13 +61,6 @@ constructor(
         it
     }
 
-    val currentUser: LiveData<FirebaseUser> = Transformations.map(_currentUser){
-        it
-    }
-
-    val isOwner: LiveData<Boolean> = Transformations.map(_isOwner){
-        it
-    }
 
     val currentFocusBlog: LiveData<Blog> = Transformations.map(_currentFocusBlog){
         it
@@ -114,7 +104,6 @@ constructor(
 
             is MainStateEvent.CheckAuthentication -> {
                 blogRepository.checkAuthentication {response ->
-
                     if(response.status){
                         println("debug: authentication ${response.data}")
                         _currentUser.value = response.data!!
@@ -257,14 +246,6 @@ constructor(
                 _area.value = event.area
             }
 
-            is MainStateEvent.IsBlogOwner -> {
-                println("debug: IsBlogOwner called")
-                _currentUser.value?.let {user ->
-                    println("debug: IsBlogOwner ${user.uid == event.userId} ${user.uid} ${event.userId}")
-                    _isOwner.value = user.uid == event.userId
-                }
-            }
-
             is MainStateEvent.SetFocusBlog -> {
                 _currentFocusBlog.value = event.blog
             }
@@ -305,7 +286,6 @@ sealed class MainStateEvent{
     //Others
     class SetPostalCode(val postalCode: String?): MainStateEvent()
     class SetArea(val area: String?) : MainStateEvent()
-    class IsBlogOwner(val userId: String): MainStateEvent()
     class SetFocusBlog(val blog: Blog) : MainStateEvent()
 
 
