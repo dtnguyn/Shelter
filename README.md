@@ -14,7 +14,7 @@ Shelter is a real estate app that is used for finding rent and sale houses. It i
 The app is almost finshed now. Once it's finished, a link to the Google Play Store will be posted.
 For now, you can clone it and use Android Studio to run this app
 
-<img src="/screenshots/app_gif.gif"  alt="Images comming soon" align="right" width="32%"/>
+<img src="/screenshots/app_gif.gif"  alt="Images comming soon" align="right" width="30%"/>
 
 ## Tech stack & libraries
 - Minimum SDK level 21
