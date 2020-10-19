@@ -32,7 +32,7 @@ constructor
 ): RemoteMediator<Int, PropertyCacheEntity>() {
 
     companion object{
-        private var isLoaded: Boolean = true
+        var isLoaded: Boolean = false
     }
 
     override suspend fun load(
@@ -43,6 +43,7 @@ constructor
         val page = when(loadType){
             LoadType.REFRESH -> {
                 if(isLoaded) return MediatorResult.Success(endOfPaginationReached = true)
+                println("debug: Refresh Rent")
 //                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
 //                remoteKeys?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
 
@@ -101,13 +102,16 @@ constructor
                 features = filter.features
             )
 
-            //isLoaded = true
+            isLoaded = true
             var properties = apiResponse.data
+            println("debug: properties rent: $properties")
             if(properties == null) properties = listOf()
             val endOfPaginationReached = properties.isEmpty()
             database.withTransaction {
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
+
+                    println("clear")
                     database.remoteKeysDao().clearRemoteKeys()
                     database.propertyDao().clearProperties()
                 }

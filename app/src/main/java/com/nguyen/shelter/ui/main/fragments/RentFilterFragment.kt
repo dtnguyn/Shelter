@@ -11,7 +11,9 @@ import androidx.paging.ExperimentalPagingApi
 import com.nguyen.shelter.databinding.FragmentFilterRentBinding
 import com.nguyen.shelter.model.PropertyFilter
 import com.nguyen.shelter.repo.MainRepository.Companion.RENT
+import com.nguyen.shelter.repo.RentRemoteMediator.Companion.isLoaded
 import com.nguyen.shelter.ui.main.MainActivity
+import com.nguyen.shelter.ui.main.MainFragment
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,7 +86,11 @@ class RentFilterFragment : Fragment() {
 
             println("debug: $propertyFilter")
             viewModel.setStateEvent(MainStateEvent.SaveRentPropertyFilter(propertyFilter))
+
+            isLoaded = false
+
             findNavController().popBackStack()
+
         }
 
         return binding.root

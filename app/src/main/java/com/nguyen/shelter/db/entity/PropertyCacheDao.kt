@@ -19,7 +19,7 @@ interface PropertyCacheDao {
     @Query("SELECT * FROM properties WHERE prop_status = :query")
     fun getProperties(query: String): PagingSource<Int, PropertyCacheEntity>
 
-    @Query("DELETE FROM properties WHERE prop_status")
+    @Query("DELETE FROM properties")
     suspend fun clearProperties()
 
 

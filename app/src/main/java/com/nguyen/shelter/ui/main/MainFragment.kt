@@ -69,6 +69,8 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+
+
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -126,4 +128,6 @@ class MainFragment : Fragment() {
         (activity as MainActivity?)?.hideActionBar()
         super.onStop()
     }
+
+
 }

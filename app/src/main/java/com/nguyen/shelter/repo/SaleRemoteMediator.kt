@@ -32,7 +32,7 @@ constructor
 ): RemoteMediator<Int, PropertyCacheEntity>() {
 
     companion object{
-        private var isLoaded: Boolean = true
+        private var isLoaded: Boolean = false
     }
 
 
@@ -43,7 +43,9 @@ constructor
         println("debug: Sale Loading...")
         val page = when(loadType){
             LoadType.REFRESH -> {
+
                 if(isLoaded) return MediatorResult.Success(endOfPaginationReached = true)
+                println("debug: Refresh Sale")
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                 remoteKeys?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
             }
