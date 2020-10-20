@@ -137,8 +137,16 @@ constructor(
                         _blogs.value = response.data as ArrayList<Blog>
                     } else _errorMessage.value = response.message
                 }
+            }
 
+            is MainStateEvent.GetUserBlogs -> {
+                _isLoading.value = true
 
+                blogRepository.getUserBlogs {response ->
+                    println("debug: response: $response")
+                    if(response.status) _blogs.value = response.data
+                    else _errorMessage.value = response.message
+                }
             }
 
             is MainStateEvent.EditBlog -> {
@@ -272,6 +280,8 @@ sealed class MainStateEvent{
     object GetBlogs: MainStateEvent()
     class ReportBlog(val reportContent: String, val blogId: String) : MainStateEvent()
     class LikeBlog(val blog: Blog): MainStateEvent()
+    object GetUserBlogs: MainStateEvent()
+
 
     //Add images to blogs operations
     class AddImage(val newImages: List<Uri>): MainStateEvent()

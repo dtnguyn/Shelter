@@ -37,7 +37,9 @@ object RepositoryModule {
         propertyDetailCacheMapper: PropertyDetailCacheMapper,
         propertyCacheMapper: PropertyCacheMapper,
         filterCacheMapper: PropertyFilterCacheMapper,
-        auth: FirebaseAuth
+        blogFirebaseMapper: BlogFirebaseMapper,
+        auth: FirebaseAuth,
+        fireStore: FirebaseFirestore,
     ): MainRepository{
         return MainRepository(
             service,
@@ -47,7 +49,9 @@ object RepositoryModule {
             propertyDetailCacheMapper,
             propertyCacheMapper,
             filterCacheMapper,
-            auth
+            blogFirebaseMapper,
+            auth,
+            fireStore
         )
     }
 

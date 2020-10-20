@@ -9,9 +9,7 @@ import androidx.paging.cachedIn
 import com.facebook.AccessToken
 import com.google.firebase.auth.FirebaseUser
 import com.nguyen.shelter.db.entity.PropertyCacheEntity
-import com.nguyen.shelter.model.CallbackResponse
-import com.nguyen.shelter.model.PropertyDetail
-import com.nguyen.shelter.model.PropertyFilter
+import com.nguyen.shelter.model.*
 import com.nguyen.shelter.repo.MainRepository
 import com.nguyen.shelter.repo.MainRepository.Companion.RENT
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +32,9 @@ constructor(
     private val _rentPropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
     private val _salePropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
     private val _rentPropertyDetail: MutableLiveData<PropertyDetail> = MutableLiveData()
+    private val _savedProperties: MutableLiveData<HashMap<String, Boolean>> = MutableLiveData()
+    private val _userBlogs: MutableLiveData<ArrayList<Blog>> = MutableLiveData()
+
 
     private val _currentUser: MutableLiveData<FirebaseUser> = MutableLiveData()
     private val _error: MutableLiveData<String> = MutableLiveData()
@@ -63,6 +64,14 @@ constructor(
     }
 
     val rentPropertyDetail: LiveData<PropertyDetail> = Transformations.map(_rentPropertyDetail){
+        it
+    }
+
+    val savedProperties: LiveData<HashMap<String, Boolean>> = Transformations.map(_savedProperties){
+        it
+    }
+
+    val userBlogs: LiveData<ArrayList<Blog>> = Transformations.map(_userBlogs){
         it
     }
 
@@ -171,6 +180,26 @@ constructor(
                     }
 
                 }
+
+                is MainStateEvent.GetSavedProperties -> {
+                    mainRepository.getSavedProperties {response ->
+                        if(response.status) _savedProperties.value = response.data
+                        else _error.value = response.message
+                    }
+                }
+
+                is MainStateEvent.UpdatePropertySaveStatus -> {
+                    _savedProperties.value?.let{
+                        it[mainStateEvent.propertyId] = it[mainStateEvent.propertyId]?.not() ?: true
+                        mainRepository.updatePropertySaveStatus(it){response ->
+                            if(!response.status) _error.value = response.message
+                        }
+
+                        _savedProperties.value = it
+                    }
+                }
+
+
             }
         }
     }
@@ -207,5 +236,11 @@ sealed class MainStateEvent{
     class SaveRentPropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
     class SaveSalePropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
     class GetPropertyFilter(val type: String): MainStateEvent()
+
+
+
+    //Others
+    object GetSavedProperties: MainStateEvent()
+    class UpdatePropertySaveStatus(val propertyId: String): MainStateEvent()
 
 }

@@ -6,6 +6,8 @@
       <w>geocoder</w>
       <w>gson</w>
       <w>sqft</w>
+      <w>unsave</w>
+      <w>unsaving</w>
     </words>
   </dictionary>
 </component>

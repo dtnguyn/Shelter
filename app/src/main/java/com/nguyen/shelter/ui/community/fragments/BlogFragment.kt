@@ -117,12 +117,12 @@ class BlogFragment : Fragment() {
 
     private fun viewInit(){
         binding.apply {
-            addBottomSheet = BottomSheetBehavior.from(binding.addPostBottomSheet)
+            addBottomSheet = BottomSheetBehavior.from(binding.addInclude.addPostBottomSheet)
             addPostButton.setOnClickListener {
-                postButton.text = getString(R.string.post)
-                contentEditText.setText("")
+                addInclude.postButton.text = getString(R.string.post)
+                addInclude.contentEditText.setText("")
                 addImageAdapter.refreshImages()
-                addEditPostText.text = getString(R.string.add_post)
+                addInclude.addEditPostText.text = getString(R.string.add_post)
                 addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
             }
 
@@ -147,7 +147,7 @@ class BlogFragment : Fragment() {
                 viewModel.setStateEvent(MainStateEvent.AddComment(commentContent))
             }
 
-            addImageButton.setOnClickListener {
+            addInclude.addImageButton.setOnClickListener {
                 val intent = Intent()
                 intent.type = "image/*"
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
@@ -155,16 +155,16 @@ class BlogFragment : Fragment() {
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
             }
 
-            postButton.setOnClickListener {
-                if(postButton.text == getString(R.string.post)){
-                    viewModel.setStateEvent(MainStateEvent.AddBlog(contentEditText.text.toString()))
+            addInclude.postButton.setOnClickListener {
+                if(addInclude.postButton.text == getString(R.string.post)){
+                    viewModel.setStateEvent(MainStateEvent.AddBlog(addInclude.contentEditText.text.toString()))
                 } else {
-                    viewModel.setStateEvent(MainStateEvent.EditBlog(contentEditText.text.toString()))
+                    viewModel.setStateEvent(MainStateEvent.EditBlog(addInclude.contentEditText.text.toString()))
                 }
 
                 addBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
 
-                contentEditText.setText("")
+                addInclude.contentEditText.setText("")
             }
 
             val locationListener = View.OnClickListener {
@@ -286,7 +286,7 @@ class BlogFragment : Fragment() {
                 addImageAdapter = AddImageAdapter(it as ArrayList<PhotoUri>){position ->
                     viewModel.setStateEvent(MainStateEvent.DeleteImage(position))
                 }
-                val recyclerView = binding.imageRecyclerView
+                val recyclerView = binding.addInclude.imageRecyclerView
                 recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 recyclerView.adapter = addImageAdapter
             }
@@ -304,7 +304,7 @@ class BlogFragment : Fragment() {
         })
 
         viewModel.currentFocusBlog.observe(viewLifecycleOwner, {blog ->
-            binding.contentEditText.setText(blog.content)
+            binding.addInclude.contentEditText.setText(blog.content)
             binding.reportInclude.blogId = blog.id
         })
 
@@ -362,8 +362,8 @@ class BlogFragment : Fragment() {
         when(action){
             "edit" -> {
                 viewModel.setStateEvent(MainStateEvent.ReplaceAddImages)
-                binding.postButton.text = getString(R.string.save)
-                binding.addEditPostText.text = getString(R.string.edit_post)
+                binding.addInclude.postButton.text = getString(R.string.save)
+                binding.addInclude.addEditPostText.text = getString(R.string.edit_post)
                 addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
             }
 

@@ -345,4 +345,32 @@ class BlogRepository(
         }
     }
 
+    fun getUserBlogs(callback: (response: CallbackResponse<ArrayList<Blog>>) -> Unit) {
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
+        val collectionRef = db.collection("blogs")
+        val blogs = ArrayList<Blog>()
+
+        collectionRef
+            .whereEqualTo("user_id", auth.currentUser!!.uid)
+            .orderBy("date", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener {documents ->
+                for(document in documents){
+                    val blog = blogMapper.mapFromEntity(document.data as HashMap<String, Any>)
+                    auth.currentUser?.let { user ->
+                        blog.isLiked = blog.likeUsers[user.uid] == true
+                        blog.isOwner = blog.userId == auth.currentUser?.uid
+                        if(blog.removeUsers[user.uid] != true) blogs.add(blog)
+                    } ?: blogs.add(blog)
+                }
+                callback.invoke(CallbackResponse(true, "", blogs))
+            }.addOnFailureListener {
+                println("debug: ${it.message}")
+                callback.invoke(CallbackResponse(false, "Error when getting posts: ${it.message}", null))
+            }
+    }
+
 }

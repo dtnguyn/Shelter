@@ -42,7 +42,7 @@ class DetailFragment : Fragment() {
     private lateinit var binding: FragmentDetailBinding
     private lateinit var adapter: ImageSliderAdapter
     private lateinit var imageSlider: SliderView
-
+    private lateinit var propertyId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +68,8 @@ class DetailFragment : Fragment() {
         binding.addressShimmerContainer.startShimmer()
 
 
+
+
         imageSlider = binding.detailImageSlider
 
         val photosUrl: String? = arguments?.getString("photo")
@@ -77,17 +79,23 @@ class DetailFragment : Fragment() {
             }
             imageSlider.setSliderAdapter(adapter)
         }
-        
-        subscribeObservers()
 
-        val id = arguments?.getString("id")
-        id?.let {
+        arguments?.getString("id")?.let{id ->
+            propertyId = id
             viewModel.setStateEvent(MainStateEvent.GetPropertyDetail(id))
         }
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
+
+        binding.savePropertyButton.setOnClickListener {
+            viewModel.setStateEvent(MainStateEvent.UpdatePropertySaveStatus(propertyId))
+        }
+
+        subscribeObservers()
+
+        viewModel.setStateEvent(MainStateEvent.GetSavedProperties)
 
         return binding.root
     }
@@ -102,6 +110,14 @@ class DetailFragment : Fragment() {
     private fun subscribeObservers(){
         viewModel.rentPropertyDetail.observe(viewLifecycleOwner, { propDetail ->
             fragmentInit(propDetail)
+        })
+
+        viewModel.savedProperties.observe(viewLifecycleOwner, {savedProperties ->
+            if(savedProperties?.get(propertyId) == true){
+                binding.savePropertyButton.setImageResource(R.drawable.red_heart_ic_32)
+            } else {
+                binding.savePropertyButton.setImageResource(R.drawable.heart_ic_32)
+            }
         })
     }
     

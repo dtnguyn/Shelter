@@ -7,6 +7,9 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
 import com.nguyen.shelter.api.service.RealtorApiService
@@ -15,6 +18,7 @@ import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
 import com.nguyen.shelter.db.mapper.PropertyDetailCacheMapper
 import com.nguyen.shelter.db.mapper.PropertyFilterCacheMapper
+import com.nguyen.shelter.model.Blog
 import com.nguyen.shelter.model.CallbackResponse
 import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.model.PropertyFilter
@@ -33,7 +37,9 @@ constructor(
     private val detailCacheMapper: PropertyDetailCacheMapper,
     private val cacheMapper: PropertyCacheMapper,
     private val filterMapper: PropertyFilterCacheMapper,
-    private val auth: FirebaseAuth
+    private val blogMapper: BlogFirebaseMapper,
+    private val auth: FirebaseAuth,
+    private val db: FirebaseFirestore,
 ){
 
     private var rentFilter = PropertyFilter()
@@ -169,5 +175,51 @@ constructor(
         val cacheFilter = database.filterDao().getPropertyFilter(type) ?: return PropertyFilter()
         return filterMapper.mapFromEntity(cacheFilter)
     }
+
+    fun updatePropertySaveStatus(savedList: HashMap<String, Boolean>, callback: (response: CallbackResponse<Unit>) -> Unit) {
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
+
+        println("debug: savedList: $savedList")
+        db.collection("saves").document(auth.currentUser!!.uid)
+            .set(savedList)
+            .addOnSuccessListener {
+                callback.invoke(CallbackResponse(true, "Save/Unsave property successfully", null))
+            }
+            .addOnFailureListener {
+                println("debug: report fail ${it.message}")
+                callback.invoke(CallbackResponse(false, "Error when saving/Unsaving property: ${it.message}", null))
+            }
+    }
+
+    fun getSavedProperties(callback: (response: CallbackResponse<HashMap<String, Boolean>>) -> Unit){
+        if(auth.currentUser == null) {
+            callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
+            return
+        }
+
+        val docRef = db.collection("saves").document(auth.currentUser!!.uid)
+        var map: HashMap<String, Boolean>?
+
+        docRef.get()
+            .addOnSuccessListener {document ->
+                map = if(document != null && document.data != null){
+                    document.data!! as HashMap<String, Boolean>
+                } else {
+                    HashMap()
+                }
+                println("Getting saved properties successfully")
+                callback.invoke(CallbackResponse(true, "Getting saved properties successfully", map))
+            }
+            .addOnFailureListener {e ->
+                println(e.message)
+                callback.invoke(CallbackResponse(false, "Error when getting saved properties: ${e.message}", null))
+            }
+
+    }
+
+
 
 }

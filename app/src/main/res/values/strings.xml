@@ -93,5 +93,7 @@
     <string name="user">User</string>
     <string name="edit_post">Edit Post</string>
     <string name="postal_code_dialog">Postal code dialog</string>
+    <string name="saved">Saved</string>
+    <string name="blogs">Blogs</string>
 
 </resources>

@@ -32,7 +32,7 @@ constructor
 ): RemoteMediator<Int, PropertyCacheEntity>() {
 
     companion object{
-        private var isLoaded: Boolean = false
+        private var isLoaded: Boolean = true
     }
 
 

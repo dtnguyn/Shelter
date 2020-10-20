@@ -32,7 +32,7 @@ constructor
 ): RemoteMediator<Int, PropertyCacheEntity>() {
 
     companion object{
-        var isLoaded: Boolean = false
+        var isLoaded: Boolean = true
     }
 
     override suspend fun load(
