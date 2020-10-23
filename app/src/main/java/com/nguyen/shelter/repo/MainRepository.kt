@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.gson.Gson
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
@@ -18,10 +19,7 @@ import com.nguyen.shelter.db.entity.PropertyCacheEntity
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
 import com.nguyen.shelter.db.mapper.PropertyDetailCacheMapper
 import com.nguyen.shelter.db.mapper.PropertyFilterCacheMapper
-import com.nguyen.shelter.model.Blog
-import com.nguyen.shelter.model.CallbackResponse
-import com.nguyen.shelter.model.PropertyDetail
-import com.nguyen.shelter.model.PropertyFilter
+import com.nguyen.shelter.model.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -38,6 +36,7 @@ constructor(
     private val cacheMapper: PropertyCacheMapper,
     private val filterMapper: PropertyFilterCacheMapper,
     private val blogMapper: BlogFirebaseMapper,
+    private val gson: Gson,
     private val auth: FirebaseAuth,
     private val db: FirebaseFirestore,
 ){
@@ -176,15 +175,21 @@ constructor(
         return filterMapper.mapFromEntity(cacheFilter)
     }
 
-    fun updatePropertySaveStatus(savedList: HashMap<String, Boolean>, callback: (response: CallbackResponse<Unit>) -> Unit) {
+    fun updatePropertySaveStatus(savedList: HashMap<String, Property?>, property: Property, callback: (response: CallbackResponse<Unit>) -> Unit) {
         if(auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
 
+        val savedMap = HashMap<String, String>()
+
+        for ((key, value) in savedList) {
+            savedMap[key] = gson.toJson(value)
+        }
+
         println("debug: savedList: $savedList")
         db.collection("saves").document(auth.currentUser!!.uid)
-            .set(savedList)
+            .set(savedMap)
             .addOnSuccessListener {
                 callback.invoke(CallbackResponse(true, "Save/Unsave property successfully", null))
             }
@@ -192,26 +197,33 @@ constructor(
                 println("debug: report fail ${it.message}")
                 callback.invoke(CallbackResponse(false, "Error when saving/Unsaving property: ${it.message}", null))
             }
+
+
     }
 
-    fun getSavedProperties(callback: (response: CallbackResponse<HashMap<String, Boolean>>) -> Unit){
+    fun getSavedProperties(callback: (response: CallbackResponse<HashMap<String, Property?>>) -> Unit){
         if(auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
 
         val docRef = db.collection("saves").document(auth.currentUser!!.uid)
-        var map: HashMap<String, Boolean>?
+        var map: HashMap<String, String>?
 
         docRef.get()
             .addOnSuccessListener {document ->
                 map = if(document != null && document.data != null){
-                    document.data!! as HashMap<String, Boolean>
+                    document.data!! as HashMap<String, String>
                 } else {
                     HashMap()
                 }
                 println("Getting saved properties successfully")
-                callback.invoke(CallbackResponse(true, "Getting saved properties successfully", map))
+
+                val propMap = HashMap<String, Property?>()
+                for ((key, value) in map!!) {
+                    propMap[key] = gson.fromJson(value, Property::class.java)
+                }
+                callback.invoke(CallbackResponse(true, "Getting saved properties successfully", propMap))
             }
             .addOnFailureListener {e ->
                 println(e.message)

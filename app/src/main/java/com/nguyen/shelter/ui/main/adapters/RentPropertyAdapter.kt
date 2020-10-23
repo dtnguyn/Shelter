@@ -77,7 +77,7 @@ constructor(
                     println("debug: ${transformationLayout.transitionName}")
                     val photo = if(prop.photos.isNotEmpty()) prop.photos[0].url else ""
                     val bundle = transformationLayout.getBundle("TransformationParams")
-                    bundle.putString("id", prop.id)
+                    bundle.putParcelable("prop", prop)
                     bundle.putString("photo", prop.photos[0].url)
                     detailOnClick.invoke(bundle, binding.transformationLayout)
                 }

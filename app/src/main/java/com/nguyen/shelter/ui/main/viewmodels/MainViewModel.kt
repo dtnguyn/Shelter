@@ -32,7 +32,7 @@ constructor(
     private val _rentPropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
     private val _salePropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
     private val _rentPropertyDetail: MutableLiveData<PropertyDetail> = MutableLiveData()
-    private val _savedProperties: MutableLiveData<HashMap<String, Boolean>> = MutableLiveData()
+    private val _savedProperties: MutableLiveData<HashMap<String, Property?>> = MutableLiveData()
     private val _userBlogs: MutableLiveData<ArrayList<Blog>> = MutableLiveData()
 
 
@@ -67,7 +67,7 @@ constructor(
         it
     }
 
-    val savedProperties: LiveData<HashMap<String, Boolean>> = Transformations.map(_savedProperties){
+    val savedProperties: LiveData<HashMap<String, Property?>> = Transformations.map(_savedProperties){
         it
     }
 
@@ -189,13 +189,19 @@ constructor(
                 }
 
                 is MainStateEvent.UpdatePropertySaveStatus -> {
-                    _savedProperties.value?.let{
-                        it[mainStateEvent.propertyId] = it[mainStateEvent.propertyId]?.not() ?: true
-                        mainRepository.updatePropertySaveStatus(it){response ->
-                            if(!response.status) _error.value = response.message
-                        }
+                    _savedProperties.value?.let{savedList ->
+//                        it[mainStateEvent.propertyId] = it[mainStateEvent.propertyId]?.not() ?: true
+//                        mainRepository.updatePropertySaveStatus(it, mainStateEvent.property){response ->
+//                            if(!response.status) _error.value = response.message
+//                        }
+//
+//                        _savedProperties.value = it
 
-                        _savedProperties.value = it
+                        savedList[mainStateEvent.propertyId] = if(savedList[mainStateEvent.propertyId] == null) mainStateEvent.property else null
+                        _savedProperties.value = savedList
+                        mainRepository.updatePropertySaveStatus(savedList, mainStateEvent.property){
+
+                        }
                     }
                 }
 
@@ -237,10 +243,8 @@ sealed class MainStateEvent{
     class SaveSalePropertyFilter(val propertyFilter: PropertyFilter): MainStateEvent()
     class GetPropertyFilter(val type: String): MainStateEvent()
 
-
-
     //Others
     object GetSavedProperties: MainStateEvent()
-    class UpdatePropertySaveStatus(val propertyId: String): MainStateEvent()
+    class UpdatePropertySaveStatus(val propertyId: String, val property: Property): MainStateEvent()
 
 }

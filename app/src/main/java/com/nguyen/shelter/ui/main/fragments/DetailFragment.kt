@@ -17,6 +17,7 @@ import com.nguyen.shelter.R
 import com.nguyen.shelter.api.response.Photo
 import com.nguyen.shelter.api.response.WorkingHour
 import com.nguyen.shelter.databinding.FragmentDetailBinding
+import com.nguyen.shelter.model.Property
 import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.ui.main.MainActivity
 import com.nguyen.shelter.ui.main.adapters.FloorPlanAdapter
@@ -43,6 +44,7 @@ class DetailFragment : Fragment() {
     private lateinit var adapter: ImageSliderAdapter
     private lateinit var imageSlider: SliderView
     private lateinit var propertyId: String
+    private lateinit var property: Property
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,9 +82,10 @@ class DetailFragment : Fragment() {
             imageSlider.setSliderAdapter(adapter)
         }
 
-        arguments?.getString("id")?.let{id ->
-            propertyId = id
-            viewModel.setStateEvent(MainStateEvent.GetPropertyDetail(id))
+        arguments?.getParcelable<Property>("prop")?.let{prop ->
+            property = prop
+            propertyId = prop.id
+            viewModel.setStateEvent(MainStateEvent.GetPropertyDetail(prop.id))
         }
 
         binding.backButton.setOnClickListener {
@@ -90,7 +93,7 @@ class DetailFragment : Fragment() {
         }
 
         binding.savePropertyButton.setOnClickListener {
-            viewModel.setStateEvent(MainStateEvent.UpdatePropertySaveStatus(propertyId))
+            viewModel.setStateEvent(MainStateEvent.UpdatePropertySaveStatus(propertyId, property))
         }
 
         subscribeObservers()
@@ -103,7 +106,7 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = arguments?.getString("id")
+        val id = arguments?.getParcelable<Property>("prop")?.id
         view.scrollView.transitionName = id!!
     }
 
@@ -113,7 +116,7 @@ class DetailFragment : Fragment() {
         })
 
         viewModel.savedProperties.observe(viewLifecycleOwner, {savedProperties ->
-            if(savedProperties?.get(propertyId) == true){
+            if(savedProperties?.get(propertyId) != null){
                 binding.savePropertyButton.setImageResource(R.drawable.red_heart_ic_32)
             } else {
                 binding.savePropertyButton.setImageResource(R.drawable.heart_ic_32)

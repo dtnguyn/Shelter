@@ -20,7 +20,13 @@
     <fragment
         android:name="com.nguyen.shelter.ui.main.fragments.UserFragment"
         tools:layout="@layout/fragment_user"
-        android:id="@+id/user_fragment" />
+        android:id="@+id/user_fragment" >
+
+        <action
+            android:id="@+id/action_user_fragment_to_detail_fragment"
+            app:destination="@id/detail_fragment" />
+
+    </fragment>
 
     <fragment
         android:name="com.nguyen.shelter.ui.main.fragments.RentFilterFragment"

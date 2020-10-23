@@ -6,30 +6,36 @@
 
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".ui.main.fragments.UserBlogFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/user_blog_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
-        <include
-            android:id="@+id/add_include"
-            layout="@layout/bottom_sheet_add_blog"/>
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-
-        <include
-            android:id="@+id/report_include"
-            layout="@layout/report_bottom_sheet"/>
-
-        <include
-            android:id="@+id/comment_include"
-            layout="@layout/comment_bottom_sheet"/>
+            <include
+                android:id="@+id/add_include"
+                layout="@layout/bottom_sheet_add_blog"/>
 
 
+            <include
+                android:id="@+id/report_include"
+                layout="@layout/report_bottom_sheet"/>
 
-    </LinearLayout>
+            <include
+                android:id="@+id/comment_include"
+                layout="@layout/comment_bottom_sheet"/>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    </RelativeLayout>
 </layout>

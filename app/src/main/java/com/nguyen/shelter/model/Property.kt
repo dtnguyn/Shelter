@@ -1,9 +1,12 @@
 package com.nguyen.shelter.model
 
+import android.os.Parcelable
 import com.nguyen.shelter.api.response.Address
 import com.nguyen.shelter.api.response.Features
 import com.nguyen.shelter.api.response.Photo
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Property (
     var id: String,
     var listingId: String,
@@ -18,4 +21,4 @@ data class Property (
     var photos: List<Photo>,
     var thumbnail: String,
     var buildingSize: String
-)
+) : Parcelable

@@ -83,4 +83,8 @@ class UserFragment : Fragment() {
     }
 
 
+    fun collapseOrExpandAppBar(expand: Boolean){
+        binding.appBar.setExpanded(expand)
+    }
+
 }

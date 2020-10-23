@@ -8,6 +8,7 @@ import com.nguyen.shelter.api.response.DataList
 import com.nguyen.shelter.api.response.Features
 import com.nguyen.shelter.api.response.Photo
 
+
 @Entity(tableName = "properties")
 class PropertyCacheEntity (
     @PrimaryKey(autoGenerate = false)

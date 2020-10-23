@@ -1,7 +1,10 @@
 package com.nguyen.shelter.api.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Address (
     @SerializedName("city")
     var city: String? = null,
@@ -37,4 +40,4 @@ data class Address (
     var neighborhoodName: String? = null
 //    @SerializedName("neighborhoods")
 //    var neighborhoods: DataList<Neighborhood>?
-)
+) : Parcelable

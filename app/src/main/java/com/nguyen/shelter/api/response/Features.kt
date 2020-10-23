@@ -1,7 +1,10 @@
 package com.nguyen.shelter.api.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Features (
 
     @SerializedName("id")
@@ -33,4 +36,4 @@ data class Features (
 
     @SerializedName("sqft_max")
     var areaMax: Double? = null
-)
+) : Parcelable

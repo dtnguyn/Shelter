@@ -4,6 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
+import com.google.gson.Gson
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.CommentFirebaseMapper
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
@@ -39,6 +40,7 @@ object RepositoryModule {
         filterCacheMapper: PropertyFilterCacheMapper,
         blogFirebaseMapper: BlogFirebaseMapper,
         auth: FirebaseAuth,
+        gson: Gson,
         fireStore: FirebaseFirestore,
     ): MainRepository{
         return MainRepository(
@@ -50,6 +52,7 @@ object RepositoryModule {
             propertyCacheMapper,
             filterCacheMapper,
             blogFirebaseMapper,
+            gson,
             auth,
             fireStore
         )

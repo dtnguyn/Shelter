@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -34,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_user_blog.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class UserBlogFragment : Fragment() {
@@ -82,6 +84,7 @@ class UserBlogFragment : Fragment() {
                 },
                 onCommentClick = fun(blog){
                     commentBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+                    (parentFragment as UserFragment?)?.collapseOrExpandAppBar(false)
                     binding.commentInclude.commentCount = blog.commentCounter
                     binding.commentInclude.isLoading = true
                     if(this::commentAdapter.isInitialized) commentAdapter.clearComments()
@@ -168,52 +171,52 @@ class UserBlogFragment : Fragment() {
     }
 
     private fun viewInit(){
-//        binding.apply {
-//            addBottomSheet = BottomSheetBehavior.from(binding.addInclude.addPostBottomSheet)
-//
-//            reportBottomSheet = BottomSheetBehavior.from(binding.reportInclude.reportContainer)
-//            reportInclude.reportButton.setOnClickListener {
-//                val reportContent = binding.reportInclude.reportEditText.text.toString()
-//                if(reportContent.isBlank()) return@setOnClickListener
-//                viewModel.currentFocusBlog.value?.id?.let {
-//                    viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
-//                    reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-//                }
-//
-//            }
-//
-//            commentBottomSheet = BottomSheetBehavior.from(binding.commentInclude.commentContainer)
-//            commentInclude.addCommentButton.setOnClickListener {
-//                val commentContent = commentInclude.commentEditText.text.toString()
-//                if(commentContent.isBlank()) return@setOnClickListener
-//                commentInclude.commentEditText.setText("")
-//                (activity as MainActivity?)?.hideKeyboard()
-//
-//                viewModel.setStateEvent(MainStateEvent.AddComment(commentContent))
-//            }
-//
-//            addInclude.addImageButton.setOnClickListener {
-//                val intent = Intent()
-//                intent.type = "image/*"
-//                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-//                intent.action = Intent.ACTION_GET_CONTENT
-//                startActivityForResult(Intent.createChooser(intent, "Select Picture"),
-//                    BlogFragment.PICK_IMAGE_REQUEST
-//                )
-//            }
-//
-//            addInclude.postButton.setOnClickListener {
-//                if(addInclude.postButton.text == getString(R.string.post)){
-//                    viewModel.setStateEvent(MainStateEvent.AddBlog(addInclude.contentEditText.text.toString()))
-//                } else {
-//                    viewModel.setStateEvent(MainStateEvent.EditBlog(addInclude.contentEditText.text.toString()))
-//                }
-//
-//                addBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-//
-//                addInclude.contentEditText.setText("")
-//            }
-//        }
+        binding.apply {
+            addBottomSheet = BottomSheetBehavior.from(binding.addInclude.addPostBottomSheet)
+
+            reportBottomSheet = BottomSheetBehavior.from(binding.reportInclude.reportContainer)
+            reportInclude.reportButton.setOnClickListener {
+                val reportContent = binding.reportInclude.reportEditText.text.toString()
+                if(reportContent.isBlank()) return@setOnClickListener
+                viewModel.currentFocusBlog.value?.id?.let {
+                    viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
+                    reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+
+            }
+
+            commentBottomSheet = BottomSheetBehavior.from(binding.commentInclude.commentContainer)
+            commentInclude.addCommentButton.setOnClickListener {
+                val commentContent = commentInclude.commentEditText.text.toString()
+                if(commentContent.isBlank()) return@setOnClickListener
+                commentInclude.commentEditText.setText("")
+                (activity as MainActivity?)?.hideKeyboard()
+
+                viewModel.setStateEvent(MainStateEvent.AddComment(commentContent))
+            }
+
+            addInclude.addImageButton.setOnClickListener {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"),
+                    BlogFragment.PICK_IMAGE_REQUEST
+                )
+            }
+
+            addInclude.postButton.setOnClickListener {
+                if(addInclude.postButton.text == getString(R.string.post)){
+                    viewModel.setStateEvent(MainStateEvent.AddBlog(addInclude.contentEditText.text.toString()))
+                } else {
+                    viewModel.setStateEvent(MainStateEvent.EditBlog(addInclude.contentEditText.text.toString()))
+                }
+
+                addBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+
+                addInclude.contentEditText.setText("")
+            }
+        }
     }
 
     private fun performAction(action: String){
@@ -224,6 +227,7 @@ class UserBlogFragment : Fragment() {
                 binding.addInclude.postButton.text = getString(R.string.save)
                 binding.addInclude.addEditPostText.text = getString(R.string.edit_post)
                 addBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
+                (parentFragment as UserFragment?)?.collapseOrExpandAppBar(false)
             }
 
             "delete" -> {
@@ -232,6 +236,7 @@ class UserBlogFragment : Fragment() {
 
             "report" -> {
                 reportBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+                (parentFragment as UserFragment?)?.collapseOrExpandAppBar(false)
             }
 
             "remove" -> {

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nguyen.shelter.R
 import com.nguyen.shelter.databinding.FragmentRentBinding
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
+import com.nguyen.shelter.model.Property
 import com.nguyen.shelter.repo.MainRepository.Companion.RENT
 import com.nguyen.shelter.ui.main.adapters.RentPropertyAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
@@ -82,7 +83,7 @@ class RentFragment: Fragment() {
 //            val action = MainFragmentDirections.actionMainFragmentToDetailFragment(id, photos[0].url ?: "")
 //            NavHostFragment.findNavController(this@RentFragment).navigate(action, extras)
 
-            val extras = FragmentNavigatorExtras(transformationLayout to bundle.getString("id")!!)
+            val extras = FragmentNavigatorExtras(transformationLayout to bundle.getParcelable<Property>("prop")!!.id)
 
 //            val bundle = bundleOf("id" to id, "photo" to photos[0].url)
 //            findNavController().navigate(R.id.detail_fragment, bundle, null, extras)
