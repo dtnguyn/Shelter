@@ -74,9 +74,11 @@ constructor(
                 binding.container.setOnClickListener {
                     val bundle = transformationLayout.getBundle("TransformationParams")
                     val photo = if(prop.photos.isNotEmpty()) prop.photos[0].url else ""
-                    bundle.putString("id", prop.id)
+                    bundle.putParcelable("prop", prop)
                     bundle.putString("photo", photo)
                     detailOnClick.invoke(bundle, binding.transformationLayout)
+
+
                 }
             }
 

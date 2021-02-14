@@ -1,5 +1,6 @@
 package com.nguyen.shelter.repo
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -39,11 +40,9 @@ constructor
         loadType: LoadType,
         state: PagingState<Int, PropertyCacheEntity>
     ): MediatorResult {
-        println("debug: Loading Rent...")
         val page = when(loadType){
             LoadType.REFRESH -> {
                 if(isLoaded) return MediatorResult.Success(endOfPaginationReached = true)
-                println("debug: Refresh Rent")
 //                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
 //                remoteKeys?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
 
@@ -85,9 +84,9 @@ constructor
                 limit = state.config.pageSize,
                 offset = page,
                 postalCode = filter.postalCode,
-                bedsMin = filter.bedsMin,
+                bedsMin = filter.bedsMax,
                 bedsMax = filter.bedsMax,
-                bathsMin = filter.bathsMin,
+                bathsMin = filter.bathsMax,
                 bathsMax = filter.bathsMax,
                 priceMin = filter.priceMin,
                 priceMax = filter.priceMax,
@@ -102,9 +101,11 @@ constructor
                 features = filter.features
             )
 
-            isLoaded = true
+            //isLoaded = true
+            Log.d("DebugApp", "Call Rent API, $filter")
+            Log.d("DebugApp", "Response got back:  $apiResponse")
             var properties = apiResponse.data
-            println("debug: properties rent: $properties")
+            //println("DebugApp: properties rent: $properties")
             if(properties == null) properties = listOf()
             val endOfPaginationReached = properties.isEmpty()
             database.withTransaction {
@@ -113,7 +114,7 @@ constructor
 
                     println("clear")
                     database.remoteKeysDao().clearRemoteKeys()
-                    database.propertyDao().clearProperties()
+                    database.propertyDao().clearProperties("for_rent")
                 }
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1

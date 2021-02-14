@@ -15,9 +15,7 @@ import com.nguyen.shelter.repo.MainRepository.Companion.RENT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -29,15 +27,32 @@ constructor(
 
     private val _rentPropertyPageData: MutableLiveData<PagingData<PropertyCacheEntity>> = MutableLiveData()
     private val _salePropertyPageData: MutableLiveData<PagingData<PropertyCacheEntity>> = MutableLiveData()
-    private val _rentPropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
-    private val _salePropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData(PropertyFilter())
+    private val _rentPropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData()
+    private val _salePropertyFilter: MutableLiveData<PropertyFilter> = MutableLiveData()
     private val _rentPropertyDetail: MutableLiveData<PropertyDetail> = MutableLiveData()
     private val _savedProperties: MutableLiveData<HashMap<String, Property?>> = MutableLiveData()
     private val _userBlogs: MutableLiveData<ArrayList<Blog>> = MutableLiveData()
 
+    private val _rentLoading: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _saleLoading: MutableLiveData<Boolean> = MutableLiveData(false)
+
 
     private val _currentUser: MutableLiveData<FirebaseUser> = MutableLiveData()
     private val _error: MutableLiveData<String> = MutableLiveData()
+
+    private var firstRentCall = true
+    private var rentFilterChange = false
+    private var firstSaleCall = true
+    private var saleFilterChange = false
+    private var networkAvailable = false
+
+    val rentLoading: LiveData<Boolean> = Transformations.map(_rentLoading){
+        it
+    }
+
+    val saleLoading: LiveData<Boolean> = Transformations.map(_saleLoading){
+        it
+    }
 
     val rentPropertyPageData: LiveData<PagingData<PropertyCacheEntity>> = Transformations.map(_rentPropertyPageData){
         it
@@ -120,24 +135,38 @@ constructor(
                 }
 
                 is MainStateEvent.GetRentPropertyList -> {
+                    if(!rentFilterChange && !firstRentCall) return@launch
+                    println("DebugApp: Getting rent property list")
+                    _rentLoading.value = true
                     mainRepository.getRentPropertyList(mainStateEvent.propertyFilter)
                         .cachedIn(viewModelScope)
                         .onEach {
-                            println("debug: Success")
+                            println("DebugApp: emit paging rent data")
+                            firstRentCall = false
                             _rentPropertyPageData.value = it
+                            if(!rentFilterChange || !networkAvailable) _rentLoading.value = false
+                            else rentFilterChange = false
                         }
                         .catch {
-                            println("debug: Error")
+
                         }
                         .launchIn(viewModelScope)
+
 
                 }
 
                 is MainStateEvent.GetSalePropertyList -> {
+                    if(!saleFilterChange && !firstSaleCall) return@launch
+                    println("DebugApp: Getting sale property list")
+                    _saleLoading.value = true
                     mainRepository.getSalePropertyList(mainStateEvent.propertyFilter)
                         .cachedIn(viewModelScope)
                         .onEach {
+                            println("DebugApp: emit paging sale data")
+                            firstSaleCall = false
                             _salePropertyPageData.value = it
+                            if(!saleFilterChange || !networkAvailable) _saleLoading.value = false
+                            else saleFilterChange = false
                         }
                         .catch {
 
@@ -158,25 +187,28 @@ constructor(
                 }
 
                 is MainStateEvent.SaveRentPropertyFilter -> {
-                    _rentPropertyFilter.value = mainStateEvent.propertyFilter
-                    println("debug: save rent ${mainStateEvent.propertyFilter}")
                     mainRepository.saveRentFilter(mainStateEvent.propertyFilter)
                 }
 
                 is MainStateEvent.SaveSalePropertyFilter -> {
-                    _salePropertyFilter.value = mainStateEvent.propertyFilter
-                    println("debug: save sale ${mainStateEvent.propertyFilter}")
                     mainRepository.saveSaleFilter(mainStateEvent.propertyFilter)
                 }
 
                 is MainStateEvent.GetPropertyFilter -> {
-                    CoroutineScope(IO).launch {
+                    viewModelScope.launch(IO) {
                         val filter = mainRepository.getFilter(mainStateEvent.type)
-                        println("debug: get filter ${mainStateEvent.type}$filter")
+
                         withContext(Main){
-                            if(mainStateEvent.type == RENT) _rentPropertyFilter.value = filter
-                            else _salePropertyFilter.value = filter
+                            if(mainStateEvent.type == RENT && _rentPropertyFilter.value != filter){
+                                rentFilterChange = true
+                                _rentPropertyFilter.value = filter
+                            }
+                            else if(_salePropertyFilter.value != filter) {
+                                saleFilterChange = true
+                                _salePropertyFilter.value = filter
+                            }
                         }
+
                     }
 
                 }
@@ -203,6 +235,10 @@ constructor(
 
                         }
                     }
+                }
+
+                is MainStateEvent.UpdateNetworkAvailable -> {
+                    networkAvailable = mainStateEvent.status
                 }
 
 
@@ -246,5 +282,6 @@ sealed class MainStateEvent{
     //Others
     object GetSavedProperties: MainStateEvent()
     class UpdatePropertySaveStatus(val propertyId: String, val property: Property): MainStateEvent()
+    class UpdateNetworkAvailable(val status: Boolean): MainStateEvent()
 
 }

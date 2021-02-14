@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         println("debug: Running Main activity")
-        mainViewModel.setStateEvent(MainStateEvent.InitializeLiveData)
+        //mainViewModel.setStateEvent(MainStateEvent.InitializeLiveData)
 
         val mainToolBar = main_toolbar
         drawerLayout = drawer_layout

@@ -19,7 +19,7 @@ import com.nguyen.shelter.repo.MainRepository.Companion.RENT
 import com.nguyen.shelter.ui.main.adapters.RentPropertyAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
-import com.skydoves.transformationlayout.onTransformationStartContainer
+import com.nguyen.shelter.util.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -37,14 +37,11 @@ class RentFragment: Fragment() {
 
     private lateinit var pagingAdapterRent: RentPropertyAdapter
 
+    private lateinit var connectionLiveData: ConnectionLiveData
+
     @Inject
     lateinit var cacheMapper: PropertyCacheMapper
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        onTransformationStartContainer()
-    }
 
 
     @ExperimentalCoroutinesApi
@@ -54,6 +51,7 @@ class RentFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentRentBinding.inflate(inflater, container, false)
+        binding.isLoading = false
         createAdapter()
 
         val rentRecyclerView = binding.rentRecyclerview
@@ -61,11 +59,12 @@ class RentFragment: Fragment() {
         rentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         rentRecyclerView.adapter = pagingAdapterRent
 
-
-        subscribeObservers()
-
         viewModel.setStateEvent(MainStateEvent.GetPropertyFilter(RENT))
 
+        connectionLiveData = ConnectionLiveData(requireContext())
+
+
+        subscribeObservers(binding)
 
         return binding.root
     }
@@ -75,40 +74,34 @@ class RentFragment: Fragment() {
 
         pagingAdapterRent = RentPropertyAdapter(cacheMapper,
         detailOnClick = {bundle, transformationLayout ->
-            //val bundle = bundleOf("id" to id, "photo" to photos)
-//            findNavController().navigate(R.id.detail_fragment, bundle)
-//            val extras = FragmentNavigatorExtras(
-//                preview to "preview"
-//            )
-//            val action = MainFragmentDirections.actionMainFragmentToDetailFragment(id, photos[0].url ?: "")
-//            NavHostFragment.findNavController(this@RentFragment).navigate(action, extras)
-
             val extras = FragmentNavigatorExtras(transformationLayout to bundle.getParcelable<Property>("prop")!!.id)
-
-//            val bundle = bundleOf("id" to id, "photo" to photos[0].url)
-//            findNavController().navigate(R.id.detail_fragment, bundle, null, extras)
-
-
-//            val fragment = DetailFragment()
-//            fragment.arguments = bundle
-
-            //val extras = FragmentNavigatorExtras(transformationLayout to "preview")
             findNavController().navigate(R.id.detail_fragment, bundle, null, extras)
-
         })
 
     }
 
 
-    private fun subscribeObservers(){
+    private fun subscribeObservers(binding: FragmentRentBinding){
         viewModel.rentPropertyPageData.observe(viewLifecycleOwner, { pagingData ->
+            //Log.d("DebugApp", "Finish property")
             lifecycleScope.launch {
                 pagingAdapterRent.submitData(pagingData)
             }
         })
 
         viewModel.rentPropertyFilter.observe(viewLifecycleOwner, {filter ->
+            //Log.d("DebugApp", "Rent Filter: ${filter}")
+            //binding.isLoading = true
             viewModel.setStateEvent(MainStateEvent.GetRentPropertyList(filter))
+        })
+
+        viewModel.rentLoading.observe(viewLifecycleOwner, {loading ->
+            //Log.d("DebugApp", "Loading $loading")
+            binding.isLoading = loading
+        })
+
+        connectionLiveData.observe(viewLifecycleOwner, {isNetworkAvailable ->
+            viewModel.setStateEvent(MainStateEvent.UpdateNetworkAvailable(isNetworkAvailable))
         })
     }
 
