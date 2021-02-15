@@ -20,6 +20,7 @@ object Versions{
     const val legacySupportVersion = "1.0.0"
     const val fireBaseVersion = "17.5.0"
     const val firebaseAuthVersion = "19.3.2"
+    const val firebaseMessagingVersion = "21.0.1"
     const val serviceAuthVersion = "18.1.0"
     const val googleServicePath = "4.3.3"
     const val facebookVersion = "[5,6)"
@@ -70,6 +71,7 @@ object Deps{
 
     const val fireBase = "com.google.firebase:firebase-analytics:${Versions.fireBaseVersion}"
     const val fireBaseAuth = "com.google.firebase:firebase-auth:${Versions.firebaseAuthVersion}"
+    const val firebaseMessaging = "com.google.firebase:firebase-messaging-ktx:${Versions.firebaseMessagingVersion}"
     const val serviceAuth =  "com.google.android.gms:play-services-auth:${Versions.serviceAuthVersion}"
     const val facebook = "com.facebook.android:facebook-login:${Versions.facebookVersion}"
 

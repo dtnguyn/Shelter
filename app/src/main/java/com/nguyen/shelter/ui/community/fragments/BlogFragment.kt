@@ -76,7 +76,11 @@ class BlogFragment : Fragment() {
             })
         }
 
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
+        viewModel.setStateEvent(MainStateEvent.GetMessagingToken)
         viewModel.setStateEvent(MainStateEvent.CheckAuthentication)
 
 
@@ -189,6 +193,9 @@ class BlogFragment : Fragment() {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(requireContext(), "Permission denied!", Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack()
+                } else {
+                    println("DebugApp: location permission granted")
+                    getCurrentLocation()
                 }
             }
         }

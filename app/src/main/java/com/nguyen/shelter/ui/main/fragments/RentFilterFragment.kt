@@ -215,17 +215,29 @@ class RentFilterFragment : Fragment() {
                 binding.filter = propertyFilter
             }
 
-            bedsSlider.values = mutableListOf(propertyFilter.bedsMin?.toFloat(), propertyFilter.bedsMax?.toFloat())
-            bedsSlider.addOnChangeListener { rangeSlider, _, _ ->
-                propertyFilter.bedsMin = rangeSlider.values[0].toInt()
-                propertyFilter.bedsMax = rangeSlider.values[1].toInt()
+//            bedsSlider.values = mutableListOf(propertyFilter.bedsMin?.toFloat(), propertyFilter.bedsMax?.toFloat())
+//            bedsSlider.addOnChangeListener { rangeSlider, _, _ ->
+//                propertyFilter.bedsMin = rangeSlider.values[0].toInt()
+//                propertyFilter.bedsMax = rangeSlider.values[1].toInt()
+//                binding.filter = propertyFilter
+//            }
+//
+//            bathsSlider.values = mutableListOf(propertyFilter.bathsMin?.toFloat(), propertyFilter.bathsMax?.toFloat())
+//            bathsSlider.addOnChangeListener { rangeSlider, _, _ ->
+//                propertyFilter.bathsMin = rangeSlider.values[0].toInt()
+//                propertyFilter.bathsMax = rangeSlider.values[1].toInt()
+//                binding.filter = propertyFilter
+//            }
+
+            bedsSlider.value = propertyFilter.bedsMin?.toFloat() ?: 1f
+            bedsSlider.addOnChangeListener { _, value, _ ->
+                propertyFilter.bedsMin = value.toInt()
                 binding.filter = propertyFilter
             }
 
-            bathsSlider.values = mutableListOf(propertyFilter.bathsMin?.toFloat(), propertyFilter.bathsMax?.toFloat())
-            bathsSlider.addOnChangeListener { rangeSlider, _, _ ->
-                propertyFilter.bathsMin = rangeSlider.values[0].toInt()
-                propertyFilter.bathsMax = rangeSlider.values[1].toInt()
+            bathsSlider.value = propertyFilter.bathsMin?.toFloat() ?: 1f
+            bathsSlider.addOnChangeListener { _, value, _ ->
+                propertyFilter.bathsMin = value.toInt()
                 binding.filter = propertyFilter
             }
 
@@ -411,6 +423,11 @@ class RentFilterFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as MainActivity?)?.showActionBar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity?)?.hideActionBar()
     }
 
 

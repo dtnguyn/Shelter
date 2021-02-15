@@ -111,10 +111,12 @@ class MainFragment : Fragment() {
             println("debug: Updating UI")
             if(it == null){
                 binding.isLogged = false
+                (activity as MainActivity?)?.hideUserMenuItem()
             } else {
                 binding.isLogged = true
                 binding.loggedCollapseArea.url = it.photoUrl.toString()
                 binding.loggedCollapseArea.username = it.displayName
+                (activity as MainActivity?)?.showUserMenuItem()
             }
         })
     }

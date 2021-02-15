@@ -77,7 +77,7 @@ class SaleFragment : Fragment() {
         })
 
         viewModel.salePropertyFilter.observe(viewLifecycleOwner, {filter ->
-           // viewModel.setStateEvent(MainStateEvent.GetSalePropertyList(filter))
+            //viewModel.setStateEvent(MainStateEvent.GetSalePropertyList(filter))
         })
 
         viewModel.saleLoading.observe(viewLifecycleOwner, {loading ->

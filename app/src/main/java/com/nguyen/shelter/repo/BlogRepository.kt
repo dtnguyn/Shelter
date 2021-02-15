@@ -1,65 +1,99 @@
 package com.nguyen.shelter.repo
 
+import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.StorageReference
+import com.nguyen.shelter.api.entity.NotificationData
+import com.nguyen.shelter.api.entity.PushNotification
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.CommentFirebaseMapper
 import com.nguyen.shelter.api.response.Photo
+import com.nguyen.shelter.api.service.FirebaseApiService
 import com.nguyen.shelter.model.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class BlogRepository(
+    private val service: FirebaseApiService,
     private val blogMapper: BlogFirebaseMapper,
     private val commentMapper: CommentFirebaseMapper,
     private val db: FirebaseFirestore,
+    private val msg: FirebaseMessaging,
     private val storageRef: StorageReference,
     private val auth: FirebaseAuth
 ) {
 
 
-    fun addBlog(blogContent: String, postalCode: String, images: List<PhotoUri>, callback: (CallbackResponse<Blog>) -> Unit){
-        if(auth.currentUser == null) {
+    fun addBlog(
+        blogContent: String,
+        postalCode: String,
+        images: List<PhotoUri>,
+        callback: (CallbackResponse<Blog>) -> Unit
+    ) {
+        if (auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
 
         println("debug: prepare adding images: ${images.size}")
-        addImagesToStorage(images){
-            println("debug: added images: ${it.data?.size}")
-            if(it.status){
-                val blog = Blog(
-                    id = UUID.randomUUID().toString(),
-                    userId = auth.currentUser!!.uid,
-                    user = User(
-                        id = auth.currentUser!!.uid,
-                        avatar = auth.currentUser!!.photoUrl.toString(),
-                        name = auth.currentUser!!.displayName ?: "Unknown",
-                        email = auth.currentUser!!.email ?: "Unknown"
-                    ),
-                    date = Date(),
-                    content = blogContent,
-                    photos = it.data!!,
-                    postalCode = postalCode,
-                    isOwner = true
-                )
-                val blogMap = blogMapper.mapToEntity(blog)
-                db.collection("blogs").document(blog.id)
-                    .set(blogMap)
-                    .addOnSuccessListener {
-                        callback.invoke(CallbackResponse(true, "Add post successfully.", blog))
-                    }
-                    .addOnFailureListener {
-                        callback.invoke(CallbackResponse(false, "Error when adding post: ${it.message}", null))
-                    }
-            } else {
-                callback.invoke(CallbackResponse(it.status, it.message, null))
+        getMessageToken {response ->
+            if(!response.status) {
+                callback.invoke(CallbackResponse(status = false, message = "Fail to get token", data = null))
+                return@getMessageToken
+            }
+            val token = response.data
+            addImagesToStorage(images) {
+
+                println("debug: added images: ${it.data?.size}")
+                if (it.status) {
+                    val blogId = UUID.randomUUID().toString()
+                    val blog = Blog(
+                        id = blogId,
+                        notificationToken = token ?: "",
+                        userId = auth.currentUser!!.uid,
+                        user = User(
+                            id = auth.currentUser!!.uid,
+                            avatar = auth.currentUser!!.photoUrl.toString(),
+                            name = auth.currentUser!!.displayName ?: "Unknown",
+                            email = auth.currentUser!!.email ?: "Unknown"
+                        ),
+                        date = Date(),
+                        content = blogContent,
+                        photos = it.data!!,
+                        postalCode = postalCode,
+                        isOwner = true
+                    )
+                    val blogMap = blogMapper.mapToEntity(blog)
+                    println("DebugApp: blog token: ${blog.notificationToken}")
+                    db.collection("blogs").document(blog.id)
+                        .set(blogMap)
+                        .addOnSuccessListener {
+                            callback.invoke(CallbackResponse(true, "Add post successfully.", blog))
+                        }
+                        .addOnFailureListener {
+                            callback.invoke(
+                                CallbackResponse(
+                                    false,
+                                    "Error when adding post: ${it.message}",
+                                    null
+                                )
+                            )
+                        }
+                } else {
+                    callback.invoke(CallbackResponse(it.status, it.message, null))
+                }
             }
         }
+
     }
 
 
@@ -73,37 +107,49 @@ class BlogRepository(
             .whereEqualTo("postal_code", postalCode)
             .orderBy("date", Query.Direction.DESCENDING)
             .get()
-            .addOnSuccessListener {documents ->
+            .addOnSuccessListener { documents ->
                 println("debug: document size: ${documents.size()}")
-                for(document in documents){
+                for (document in documents) {
                     val blog = blogMapper.mapFromEntity(document.data as HashMap<String, Any>)
                     auth.currentUser?.let { user ->
                         blog.isLiked = blog.likeUsers[user.uid] == true
                         blog.isOwner = blog.userId == auth.currentUser?.uid
-                        if(blog.removeUsers[user.uid] != true) blogs.add(blog)
+                        if (blog.removeUsers[user.uid] != true) blogs.add(blog)
                     } ?: blogs.add(blog)
                 }
                 callback.invoke(CallbackResponse(true, "", blogs))
             }.addOnFailureListener {
                 println("debug: ${it.message}")
-                callback.invoke(CallbackResponse(false, "Error when getting posts: ${it.message}", null))
+                callback.invoke(
+                    CallbackResponse(
+                        false,
+                        "Error when getting posts: ${it.message}",
+                        null
+                    )
+                )
             }
 
     }
 
-    fun editBlog(oldBlog: Blog, newContent: String, newImages: List<PhotoUri>, callback: (CallbackResponse<Blog>) -> Unit){
-        if(auth.currentUser == null) {
+    fun editBlog(
+        oldBlog: Blog,
+        newContent: String,
+        newImages: List<PhotoUri>,
+        callback: (CallbackResponse<Blog>) -> Unit
+    ) {
+        if (auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
 
         println("debug: prepare adding images: ${newImages.size}")
-        addImagesToStorage(newImages){
+        addImagesToStorage(newImages) {
             println("debug: added images: ${it.data?.size}")
-            if(it.status){
+            if (it.status) {
                 val editedBlog = Blog(
                     id = oldBlog.id,
                     userId = auth.currentUser!!.uid,
+                    notificationToken = oldBlog.notificationToken,
                     user = User(
                         id = auth.currentUser!!.uid,
                         avatar = auth.currentUser!!.photoUrl.toString(),
@@ -119,10 +165,22 @@ class BlogRepository(
                 db.collection("blogs").document(editedBlog.id)
                     .set(blogMap)
                     .addOnSuccessListener {
-                        callback.invoke(CallbackResponse(true, "Edit post successfully.", editedBlog))
+                        callback.invoke(
+                            CallbackResponse(
+                                true,
+                                "Edit post successfully.",
+                                editedBlog
+                            )
+                        )
                     }
-                    .addOnFailureListener {e ->
-                        callback.invoke(CallbackResponse(false, "Error when editing post: ${e.message}", null))
+                    .addOnFailureListener { e ->
+                        callback.invoke(
+                            CallbackResponse(
+                                false,
+                                "Error when editing post: ${e.message}",
+                                null
+                            )
+                        )
                     }
             } else {
                 callback.invoke(CallbackResponse(it.status, it.message, null))
@@ -131,21 +189,25 @@ class BlogRepository(
     }
 
 
-
-
-    fun deleteBlog(id: String, callback: (CallbackResponse<Unit>) -> Unit){
+    fun deleteBlog(id: String, callback: (CallbackResponse<Unit>) -> Unit) {
         db.collection("blogs").document(id)
             .delete()
             .addOnSuccessListener {
                 callback.invoke(CallbackResponse(true, "Delete post successfully.", null))
             }
             .addOnFailureListener {
-                callback.invoke(CallbackResponse(false, "Error when deleting post: ${it.message}", null))
+                callback.invoke(
+                    CallbackResponse(
+                        false,
+                        "Error when deleting post: ${it.message}",
+                        null
+                    )
+                )
             }
     }
 
-    fun removeBlog(blog: Blog, callback: (CallbackResponse<Unit>) -> Unit){
-        if(auth.currentUser == null) {
+    fun removeBlog(blog: Blog, callback: (CallbackResponse<Unit>) -> Unit) {
+        if (auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
@@ -156,19 +218,28 @@ class BlogRepository(
             .addOnSuccessListener {
                 callback.invoke(CallbackResponse(true, "Edit post successfully.", null))
             }
-            .addOnFailureListener {e ->
-                callback.invoke(CallbackResponse(false, "Error when editing post: ${e.message}", null))
+            .addOnFailureListener { e ->
+                callback.invoke(
+                    CallbackResponse(
+                        false,
+                        "Error when editing post: ${e.message}",
+                        null
+                    )
+                )
             }
     }
 
-    private fun addImagesToStorage(images: List<PhotoUri>, callback: (CallbackResponse<List<Photo>>) -> Unit){
+    private fun addImagesToStorage(
+        images: List<PhotoUri>,
+        callback: (CallbackResponse<List<Photo>>) -> Unit
+    ) {
 
         val photos = ArrayList<Photo>()
-        if(images.isEmpty()) callback.invoke(CallbackResponse(true, "", photos))
-        for(image in images){
-            if(image.isUploaded) {
+        if (images.isEmpty()) callback.invoke(CallbackResponse(true, "", photos))
+        for (image in images) {
+            if (image.isUploaded) {
                 photos.add(Photo(image.url!!))
-                if(photos.size == images.size) callback.invoke(CallbackResponse(true, "", photos))
+                if (photos.size == images.size) callback.invoke(CallbackResponse(true, "", photos))
                 continue
             }
             val postImagesRef = storageRef.child("images/postImages/${UUID.randomUUID()}")
@@ -178,12 +249,12 @@ class BlogRepository(
                 .addOnSuccessListener {
                     println("debug: Add Success")
                 }
-                .addOnFailureListener{
+                .addOnFailureListener {
                     println("debug: Add Fail ${it.message}")
                 }
                 .continueWithTask {
                     if (!it.isSuccessful) {
-                        it.exception?.let {e ->
+                        it.exception?.let { e ->
                             throw e
                         }
                     }
@@ -194,8 +265,15 @@ class BlogRepository(
                         val downloadUrl = task.result!!.toString()
                         println("download url $downloadUrl")
                         photos.add(Photo(downloadUrl))
-                        if(photos.size == images.size) callback.invoke(CallbackResponse(true, "", photos))
-                    } else {println("debug: Can't add images.")
+                        if (photos.size == images.size) callback.invoke(
+                            CallbackResponse(
+                                true,
+                                "",
+                                photos
+                            )
+                        )
+                    } else {
+                        println("debug: Can't add images.")
                         callback.invoke(CallbackResponse(false, "Can't add images.", null))
                     }
                 }
@@ -203,14 +281,18 @@ class BlogRepository(
     }
 
     fun checkAuthentication(callback: (CallbackResponse<FirebaseUser?>) -> Unit) {
-        if(auth.currentUser != null){
+        if (auth.currentUser != null) {
             callback.invoke(CallbackResponse(true, "User has logged in.", auth.currentUser!!))
         } else {
             callback.invoke(CallbackResponse(false, "User has logged in.", null))
         }
     }
 
-    fun reportBlog(reportContent: String, blogId: String, callback: (CallbackResponse<Unit>) -> Unit) {
+    fun reportBlog(
+        reportContent: String,
+        blogId: String,
+        callback: (CallbackResponse<Unit>) -> Unit
+    ) {
 
         val reportMap = hashMapOf(
             "blog_id" to blogId,
@@ -225,12 +307,18 @@ class BlogRepository(
             }
             .addOnFailureListener {
                 println("debug: report fail ${it.message}")
-                callback.invoke(CallbackResponse(false, "Error when reporting post: ${it.message}", null))
+                callback.invoke(
+                    CallbackResponse(
+                        false,
+                        "Error when reporting post: ${it.message}",
+                        null
+                    )
+                )
             }
     }
 
-    fun likeBlog(blog: Blog, callback: (CallbackResponse<Unit>) -> Unit){
-        if(auth.currentUser == null) {
+    fun likeBlog(blog: Blog, callback: (CallbackResponse<Unit>) -> Unit) {
+        if (auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
@@ -240,7 +328,8 @@ class BlogRepository(
 
         blog.likeUsers[userId] = blog.likeUsers[userId] != true
         blog.isLiked = blog.likeUsers[userId] == true
-        blog.likeCounter = if (blog.likeUsers[userId] == true) blog.likeCounter + 1 else blog.likeCounter - 1
+        blog.likeCounter =
+            if (blog.likeUsers[userId] == true) blog.likeCounter + 1 else blog.likeCounter - 1
 
         val blogMap = blogMapper.mapToEntity(blog)
 
@@ -248,13 +337,34 @@ class BlogRepository(
             .set(blogMap)
             .addOnSuccessListener {
                 callback.invoke(CallbackResponse(true, "Like post successfully.", null))
+                if (blog.likeUsers[userId] == true) {
+                    CoroutineScope(IO).launch {
+                        println("DebugApp: sending like notification to ${blog.id}")
+                        service.postNotification(
+                            PushNotification(
+                                NotificationData(
+                                    title = "New like",
+                                    message = "${auth.currentUser!!.displayName} likes your post"
+                                ), blog.notificationToken
+                            )
+                        )
+                    }
+                }
             }
-            .addOnFailureListener {e ->
-                callback.invoke(CallbackResponse(false, "Error when liking post: ${e.message}", null))
+            .addOnFailureListener { e ->
+                callback.invoke(
+                    CallbackResponse(
+                        false,
+                        "Error when liking post: ${e.message}",
+                        null
+                    )
+                )
             }
+
+
     }
 
-    fun getComments(blogId: String, callback: (CallbackResponse<ArrayList<Comment>>) -> Unit){
+    fun getComments(blogId: String, callback: (CallbackResponse<ArrayList<Comment>>) -> Unit) {
 
         val collectionRef = db.collection("comments")
         val comments = ArrayList<Comment>()
@@ -262,31 +372,38 @@ class BlogRepository(
         collectionRef
             .whereEqualTo("blog_id", blogId)
             .get()
-            .addOnSuccessListener {documents ->
-                for(document in documents){
-                    val comment = commentMapper.mapFromEntity(document.data as HashMap<String, String>)
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val comment =
+                        commentMapper.mapFromEntity(document.data as HashMap<String, String>)
                     auth.currentUser?.let { user ->
-                        if(user.uid == comment.user.id) comment.isOwner = true
+                        if (user.uid == comment.user.id) comment.isOwner = true
                     }
                     comments.add(comment)
                 }
                 callback.invoke(CallbackResponse(true, "Get comments successfully", comments))
             }.addOnFailureListener {
-                callback.invoke(CallbackResponse(false, "Error when getting comments: ${it.message}", null))
+                callback.invoke(
+                    CallbackResponse(
+                        false,
+                        "Error when getting comments: ${it.message}",
+                        null
+                    )
+                )
             }
 
     }
 
 
-    fun addComment(blog: Blog, content: String, callback: (CallbackResponse<Comment>) -> Unit){
-        if(auth.currentUser == null) {
+    fun addComment(blog: Blog, content: String, callback: (CallbackResponse<Comment>) -> Unit) {
+        if (auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
 
         val comment = Comment(
             id = UUID.randomUUID().toString(),
-            blogId= blog.id,
+            blogId = blog.id,
             content = content,
             user = User(
                 id = auth.currentUser!!.uid,
@@ -314,13 +431,30 @@ class BlogRepository(
 
         }.addOnCompleteListener {
             callback.invoke(CallbackResponse(true, "Add comment successfully.", comment))
-        }.addOnFailureListener {e ->
-            callback.invoke(CallbackResponse(false, "Error when adding comment: ${e.message}", null))
+            CoroutineScope(IO).launch {
+                println("DebugApp: sending like notification to ${blog.id}")
+                service.postNotification(
+                    PushNotification(
+                        NotificationData(
+                            title = "New comment",
+                            message = "${auth.currentUser!!.displayName} comments on your post"
+                        ), blog.notificationToken
+                    )
+                )
+            }
+        }.addOnFailureListener { e ->
+            callback.invoke(
+                CallbackResponse(
+                    false,
+                    "Error when adding comment: ${e.message}",
+                    null
+                )
+            )
         }
     }
 
-    fun deleteComment(blog: Blog, id: String, callback: (CallbackResponse<String>) -> Unit){
-        if(auth.currentUser == null) {
+    fun deleteComment(blog: Blog, id: String, callback: (CallbackResponse<String>) -> Unit) {
+        if (auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
@@ -340,13 +474,19 @@ class BlogRepository(
 
         }.addOnCompleteListener {
             callback.invoke(CallbackResponse(true, "Delete comment successfully.", id))
-        }.addOnFailureListener {e ->
-            callback.invoke(CallbackResponse(false, "Error when deleting comment: ${e.message}", null))
+        }.addOnFailureListener { e ->
+            callback.invoke(
+                CallbackResponse(
+                    false,
+                    "Error when deleting comment: ${e.message}",
+                    null
+                )
+            )
         }
     }
 
     fun getUserBlogs(callback: (response: CallbackResponse<ArrayList<Blog>>) -> Unit) {
-        if(auth.currentUser == null) {
+        if (auth.currentUser == null) {
             callback.invoke(CallbackResponse(false, "User haven't logged in.", null))
             return
         }
@@ -357,20 +497,45 @@ class BlogRepository(
             .whereEqualTo("user_id", auth.currentUser!!.uid)
             .orderBy("date", Query.Direction.DESCENDING)
             .get()
-            .addOnSuccessListener {documents ->
-                for(document in documents){
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
                     val blog = blogMapper.mapFromEntity(document.data as HashMap<String, Any>)
                     auth.currentUser?.let { user ->
                         blog.isLiked = blog.likeUsers[user.uid] == true
                         blog.isOwner = blog.userId == auth.currentUser?.uid
-                        if(blog.removeUsers[user.uid] != true) blogs.add(blog)
+                        if (blog.removeUsers[user.uid] != true) blogs.add(blog)
                     } ?: blogs.add(blog)
                 }
                 callback.invoke(CallbackResponse(true, "", blogs))
             }.addOnFailureListener {
                 println("debug: ${it.message}")
-                callback.invoke(CallbackResponse(false, "Error when getting posts: ${it.message}", null))
+                callback.invoke(
+                    CallbackResponse(
+                        false,
+                        "Error when getting posts: ${it.message}",
+                        null
+                    )
+                )
             }
+    }
+
+    fun getMessageToken( callback: (CallbackResponse<String>) -> Unit) {
+        msg.token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("DebugApp", "Fetching FCM registration token failed", task.exception)
+                callback.invoke(CallbackResponse(status = false, message = "Fail to get token", data = null))
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            callback.invoke(CallbackResponse(status = true, message = "Getting token successfully", data = token))
+            // Log and toast
+            Log.d("DebugApp", "messaging token: $token")
+
+        })
+
     }
 
 }

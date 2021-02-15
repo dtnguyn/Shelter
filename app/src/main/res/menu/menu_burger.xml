@@ -14,9 +14,9 @@
             android:title="@string/user"
             android:icon="@drawable/user_ic_32"/>
 
-        <item
-            android:title="@string/donation"
-            android:icon="@drawable/ic_donation_32"/>
+<!--        <item-->
+<!--            android:title="@string/donation"-->
+<!--            android:icon="@drawable/ic_donation_32"/>-->
 
     </group>
 
@@ -24,6 +24,7 @@
         android:id="@+id/other_screens">
 
         <item
+            android:id="@id/settings_fragment"
             android:title="@string/settings"
             android:icon="@drawable/ic_settings_32"/>
 

@@ -92,7 +92,7 @@ class RentFragment: Fragment() {
         viewModel.rentPropertyFilter.observe(viewLifecycleOwner, {filter ->
             //Log.d("DebugApp", "Rent Filter: ${filter}")
             //binding.isLoading = true
-            viewModel.setStateEvent(MainStateEvent.GetRentPropertyList(filter))
+            //viewModel.setStateEvent(MainStateEvent.GetRentPropertyList(filter))
         })
 
         viewModel.rentLoading.observe(viewLifecycleOwner, {loading ->

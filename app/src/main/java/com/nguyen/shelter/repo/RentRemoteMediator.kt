@@ -33,7 +33,7 @@ constructor
 ): RemoteMediator<Int, PropertyCacheEntity>() {
 
     companion object{
-        var isLoaded: Boolean = true
+        var isLoaded: Boolean = false
     }
 
     override suspend fun load(
@@ -84,10 +84,8 @@ constructor
                 limit = state.config.pageSize,
                 offset = page,
                 postalCode = filter.postalCode,
-                bedsMin = filter.bedsMax,
-                bedsMax = filter.bedsMax,
-                bathsMin = filter.bathsMax,
-                bathsMax = filter.bathsMax,
+                bedsMin = filter.bedsMin,
+                bathsMin = filter.bedsMin,
                 priceMin = filter.priceMin,
                 priceMax = filter.priceMax,
                 lotMin = filter.lotMin,
