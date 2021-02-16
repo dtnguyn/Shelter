@@ -12,6 +12,8 @@ object Versions{
     const val junitVersion = "4.12"
     const val junitExtensionVersion = "1.1.1"
     const val espressoCoreVersion = "3.2.0"
+    const val testRunnerVersion = "1.1.0"
+    const val testRulesVersion = "1.1.0"
     const val gradleVersion = "4.0.1"
     const val pagingVersion = "3.0.0-alpha03"
     const val materialVersion = "1.2.1"
@@ -87,9 +89,9 @@ object ClassPath{
 }
 
 object TestDeps{
-
     const val junit = "junit:junit:${Versions.junitVersion}"
     const val junitExtension = "androidx.test.ext:junit:${Versions.junitExtensionVersion}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espressoCoreVersion}"
-
+    const val testRules = "androidx.test:rules:${Versions.testRulesVersion}"
+    const val testRunner = "androidx.test:runner:${Versions.testRunnerVersion}"
 }
