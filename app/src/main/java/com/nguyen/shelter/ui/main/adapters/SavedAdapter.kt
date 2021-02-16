@@ -56,7 +56,7 @@ class SavedAdapter(private val savedList: List<Property>, private val detailOnCl
                 try {
                     println("debug: ${transformationLayout.transitionName}")
                     val photo = if(property.photos.isNotEmpty()) property.photos[0].url else ""
-                    val bundle = transformationLayout.getBundle("TransformationParams")
+                    val bundle = binding.transformationLayout.getBundle("TransformationParams")
                     bundle.putParcelable("prop", property)
                     bundle.putString("photo", property.photos[0].url)
                     detailOnClick.invoke(bundle, binding.transformationLayout)
@@ -98,11 +98,11 @@ class SavedAdapter(private val savedList: List<Property>, private val detailOnCl
             val transformationLayout = binding.transformationLayout
             transformationLayout.transitionName = property.id
             binding.container.setOnClickListener {
-                val bundle = transformationLayout.getBundle("TransformationParams")
-                val photo = if(property.photos.isNotEmpty()) property.photos[0].url else ""
-                bundle.putParcelable("prop", property)
-                bundle.putString("photo", photo)
-                detailOnClick.invoke(bundle, binding.transformationLayout)
+//                val bundle = transformationLayout.getBundle("TransformationParams")
+//                val photo = if(property.photos.isNotEmpty()) property.photos[0].url else ""
+//                bundle.putParcelable("prop", property)
+//                bundle.putString("photo", photo)
+//                detailOnClick.invoke(bundle, binding.transformationLayout)
             }
         }
     }

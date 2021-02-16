@@ -56,6 +56,8 @@ dependencies {
     implementation Deps.navigation
 
 
+
+
     implementation Deps.liveData
 
     // Hilt
@@ -120,6 +122,8 @@ dependencies {
     implementation Deps.shimmer
 
 
+
+    
     implementation 'com.google.firebase:firebase-firestore-ktx:21.6.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
 

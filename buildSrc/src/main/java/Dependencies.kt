@@ -27,7 +27,7 @@ object Versions{
     const val transformationLayoutVersion = "1.0.6"
     const val shimmerVersion = "0.5.0"
     const val databindingCompilerVersion = "4.0.1"
-    const val recyclerViewVersion = "1.1.0"
+    const val recyclerViewVersion = "1.2.0-alpha06"
     const val mapsVersion = "17.0.0"
 }
 

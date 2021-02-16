@@ -43,6 +43,8 @@ class UserFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
+
         sharedElementEnterTransition = TransitionInflater.from(this.context).inflateTransition(R.transition.change_bounds)
         sharedElementReturnTransition =  TransitionInflater.from(this.context).inflateTransition(R.transition.change_bounds)
         binding = FragmentUserBinding.inflate(inflater, container, false)
@@ -55,6 +57,8 @@ class UserFragment : Fragment() {
 
         subscribeObservers()
         viewModel.setStateEvent(MainStateEvent.CheckAuthentication)
+
+
 
         return binding.root
     }

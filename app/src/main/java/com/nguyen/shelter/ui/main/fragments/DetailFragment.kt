@@ -20,12 +20,14 @@ import com.nguyen.shelter.databinding.FragmentDetailBinding
 import com.nguyen.shelter.model.Property
 import com.nguyen.shelter.model.PropertyDetail
 import com.nguyen.shelter.ui.main.MainActivity
+import com.nguyen.shelter.ui.main.MainFragment
 import com.nguyen.shelter.ui.main.adapters.FloorPlanAdapter
 import com.nguyen.shelter.ui.main.adapters.ImageSliderAdapter
 import com.nguyen.shelter.ui.main.viewmodels.MainStateEvent
 import com.nguyen.shelter.ui.main.viewmodels.MainViewModel
 import com.skydoves.transformationlayout.TransformationLayout
 import com.skydoves.transformationlayout.onTransformationEndContainer
+import com.skydoves.transformationlayout.onTransformationStartContainer
 import com.smarteist.autoimageslider.SliderView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.view.*
@@ -48,10 +50,14 @@ class DetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
 
         val params = arguments?.getParcelable<TransformationLayout.Params>("TransformationParams")
-        onTransformationEndContainer(params)
+        println("debug: params: ${params}")
+        
+        //onTransformationEndContainer(params)
+
     }
 
 

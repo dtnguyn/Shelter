@@ -53,6 +53,7 @@ class RentFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentRentBinding.inflate(inflater, container, false)
         createAdapter()
 
