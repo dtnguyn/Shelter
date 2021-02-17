@@ -1,5 +1,6 @@
 package com.nguyen.shelter.repo
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -32,7 +33,7 @@ constructor
 ): RemoteMediator<Int, PropertyCacheEntity>() {
 
     companion object{
-        private var isLoaded: Boolean = true
+        private var isLoaded: Boolean = false
     }
 
 
@@ -84,9 +85,7 @@ constructor
                 ageMin = filter.ageMin,
                 ageMax = filter.ageMax,
                 bedsMin = filter.bedsMin,
-                bedsMax = filter.bedsMax,
                 bathsMin = filter.bathsMin,
-                bathsMax = filter.bathsMax,
                 priceMin = filter.priceMin,
                 priceMax = filter.priceMax,
                 lotMin = filter.lotMin,
@@ -105,7 +104,9 @@ constructor
                 allowDogs =  filter.allow_dogs,
                 features = filter.features
             )
-            isLoaded = true
+            Log.d("DebugApp", "Call Sale API, $filter")
+            Log.d("DebugApp", "Response got back:  $apiResponse")
+
             var properties = apiResponse.data
             if(properties == null) properties = listOf()
             val endOfPaginationReached = properties.isEmpty()
@@ -113,7 +114,7 @@ constructor
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     database.remoteKeysDao().clearRemoteKeys()
-                    database.propertyDao().clearProperties()
+                    database.propertyDao().clearProperties("for_sale")
                 }
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1

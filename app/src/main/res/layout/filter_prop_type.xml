@@ -76,7 +76,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView10"
+                        android:id="@+id/any_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{anyClicked ? @drawable/any_selected : @drawable/any, default= @drawable/any_selected}"
@@ -96,7 +96,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+                        app:layout_constraintTop_toBottomOf="@+id/any_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -114,7 +114,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView11"
+                        android:id="@+id/apartment_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{apartmentClicked ? @drawable/apartment_selected : @drawable/apartment, default= @drawable/apartment}"
@@ -134,7 +134,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView11" />
+                        app:layout_constraintTop_toBottomOf="@+id/apartment_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -152,7 +152,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView12"
+                        android:id="@+id/single_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{singleClicked ? @drawable/single_family_selected : @drawable/single_family, default= @drawable/single_family}"
@@ -172,7 +172,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView12" />
+                        app:layout_constraintTop_toBottomOf="@+id/single_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -190,7 +190,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView13"
+                        android:id="@+id/multi_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{multiClicked ? @drawable/multi_family_selected : @drawable/multi_family, default= @drawable/multi_family}"
@@ -210,7 +210,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView13" />
+                        app:layout_constraintTop_toBottomOf="@+id/multi_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -228,7 +228,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView14"
+                        android:id="@+id/condo_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{condoClicked ? @drawable/condo_selected : @drawable/condo, default= @drawable/condo}"
@@ -248,7 +248,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView14" />
+                        app:layout_constraintTop_toBottomOf="@+id/condo_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -266,7 +266,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView15"
+                        android:id="@+id/mobile_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{mobileClicked ? @drawable/mobile_selected : @drawable/mobile, default= @drawable/mobile}"
@@ -286,7 +286,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView15" />
+                        app:layout_constraintTop_toBottomOf="@+id/mobile_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -304,7 +304,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView16"
+                        android:id="@+id/farm_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{farmClicked ? @drawable/farm_selected : @drawable/farm, default= @drawable/farm}"
@@ -324,7 +324,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView16" />
+                        app:layout_constraintTop_toBottomOf="@+id/farm_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -342,7 +342,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView17"
+                        android:id="@+id/land_image_view"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:src="@{landClicked ? @drawable/land_selected : @drawable/land, default= @drawable/land}"
@@ -362,7 +362,7 @@
                         android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView17" />
+                        app:layout_constraintTop_toBottomOf="@+id/land_image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>

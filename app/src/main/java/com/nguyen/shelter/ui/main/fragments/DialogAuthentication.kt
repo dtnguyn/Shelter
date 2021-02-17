@@ -94,6 +94,7 @@ class DialogAuthentication(private val viewModel: MainViewModel, private val act
 
         //Google login result
         if (requestCode == RC_SIGN_IN) {
+            println("DebugApp: Google signin")
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -101,7 +102,7 @@ class DialogAuthentication(private val viewModel: MainViewModel, private val act
                 viewModel.setStateEvent(MainStateEvent.GoogleAuthenticate(account.idToken!!, activity))
                 dismiss()
             } catch (e: ApiException) {
-
+                println("DebugApp: Fail google signin ${e}")
             }
         }
 

@@ -8,6 +8,7 @@ data class Blog (
     var id: String,
     var userId: String = "",
     var user: User = User(),
+    var notificationToken: String,
     var date: Date,
     var content: String,
     var likeCounter: Int = 0,

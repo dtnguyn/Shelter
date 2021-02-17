@@ -34,7 +34,7 @@ class MapFragment : Fragment() {
         arguments?.let {
             latLng = LatLng(it.getDouble("lat"), it.getDouble("lng"))
             val bottomSheet = BottomSheetBehavior.from(view.map_bottom_sheet)
-            view.map_bottom_sheet_button.setOnClickListener {
+            view.map_bottom_sheet_title.setOnClickListener {
                 bottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED)
             }
 

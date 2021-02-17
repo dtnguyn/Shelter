@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
@@ -46,5 +47,11 @@ object FirebaseModule {
     @Provides
     fun provideStorageRef(): StorageReference{
         return FirebaseStorage.getInstance().reference
+    }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseMessaging(): FirebaseMessaging{
+        return FirebaseMessaging.getInstance()
     }
 }

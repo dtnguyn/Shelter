@@ -127,7 +127,8 @@ class RentFilterFragment : Fragment() {
             propTypes = convertStringToMap(propertyFilter.type)
             others = convertStringToMap(propertyFilter.features)
 
-            setUpSortFilter()
+
+            setUpSortFilter(filter.sort)
             setUpLocationFilter()
             setUpFeatureFilter()
             setUpTypeFilter(propTypes)
@@ -136,32 +137,45 @@ class RentFilterFragment : Fragment() {
         })
     }
 
-    private fun setUpSortFilter(){
+    private fun initializeSortOption(sort: String?){
+        binding.sortInclude.sortOption = when(sort){
+            "relevance" -> "relevance"
+            "newest" -> "newest"
+            "price_low" -> "price_low"
+            "price_high" -> "price_high"
+            "sqft_high" -> "sqft_high"
+            "photos" -> "photos"
+            else -> "relevance"
+        }
+    }
+
+    private fun setUpSortFilter(sort: String?){
 
         binding.sortInclude.apply {
-            sortOption = "relevance"
+            initializeSortOption(sort)
+            println("DebugApp: SortOption: $sortOption")
             relevance.setOnClickListener {
                 sortOption = "relevance"
                 propertyFilter.sort = "relevance"
             }
 
             date.setOnClickListener {
-                sortOption = "date"
+                sortOption = "newest"
                 propertyFilter.sort = "newest"
             }
 
             priceMin.setOnClickListener {
-                sortOption = "priceMin"
+                sortOption = "price_low"
                 propertyFilter.sort = "price_low"
             }
 
             priceMax.setOnClickListener {
-                sortOption = "priceMax"
+                sortOption = "price_high"
                 propertyFilter.sort = "price_high"
             }
 
             sqft.setOnClickListener {
-                sortOption = "sqft"
+                sortOption = "sqft_high"
                 propertyFilter.sort = "sqft_high"
             }
 
@@ -201,17 +215,29 @@ class RentFilterFragment : Fragment() {
                 binding.filter = propertyFilter
             }
 
-            bedsSlider.values = mutableListOf(propertyFilter.bedsMin?.toFloat(), propertyFilter.bedsMax?.toFloat())
-            bedsSlider.addOnChangeListener { rangeSlider, _, _ ->
-                propertyFilter.bedsMin = rangeSlider.values[0].toInt()
-                propertyFilter.bedsMax = rangeSlider.values[1].toInt()
+//            bedsSlider.values = mutableListOf(propertyFilter.bedsMin?.toFloat(), propertyFilter.bedsMax?.toFloat())
+//            bedsSlider.addOnChangeListener { rangeSlider, _, _ ->
+//                propertyFilter.bedsMin = rangeSlider.values[0].toInt()
+//                propertyFilter.bedsMax = rangeSlider.values[1].toInt()
+//                binding.filter = propertyFilter
+//            }
+//
+//            bathsSlider.values = mutableListOf(propertyFilter.bathsMin?.toFloat(), propertyFilter.bathsMax?.toFloat())
+//            bathsSlider.addOnChangeListener { rangeSlider, _, _ ->
+//                propertyFilter.bathsMin = rangeSlider.values[0].toInt()
+//                propertyFilter.bathsMax = rangeSlider.values[1].toInt()
+//                binding.filter = propertyFilter
+//            }
+
+            bedsSlider.value = propertyFilter.bedsMin?.toFloat() ?: 1f
+            bedsSlider.addOnChangeListener { _, value, _ ->
+                propertyFilter.bedsMin = value.toInt()
                 binding.filter = propertyFilter
             }
 
-            bathsSlider.values = mutableListOf(propertyFilter.bathsMin?.toFloat(), propertyFilter.bathsMax?.toFloat())
-            bathsSlider.addOnChangeListener { rangeSlider, _, _ ->
-                propertyFilter.bathsMin = rangeSlider.values[0].toInt()
-                propertyFilter.bathsMax = rangeSlider.values[1].toInt()
+            bathsSlider.value = propertyFilter.bathsMin?.toFloat() ?: 1f
+            bathsSlider.addOnChangeListener { _, value, _ ->
+                propertyFilter.bathsMin = value.toInt()
                 binding.filter = propertyFilter
             }
 
@@ -397,6 +423,11 @@ class RentFilterFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as MainActivity?)?.showActionBar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity?)?.hideActionBar()
     }
 
 

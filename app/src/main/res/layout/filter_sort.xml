@@ -71,7 +71,7 @@
                     android:id="@+id/price_min"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:src="@{sortOption == `priceMin` ? @drawable/price_min_selected : @drawable/price_min, default= @drawable/price_min}" />
+                    android:src="@{sortOption == `price_low` ? @drawable/price_min_selected : @drawable/price_min, default= @drawable/price_min}" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:text="@string/min"
-                    android:textColor="@{sortOption == `priceMin` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
+                    android:textColor="@{sortOption == `price_low` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -95,7 +95,7 @@
                     android:id="@+id/price_max"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:src="@{sortOption == `priceMax` ? @drawable/price_max_selected : @drawable/price_max, default= @drawable/price_max}" />
+                    android:src="@{sortOption == `price_high` ? @drawable/price_max_selected : @drawable/price_max, default= @drawable/price_max}" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -103,7 +103,7 @@
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:text="Max"
-                    android:textColor="@{sortOption == `priceMax` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
+                    android:textColor="@{sortOption == `price_high` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -178,7 +178,7 @@
                     android:id="@+id/date"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:src="@{sortOption == `date` ? @drawable/calendar_selected : @drawable/calendar, default= @drawable/calendar}"/>
+                    android:src="@{sortOption == `newest` ? @drawable/calendar_selected : @drawable/calendar, default= @drawable/calendar}"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -186,7 +186,7 @@
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:text="@string/date"
-                    android:textColor="@{sortOption == `date` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
+                    android:textColor="@{sortOption == `newest` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -238,7 +238,7 @@
                     android:id="@+id/sqft"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:src="@{sortOption == `sqft` ? @drawable/ruler_selected : @drawable/ruler, default= @drawable/ruler}" />
+                    android:src="@{sortOption == `sqft_high` ? @drawable/ruler_selected : @drawable/ruler, default= @drawable/ruler}" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -246,7 +246,7 @@
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:text="@string/sqft"
-                    android:textColor="@{sortOption == `sqft` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
+                    android:textColor="@{sortOption == `sqft_high` ? @color/textColorDark : @color/lightGrey, default= @color/lightGrey}"
                     android:textSize="14sp" />
 
             </LinearLayout>

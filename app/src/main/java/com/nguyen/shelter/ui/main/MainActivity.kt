@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         println("debug: Running Main activity")
-        mainViewModel.setStateEvent(MainStateEvent.InitializeLiveData)
+
 
         val mainToolBar = main_toolbar
         drawerLayout = drawer_layout
@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
     }
 
 
@@ -107,5 +108,12 @@ class MainActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    fun hideUserMenuItem(){
+        navigation_view.menu.findItem(R.id.user_fragment).isVisible = false
+    }
+
+    fun showUserMenuItem(){
+        navigation_view.menu.findItem(R.id.user_fragment).isVisible = true
+    }
 
 }

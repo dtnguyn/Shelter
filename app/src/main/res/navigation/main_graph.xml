@@ -73,6 +73,10 @@
         tools:layout="@layout/blog_collapse_area"
         android:id="@+id/blog_fragment" />
 
+    <fragment
+        android:name="com.nguyen.shelter.ui.main.fragments.SettingsFragment"
+        tools:layout="@layout/fragment_settings"
+        android:id="@+id/settings_fragment"/>
 
 
 </navigation>

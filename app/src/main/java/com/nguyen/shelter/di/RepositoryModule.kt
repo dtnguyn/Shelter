@@ -3,12 +3,14 @@ package com.nguyen.shelter.di
 import androidx.paging.ExperimentalPagingApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.nguyen.shelter.api.mapper.BlogFirebaseMapper
 import com.nguyen.shelter.api.mapper.CommentFirebaseMapper
 import com.nguyen.shelter.api.mapper.PropertyDetailNetworkMapper
 import com.nguyen.shelter.api.mapper.PropertyNetworkMapper
+import com.nguyen.shelter.api.service.FirebaseApiService
 import com.nguyen.shelter.api.service.RealtorApiService
 import com.nguyen.shelter.db.ShelterDatabase
 import com.nguyen.shelter.db.mapper.PropertyCacheMapper
@@ -61,13 +63,15 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideBlogRepository(
+        service: FirebaseApiService,
         commentFirebaseMapper: CommentFirebaseMapper,
         blogFirebaseMapper: BlogFirebaseMapper,
         fireStore: FirebaseFirestore,
+        fireMessage: FirebaseMessaging,
         storageReference: StorageReference,
         auth: FirebaseAuth
     ): BlogRepository{
-        return BlogRepository(blogFirebaseMapper, commentFirebaseMapper, fireStore, storageReference, auth)
+        return BlogRepository(service, blogFirebaseMapper, commentFirebaseMapper, fireStore, fireMessage, storageReference, auth)
     }
 
 }

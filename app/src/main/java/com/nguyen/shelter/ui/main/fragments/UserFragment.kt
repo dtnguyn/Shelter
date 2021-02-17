@@ -55,6 +55,10 @@ class UserFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.fab.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         subscribeObservers()
         viewModel.setStateEvent(MainStateEvent.CheckAuthentication)
 

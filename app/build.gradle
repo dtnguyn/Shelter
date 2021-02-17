@@ -6,7 +6,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: "androidx.navigation.safeargs.kotlin"
-
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -104,11 +104,16 @@ dependencies {
     testImplementation TestDeps.junit
     androidTestImplementation TestDeps.junitExtension
     androidTestImplementation TestDeps.espressoCore
+    androidTestImplementation TestDeps.espressoContrib
+    androidTestImplementation TestDeps.testRules
+    androidTestImplementation TestDeps.testRunner
 
     // Firebase
     implementation Deps.fireBase
     implementation Deps.fireBaseAuth
     implementation Deps.serviceAuth
+    implementation Deps.firebaseMessaging
+
 
     // Facebook
     implementation Deps.facebook

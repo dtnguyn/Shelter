@@ -258,7 +258,9 @@ constructor(
                 _currentFocusBlog.value = event.blog
             }
 
-
+            is MainStateEvent.GetMessagingToken -> {
+                //blogRepository.getMessageToken()
+            }
         }
     }
 
@@ -292,6 +294,9 @@ sealed class MainStateEvent{
     class GetComments(val blogId: String): MainStateEvent()
     class AddComment(val commentContent: String): MainStateEvent()
     class DeleteComment(val commentId: String): MainStateEvent()
+
+    //Messaging
+    object GetMessagingToken: MainStateEvent()
 
     //Others
     class SetPostalCode(val postalCode: String?): MainStateEvent()

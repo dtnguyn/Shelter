@@ -51,6 +51,16 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_height="match_parent" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:background="@color/lightGrey"
+            android:src="@drawable/back_button_32"
+            android:layout_margin="16dp"
+            tools:ignore="ContentDescription" />
+
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -113,7 +113,10 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = arguments?.getParcelable<Property>("prop")?.id
-        view.scrollView.transitionName = id!!
+        id.let {
+            view.scrollView.transitionName = it
+        }
+
     }
 
     private fun subscribeObservers(){

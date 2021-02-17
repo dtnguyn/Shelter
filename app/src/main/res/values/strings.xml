@@ -19,6 +19,7 @@
     <string name="rel">Rel</string>
     <string name="others">Others</string>
     <string name="sqft">Sqft</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="photos">Photos</string>
     <string name="location">Location</string>
     <string name="choose_state">Choose State</string>
@@ -95,5 +96,8 @@
     <string name="postal_code_dialog">Postal code dialog</string>
     <string name="saved">Saved</string>
     <string name="blogs">Blogs</string>
+    <string name="turn_notification_on_to_receive_information_about_your_blog_posts">Turn notification on to receive information about your blog posts.</string>
+    <string name="notifications">Notifications</string>
+
 
 </resources>

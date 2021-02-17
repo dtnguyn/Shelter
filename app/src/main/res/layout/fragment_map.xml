@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            android:id="@+id/map_bottom_sheet_button"
+            android:id="@+id/map_bottom_sheet_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -57,7 +57,7 @@
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map_bottom_sheet_button" />
+            app:layout_constraintTop_toBottomOf="@+id/map_bottom_sheet_title" />
 
     </LinearLayout>
 
