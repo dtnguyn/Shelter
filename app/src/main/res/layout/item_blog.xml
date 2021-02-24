@@ -130,7 +130,7 @@
                 app:layout_constraintTop_toTopOf="@+id/blog_image_slider" />
 
             <TextView
-                android:id="@+id/textView51"
+                android:id="@+id/blog_content_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -149,8 +149,8 @@
                 android:layout_height="32dp"
                 android:layout_marginTop="20dp"
                 android:src="@{blog.isLiked ? @drawable/red_heart_ic_32 : @drawable/heart_ic_32}"
-                app:layout_constraintStart_toStartOf="@+id/textView51"
-                app:layout_constraintTop_toBottomOf="@+id/textView51" />
+                app:layout_constraintStart_toStartOf="@+id/blog_content_textview"
+                app:layout_constraintTop_toBottomOf="@+id/blog_content_textview" />
 
             <TextView
                 android:id="@+id/textView52"

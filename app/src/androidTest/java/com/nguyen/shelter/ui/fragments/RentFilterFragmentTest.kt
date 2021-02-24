@@ -1,4 +1,4 @@
-package com.nguyen.shelter.ui.main.fragments
+package com.nguyen.shelter.ui.fragments
 
 import android.view.View
 import android.widget.ImageView
@@ -57,6 +57,7 @@ class RentFilterFragmentTest {
         onView(withId(R.id.photos)).perform(click())
             .check(matches(withDrawable(R.drawable.photo_selected)))
     }
+
 
     @Test
     fun test_pickLocationFunction() {

@@ -1,4 +1,4 @@
-package com.nguyen.shelter.ui.main.fragments
+package com.nguyen.shelter.ui.fragments
 
 import android.view.View
 import android.widget.ImageView
@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import com.google.android.material.tabs.TabLayout
 import com.nguyen.shelter.R
 import com.nguyen.shelter.ui.main.MainActivity
+import com.nguyen.shelter.ui.main.MainFragmentDirections
 import com.nguyen.shelter.ui.main.adapters.StateBottomSheetAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.Description

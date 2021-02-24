@@ -19,7 +19,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.nguyen.shelter.MyTestRunner"
     }
 
     buildTypes {
@@ -40,6 +40,10 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
     }
 }
 
@@ -107,6 +111,11 @@ dependencies {
     androidTestImplementation TestDeps.espressoContrib
     androidTestImplementation TestDeps.testRules
     androidTestImplementation TestDeps.testRunner
+    debugImplementation TestDeps.fragmentTesting
+    androidTestImplementation TestDeps.mockk
+    androidTestImplementation TestDeps.hiltTesting
+    androidTestImplementation TestDeps.testCore
+    kaptAndroidTest Deps.hiltCompiler
 
     // Firebase
     implementation Deps.fireBase

@@ -48,7 +48,7 @@ class BlogFragment : Fragment() {
         const val LOCATION_REQUEST_CODE = 1
     }
 
-    private val viewModel: BlogViewModel by viewModels()
+    val viewModel: BlogViewModel by viewModels()
 
     private lateinit var blogAdapter: BlogAdapter
     private lateinit var commentAdapter: CommentAdapter
@@ -138,7 +138,6 @@ class BlogFragment : Fragment() {
                     viewModel.setStateEvent(MainStateEvent.ReportBlog(reportContent, it))
                     reportBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
-
             }
 
             commentBottomSheet = BottomSheetBehavior.from(binding.commentInclude.commentContainer)
@@ -267,7 +266,7 @@ class BlogFragment : Fragment() {
 
 
     private fun subscribeObservers(){
-
+        println("DebugApp: Test create view")
         viewModel.isLoading.observe(viewLifecycleOwner, {
             binding.isLoading = it
         })

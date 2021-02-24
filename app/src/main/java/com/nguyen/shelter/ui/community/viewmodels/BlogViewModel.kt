@@ -98,6 +98,11 @@ constructor(
         it
     }
 
+    fun setBlog(blogs: ArrayList<Blog>){
+        _blogs.value = blogs
+    }
+
+
     fun setStateEvent(event: MainStateEvent){
 
         when(event){

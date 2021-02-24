@@ -32,6 +32,9 @@ object Versions{
     const val databindingCompilerVersion = "4.0.1"
     const val recyclerViewVersion = "1.2.0-alpha06"
     const val mapsVersion = "17.0.0"
+    const val fragmentTestingVersion = "1.2.5"
+    const val mockkVersion = "1.10.6"
+    const val testCoreVersion = "1.2.0"
 }
 
 object Deps{
@@ -95,4 +98,8 @@ object TestDeps{
     const val espressoContrib = "androidx.test.espresso:espresso-contrib:${Versions.espressoCoreVersion}"
     const val testRules = "androidx.test:rules:${Versions.testRulesVersion}"
     const val testRunner = "androidx.test:runner:${Versions.testRunnerVersion}"
+    const val fragmentTesting = "androidx.fragment:fragment-testing:${Versions.fragmentTestingVersion}"
+    const val mockk = "io.mockk:mockk-android:${Versions.mockkVersion}"
+    const val testCore = "androidx.test:core-ktx:${Versions.testCoreVersion}"
+    const val hiltTesting = "com.google.dagger:hilt-android-testing:${Versions.hiltVersion}"
 }
